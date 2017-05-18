@@ -5,6 +5,7 @@ from armulator.opcodes.thumb_instruction_set.thumb_instruction_set_encoding_16_b
 from armulator.opcodes.thumb_instruction_set.thumb_instruction_set_encoding_16_bit.thumb_shift_immediate_add_subtract_move_and_compare.lsl_immediate_t1 import LslImmediateT1
 from armulator.opcodes.thumb_instruction_set.thumb_instruction_set_encoding_16_bit.thumb_shift_immediate_add_subtract_move_and_compare.add_register_thumb_t1 import AddRegisterThumbT1
 from armulator.opcodes.thumb_instruction_set.thumb_instruction_set_encoding_16_bit.thumb_shift_immediate_add_subtract_move_and_compare.cmp_immediate_t1 import CmpImmediateT1
+from armulator.opcodes.thumb_instruction_set.thumb_instruction_set_encoding_32_bit.thumb_multiply_multiply_accumulate_and_absolute_difference.mul_t2 import MulT2
 
 def test_add_immediate_thumb():
     arm = ARM1176()
@@ -80,3 +81,24 @@ def test_cmp_immediate_thumb():
     assert arm.core_registers.get_cpsr_z() == "0"
     assert arm.core_registers.get_cpsr_c() == "0"
     assert arm.core_registers.get_cpsr_v() == "0"
+
+def test_mul_thumb():
+    arm = ARM1176()
+    arm.take_reset()
+    instr = BitArray(hex="0xFB00F201")
+    opcode = arm.decode_instruction(instr)
+    opcode = opcode.from_bitarray(instr, arm)
+    assert type(opcode) == MulT2
+    assert opcode.setflags == False
+    assert opcode.n == 0
+    assert opcode.m == 1
+    assert opcode.d == 2
+    arm.core_registers.set(opcode.n, BitArray(hex="0x00000004"))
+    arm.core_registers.set(opcode.m, BitArray(hex="0x00000002"))
+    arm.execute_instruction(opcode)
+    assert arm.core_registers.get(opcode.d) == BitArray(hex="0x00000008")
+    assert arm.core_registers.get_cpsr_n() == "0"
+    assert arm.core_registers.get_cpsr_z() == "0"
+    assert arm.core_registers.get_cpsr_c() == "0"
+    assert arm.core_registers.get_cpsr_v() == "0"
+    
