@@ -1,0 +1,16 @@
+from armulator.opcodes.abstract_opcode import AbstractOpcode
+from bitstring import BitArray
+
+
+class Rbit(AbstractOpcode):
+    def __init__(self, m, d):
+        super(Rbit, self).__init__()
+        self.m = m
+        self.d = d
+
+    def execute(self, processor):
+        if processor.condition_passed():
+            result = BitArray(length=32)
+            for i in xrange(32):
+                result[i] = processor.core_registers.get(self.m)[31 - i]
+            processor.core_registers.set(self.d, result)
