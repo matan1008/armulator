@@ -39,4 +39,4 @@ class Memory(object):
 
     def set_bits(self, memaddrdesc, size, ind, amount, bits):
         # mock
-        pass
+        raise NotImplementedError()
