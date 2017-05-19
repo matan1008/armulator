@@ -1377,7 +1377,7 @@ class CoreRegisters:
 
     def reset_control_registers(self):
         self.MIDR = BitArray(bin="01000001000011111010011101100000")
-        self.SCTLR = BitArray(bin="01000000000001010000000001111000")
+        self.SCTLR = BitArray(bin="01000000000001010000000001111001")
         self.ACTLR = BitArray(bin="00000000000000000000000000000111")
         self.VBAR = BitArray(bin=implementation_defined.vbar_bin)
 
@@ -2935,7 +2935,7 @@ class ARM1176:
                 base_address = self.core_registers.DRBARs[r]
                 access_control = self.core_registers.DRACRs[r]
                 if size_enable[31]:
-                    ls_bit = size_enable[26:31] + 1
+                    ls_bit = size_enable[26:31].uint + 1
                     if ls_bit < 2:
                         print "unpredictable"
                     if ls_bit > 2 and base_address[32 - ls_bit:30].uint != 0:
