@@ -888,6 +888,12 @@ class CoreRegisters:
     def set_dfsr(self, dfsr_14):
         self.DFAR[18:32] = dfsr_14
 
+    def set_mpuir_iregion(self, iregion):
+        self.MPUIR.bin[8:16] = iregion
+
+    def set_mpuir_dregion(self, dregion):
+        self.MPUIR.bin[16:24] = dregion
+
     def set_scr_ns(self, flag):
         self.SCR[31] = flag
 
