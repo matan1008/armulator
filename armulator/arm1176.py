@@ -2033,7 +2033,7 @@ class ARM1176:
                     self.core_registers.set_dfar(vaddress)
                 if ldfsr_format:
                     dfsr_string[0] = self.tlb_lookup_came_from_cache_maintenance()
-                    if dtype in (self.DAbort.DAbort_AsyncExternal, self.DAbort.SyncExternal):
+                    if dtype in (self.DAbort.DAbort_AsyncExternal, self.DAbort.DAbort_SyncExternal):
                         dfsr_string[1] = implementation_defined.dfsr_string_12
                     else:
                         dfsr_string[1] = False
@@ -2048,7 +2048,7 @@ class ARM1176:
                 else:
                     if HaveLPAE():
                         dfsr_string[0] = self.tlb_lookup_came_from_cache_maintenance()
-                    if dtype in (self.DAbort.DAbort_AsyncExternal, self.DAbort.SyncExternal):
+                    if dtype in (self.DAbort.DAbort_AsyncExternal, self.DAbort.DAbort_SyncExternal):
                         dfsr_string[1] = implementation_defined.dfsr_string_12
                     else:
                         dfsr_string[1] = False
@@ -2111,7 +2111,7 @@ class ARM1176:
                     self.core_registers.set_dfar(vaddress)
             else:
                 self.core_registers.set_dfar(vaddress)
-            if dtype in (self.DAbort.DAbort_AsyncExternal, self.DAbort.SyncExternal):
+            if dtype in (self.DAbort.DAbort_AsyncExternal, self.DAbort.DAbort_SyncExternal):
                 dfsr_string[1] = implementation_defined.dfsr_string_12
             else:
                 dfsr_string[1] = False
