@@ -27,7 +27,7 @@ class MemoryType(object):
 
 class RAM(MemoryType):
     def __init__(self, size):
-        super(RAM, self).__init__()
+        super(RAM, self).__init__(size)
         self.memory_array = bytearray(size)
 
     def __getitem__(self, (address, size)):
