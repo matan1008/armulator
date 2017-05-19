@@ -9,11 +9,11 @@ def test_ldr_register_thumb():
     arm.take_reset()
     instr = BitArray(bin="0101100001010011")
     # setting Data Region registers
-    arm.core_registers.DRSRs[0][31] = True
-    arm.core_registers.DRSRs[0][26:31] = "0b00010"
-    arm.core_registers.DRBARs[0] = BitArray(hex="0x0F000000")
-    arm.core_registers.DRACRs[0] = BitArray(hex="0x00000300")
-    arm.core_registers.MPUIR = BitArray(hex="0x00010100")
+    arm.core_registers.DRSRs[0][31] = True # enabling memory region
+    arm.core_registers.DRSRs[0][26:31] = "0b00010" # setting region size
+    arm.core_registers.DRBARs[0] = BitArray(hex="0x0F000000") # setting region base address
+    arm.core_registers.DRACRs[0] = BitArray(hex="0x00000300") # setting access permissions
+    arm.core_registers.MPUIR = BitArray(hex="0x00010100") # declaring the region
     ram_memory = RAM(0x100)
     ram_memory.write(0x4, 4, "ECIN")
     arm.mem.memories.append((ram_memory, (0x0F000000, 0x0F000100)))
