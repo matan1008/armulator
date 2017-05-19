@@ -101,4 +101,4 @@ def test_mul_thumb():
     assert arm.core_registers.get_cpsr_z() == "0"
     assert arm.core_registers.get_cpsr_c() == "0"
     assert arm.core_registers.get_cpsr_v() == "0"
-    
+
