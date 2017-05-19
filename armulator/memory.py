@@ -22,7 +22,7 @@ class Memory(object):
         # mock
         assert size == 1 or size == 2 or size == 4 or size == 8
         memory = self.get_memory_by_address(memaddrdesc.paddress.physicaladdress.uint)
-        if memory:
+        if memory is not None:
             data = BitArray(bytes=memory[0][memaddrdesc.paddress.physicaladdress.uint - memory[1][0], size])
             data.byteswap()
             return data
