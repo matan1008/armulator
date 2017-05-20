@@ -15,7 +15,7 @@ from permissions import Permissions
 from enums import *
 import opcodes
 from armulator.all_registers.sunavcr import SUNAVCR
-
+from armulator.all_registers.pmcr import PMCR
 
 class CoreRegisters:
     def __init__(self):
@@ -140,7 +140,7 @@ class CoreRegisters:
         self.TPIDRPRW = BitArray(length=32)
         self.PPMRR = BitArray(length=32)
         self.sunavcr = SUNAVCR()
-        self.PMCR = BitArray(length=32)
+        self.pmcr = PMCR()
         self.CCR = BitArray(length=32)
         self.CR0 = BitArray(length=32)
         self.CR1 = BitArray(length=32)
