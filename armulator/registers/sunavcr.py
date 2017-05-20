@@ -7,7 +7,7 @@ class SUNAVCR(object):
     """
 
     def __init__(self):
-        self.value = BitArray(32)
+        self.value = BitArray(length=32)
 
     def set_v(self, flag):
         self.value[31] = flag
