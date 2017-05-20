@@ -14,6 +14,7 @@ from memory import Memory
 from permissions import Permissions
 from enums import *
 import opcodes
+from armulator.all_registers.sunavcr import SUNAVCR
 
 
 class CoreRegisters:
@@ -138,7 +139,7 @@ class CoreRegisters:
         self.TPIDRURO = BitArray(length=32)
         self.TPIDRPRW = BitArray(length=32)
         self.PPMRR = BitArray(length=32)
-        self.SUNAVCR = BitArray(length=32)
+        self.sunavcr = SUNAVCR()
         self.PMCR = BitArray(length=32)
         self.CCR = BitArray(length=32)
         self.CR0 = BitArray(length=32)
