@@ -18,6 +18,7 @@ from armulator.all_registers.sunavcr import SUNAVCR
 from armulator.all_registers.pmcr import PMCR
 from armulator.all_registers.jmcr import JMCR
 from armulator.all_registers.prrr import PRRR
+from armulator.all_registers.nmrr import NMRR
 
 class CoreRegisters:
     def __init__(self):
@@ -71,7 +72,7 @@ class CoreRegisters:
         self.HMAIR0 = BitArray(length=32)
         self.HMAIR1 = BitArray(length=32)
         self.prrr = PRRR()
-        self.NMRR = BitArray(length=32)
+        self.nmrr = NMRR()
         self.DACR = BitArray(length=32)
         self.MPUIR = BitArray(length=32)
         self.CPACR = BitArray(length=32)
@@ -506,54 +507,6 @@ class CoreRegisters:
 
     def get_mpuir_nu(self):
         return self.MPUIR.bin[31]
-
-    def get_nmrr_or7(self):
-        return self.NMRR.bin[0:2]
-
-    def get_nmrr_or6(self):
-        return self.NMRR.bin[2:4]
-
-    def get_nmrr_or5(self):
-        return self.NMRR.bin[4:6]
-
-    def get_nmrr_or4(self):
-        return self.NMRR.bin[6:8]
-
-    def get_nmrr_or3(self):
-        return self.NMRR.bin[8:10]
-
-    def get_nmrr_or2(self):
-        return self.NMRR.bin[10:12]
-
-    def get_nmrr_or1(self):
-        return self.NMRR.bin[12:14]
-
-    def get_nmrr_or0(self):
-        return self.NMRR.bin[14:16]
-
-    def get_nmrr_ir7(self):
-        return self.NMRR.bin[16:18]
-
-    def get_nmrr_ir6(self):
-        return self.NMRR.bin[18:20]
-
-    def get_nmrr_ir5(self):
-        return self.NMRR.bin[20:22]
-
-    def get_nmrr_ir4(self):
-        return self.NMRR.bin[22:24]
-
-    def get_nmrr_ir3(self):
-        return self.NMRR.bin[24:26]
-
-    def get_nmrr_ir2(self):
-        return self.NMRR.bin[26:28]
-
-    def get_nmrr_ir1(self):
-        return self.NMRR.bin[28:30]
-
-    def get_nmrr_ir0(self):
-        return self.NMRR.bin[30:32]
 
     def get_vtcr_t0sz(self):
         return self.VTCR.bin[28:32]
@@ -2373,10 +2326,10 @@ class ARM1176:
                 memattrs.outershareable = True
             elif self.core_registers.prrr.get_tr_n(region) == "0b10":
                 memattrs.type = MemType.MemType_Normal
-                hintsattrs = self.convert_attrs_hints(self.core_registers.NMRR[30 - (2 * region):32 - (2 * region)])
+                hintsattrs = self.convert_attrs_hints(self.core_registers.nmrr.get_ir_n(region))
                 memattrs.innerattrs = hintsattrs[2:4]
                 memattrs.innerhints = hintsattrs[0:2]
-                hintsattrs = self.convert_attrs_hints(self.core_registers.NMRR[14 - (2 * region):16 - (2 * region)])
+                hintsattrs = self.convert_attrs_hints(self.core_registers.nmrr.get_or_n(region))
                 memattrs.outerattrs = hintsattrs[2:4]
                 memattrs.outerhints = hintsattrs[0:2]
                 s_bit = self.core_registers.prrr.get_ns0() if not s else self.core_registers.prrr.get_ns1()
