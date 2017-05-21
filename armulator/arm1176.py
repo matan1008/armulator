@@ -19,6 +19,7 @@ from armulator.all_registers.pmcr import PMCR
 from armulator.all_registers.jmcr import JMCR
 from armulator.all_registers.prrr import PRRR
 from armulator.all_registers.nmrr import NMRR
+from armulator.all_registers.dacr import DACR
 
 class CoreRegisters:
     def __init__(self):
@@ -73,7 +74,7 @@ class CoreRegisters:
         self.HMAIR1 = BitArray(length=32)
         self.prrr = PRRR()
         self.nmrr = NMRR()
-        self.DACR = BitArray(length=32)
+        self.dacr = DACR()
         self.MPUIR = BitArray(length=32)
         self.CPACR = BitArray(length=32)
         self.RGNR = BitArray(length=32)
@@ -1877,16 +1878,15 @@ class ARM1176:
         ipavalid = False
         ldfsr_format = False
         s2fs1walk = False
-        bitops = 2 * domain.uint
         permission_check = False
-        if self.core_registers.DACR[30 - bitops:32 - bitops] == "0b00":
+        if self.core_registers.dacr.get_d_n(domain.uint) == "0b00":
             self.data_abort(mva, ipaddress, domain, level, iswrite, self.DAbort.DAbort_Domain, taketohypmode,
                             secondstageabort, ipavalid, ldfsr_format, s2fs1walk)
-        elif self.core_registers.DACR[30 - bitops:32 - bitops] == "0b01":
+        elif self.core_registers.dacr.get_d_n(domain.uint) == "0b01":
             permission_check = True
-        if self.core_registers.DACR[30 - bitops:32 - bitops] == "0b10":
+        if self.core_registers.dacr.get_d_n(domain.uint) == "0b10":
             print "unpredictable"
-        if self.core_registers.DACR[30 - bitops:32 - bitops] == "0b11":
+        if self.core_registers.dacr.get_d_n(domain.uint) == "0b11":
             permission_check = False
         return permission_check
 
