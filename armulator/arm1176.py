@@ -21,6 +21,7 @@ from armulator.all_registers.prrr import PRRR
 from armulator.all_registers.nmrr import NMRR
 from armulator.all_registers.dacr import DACR
 from armulator.all_registers.mpuir import MPUIR
+from armulator.all_registers.cpacr import CPACR
 
 class CoreRegisters:
     def __init__(self):
@@ -77,7 +78,7 @@ class CoreRegisters:
         self.nmrr = NMRR()
         self.dacr = DACR()
         self.mpuir = MPUIR()
-        self.CPACR = BitArray(length=32)
+        self.cpacr = CPACR()
         self.RGNR = BitArray(length=32)
         self.HCPTR = BitArray(length=32)
         self.DRSRs = [BitArray(length=32) for region in xrange(number_of_mpu_regions)]
@@ -3080,14 +3081,14 @@ class ARM1176:
                 if not self.core_registers.is_secure() and not self.core_registers.NSACR[31 - cp_num]:
                     raise UndefinedInstructionException()
             if not HaveVirtExt() or not self.core_registers.current_mode_is_hyp():
-                if self.core_registers.CPACR[30 - (2 * cp_num):32 - (2 * cp_num)] == "0b00":
+                if self.core_registers.cpacr.get_cp_n(cp_num) == "0b00":
                     raise UndefinedInstructionException()
-                elif self.core_registers.CPACR[30 - (2 * cp_num):32 - (2 * cp_num)] == "0b01":
+                elif self.core_registers.cpacr.get_cp_n(cp_num) == "0b01":
                     if not self.core_registers.current_mode_is_not_user():
                         raise UndefinedInstructionException()
-                elif self.core_registers.CPACR[30 - (2 * cp_num):32 - (2 * cp_num)] == "0b10":
+                elif self.core_registers.cpacr.get_cp_n(cp_num) == "0b10":
                     print "unpredictable"
-                elif self.core_registers.CPACR[30 - (2 * cp_num):32 - (2 * cp_num)] == "0b11":
+                elif self.core_registers.cpacr.get_cp_n(cp_num) == "0b11":
                     pass
             if HaveSecurityExt() and HaveVirtExt() and not self.core_registers.is_secure() and \
                     self.core_registers.HCPTR[31 - cp_num]:
