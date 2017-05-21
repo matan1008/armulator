@@ -16,6 +16,7 @@ from enums import *
 import opcodes
 from armulator.all_registers.sunavcr import SUNAVCR
 from armulator.all_registers.pmcr import PMCR
+from armulator.all_registers.jmcr import JMCR
 
 class CoreRegisters:
     def __init__(self):
@@ -45,7 +46,7 @@ class CoreRegisters:
         self.HSR = BitArray(length=32)
         self.HSCTLR = BitArray(length=32)
         self.HVBAR = BitArray(length=32)
-        self.JMCR = BitArray(length=32)
+        self.jmcr = JMCR()
         self.HCR = BitArray(length=32)
         self.MVBAR = BitArray(length=32)
         self.TEEHBR = BitArray(length=32)
@@ -751,9 +752,6 @@ class CoreRegisters:
     def get_hcr_tidcp(self):
         return self.HCR.bin[11]
 
-    def get_jmcr_je(self):
-        return self.JMCR.bin[31]
-
     def get_hsctlr_te(self):
         return self.HSCTLR.bin[1]
 
@@ -874,9 +872,6 @@ class CoreRegisters:
     def set_teecr_xed(self, flag):
         self.TEECR[31] = flag
 
-    def set_jmrc_je(self, flag):
-        self.JMCR[31] = flag
-
     def set_dfar(self, new_dfar):
         self.DFAR = new_dfar
 
@@ -890,10 +885,10 @@ class CoreRegisters:
         self.DFAR[18:32] = dfsr_14
 
     def set_mpuir_iregion(self, iregion):
-        self.MPUIR.bin[8:16] = iregion
+        self.MPUIR[8:16] = iregion
 
     def set_mpuir_dregion(self, dregion):
-        self.MPUIR.bin[16:24] = dregion
+        self.MPUIR[16:24] = dregion
 
     def set_scr_ns(self, flag):
         self.SCR[31] = flag
@@ -1442,7 +1437,7 @@ class ARM1176:
         if HaveThumbEE():
             self.core_registers.set_teecr_xed(False)
         if HaveJazelle():
-            self.core_registers.set_jmrc_je(False)
+            self.core_registers.jmcr.set_je(False)
         self.core_registers.set_cpsr_i(True)
         self.core_registers.set_cpsr_f(True)
         self.core_registers.set_cpsr_a(True)

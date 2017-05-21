@@ -19,7 +19,7 @@ class Bxj(AbstractOpcode):
                 hsr_string[-4:] = self.m
                 processor.write_hsr(BitArray(bin="001010"), hsr_string)
                 processor.core_registers.take_hyp_trap_exception()
-            elif (processor.core_registers.get_jmcr_je() == "0" or
+            elif (not processor.core_registers.jmcr.get_je() or
                   processor.core_registers.current_instr_set() == InstrSet.InstrSet_ThumbEE):
                 processor.bx_write_pc(processor.core_registers.get(self.m))
             else:
