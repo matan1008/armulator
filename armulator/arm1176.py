@@ -20,6 +20,7 @@ from armulator.all_registers.jmcr import JMCR
 from armulator.all_registers.prrr import PRRR
 from armulator.all_registers.nmrr import NMRR
 from armulator.all_registers.dacr import DACR
+from armulator.all_registers.mpuir import MPUIR
 
 class CoreRegisters:
     def __init__(self):
@@ -75,7 +76,7 @@ class CoreRegisters:
         self.prrr = PRRR()
         self.nmrr = NMRR()
         self.dacr = DACR()
-        self.MPUIR = BitArray(length=32)
+        self.mpuir = MPUIR()
         self.CPACR = BitArray(length=32)
         self.RGNR = BitArray(length=32)
         self.HCPTR = BitArray(length=32)
@@ -500,15 +501,6 @@ class CoreRegisters:
     def get_rgnr_region(self):
         return self.RGNR.bin[32 - number_of_mpu_regions.bit_length():32] if number_of_mpu_regions else "0"
 
-    def get_mpuir_iregion(self):
-        return self.MPUIR.bin[8:16]
-
-    def get_mpuir_dregion(self):
-        return self.MPUIR.bin[16:24]
-
-    def get_mpuir_nu(self):
-        return self.MPUIR.bin[31]
-
     def get_vtcr_t0sz(self):
         return self.VTCR.bin[28:32]
 
@@ -778,12 +770,6 @@ class CoreRegisters:
 
     def set_dfsr(self, dfsr_14):
         self.DFAR[18:32] = dfsr_14
-
-    def set_mpuir_iregion(self, iregion):
-        self.MPUIR[8:16] = iregion
-
-    def set_mpuir_dregion(self, dregion):
-        self.MPUIR[16:24] = dregion
 
     def set_scr_ns(self, flag):
         self.SCR[31] = flag
@@ -2826,7 +2812,7 @@ class ARM1176:
             region_found = False
             texcb = BitArray(length=5)  # unknown
             s = False  # unknown
-            for r in xrange(int(self.core_registers.get_mpuir_dregion(), 2)):
+            for r in xrange(self.core_registers.mpuir.get_dregion().uint):
                 size_enable = self.core_registers.DRSRs[r]
                 base_address = self.core_registers.DRBARs[r]
                 access_control = self.core_registers.DRACRs[r]
