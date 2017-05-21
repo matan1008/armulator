@@ -17,6 +17,7 @@ import opcodes
 from armulator.all_registers.sunavcr import SUNAVCR
 from armulator.all_registers.pmcr import PMCR
 from armulator.all_registers.jmcr import JMCR
+from armulator.all_registers.prrr import PRRR
 
 class CoreRegisters:
     def __init__(self):
@@ -69,7 +70,7 @@ class CoreRegisters:
         self.MAIR1 = BitArray(length=32)
         self.HMAIR0 = BitArray(length=32)
         self.HMAIR1 = BitArray(length=32)
-        self.PRRR = BitArray(length=32)
+        self.prrr = PRRR()
         self.NMRR = BitArray(length=32)
         self.DACR = BitArray(length=32)
         self.MPUIR = BitArray(length=32)
@@ -553,66 +554,6 @@ class CoreRegisters:
 
     def get_nmrr_ir0(self):
         return self.NMRR.bin[30:32]
-
-    def get_prrr_nos7(self):
-        return self.PRRR.bin[0]
-
-    def get_prrr_nos6(self):
-        return self.PRRR.bin[1]
-
-    def get_prrr_nos5(self):
-        return self.PRRR.bin[2]
-
-    def get_prrr_nos4(self):
-        return self.PRRR.bin[3]
-
-    def get_prrr_nos3(self):
-        return self.PRRR.bin[4]
-
-    def get_prrr_nos2(self):
-        return self.PRRR.bin[5]
-
-    def get_prrr_nos1(self):
-        return self.PRRR.bin[6]
-
-    def get_prrr_nos0(self):
-        return self.PRRR.bin[7]
-
-    def get_prrr_ns1(self):
-        return self.PRRR.bin[12]
-
-    def get_prrr_ns0(self):
-        return self.PRRR.bin[13]
-
-    def get_prrr_ds1(self):
-        return self.PRRR.bin[14]
-
-    def get_prrr_ds0(self):
-        return self.PRRR.bin[15]
-
-    def get_prrr_tr7(self):
-        return self.PRRR.bin[16:18]
-
-    def get_prrr_tr6(self):
-        return self.PRRR.bin[18:20]
-
-    def get_prrr_tr5(self):
-        return self.PRRR.bin[20:22]
-
-    def get_prrr_tr4(self):
-        return self.PRRR.bin[22:24]
-
-    def get_prrr_tr3(self):
-        return self.PRRR.bin[24:26]
-
-    def get_prrr_tr2(self):
-        return self.PRRR.bin[26:28]
-
-    def get_prrr_tr1(self):
-        return self.PRRR.bin[28:30]
-
-    def get_prrr_tr0(self):
-        return self.PRRR.bin[30:32]
 
     def get_vtcr_t0sz(self):
         return self.VTCR.bin[28:32]
@@ -2414,7 +2355,7 @@ class ARM1176:
             # IMPLEMENTATION_DEFINED setting of memattrs
             pass
         else:
-            if self.core_registers.PRRR[30 - (2 * region):32 - (2 * region)] == "0b00":
+            if self.core_registers.prrr.get_tr_n(region) == "0b00":
                 memattrs.type = MemType.MemType_StronglyOrdered
                 memattrs.innerattrs = BitArray(length=2)  # unknown
                 memattrs.innerhints = BitArray(length=2)  # unknown
@@ -2422,7 +2363,7 @@ class ARM1176:
                 memattrs.outerhints = BitArray(length=2)  # unknown
                 memattrs.shareable = True
                 memattrs.outershareable = True
-            elif self.core_registers.PRRR[30 - (2 * region):32 - (2 * region)] == "0b01":
+            elif self.core_registers.prrr.get_tr_n(region) == "0b01":
                 memattrs.type = MemType.MemType_Device
                 memattrs.innerattrs = BitArray(length=2)  # unknown
                 memattrs.outerattrs = BitArray(length=2)  # unknown
@@ -2430,7 +2371,7 @@ class ARM1176:
                 memattrs.outerhints = BitArray(length=2)  # unknown
                 memattrs.shareable = True
                 memattrs.outershareable = True
-            elif self.core_registers.PRRR[30 - (2 * region):32 - (2 * region)] == "0b10":
+            elif self.core_registers.prrr.get_tr_n(region) == "0b10":
                 memattrs.type = MemType.MemType_Normal
                 hintsattrs = self.convert_attrs_hints(self.core_registers.NMRR[30 - (2 * region):32 - (2 * region)])
                 memattrs.innerattrs = hintsattrs[2:4]
@@ -2438,10 +2379,10 @@ class ARM1176:
                 hintsattrs = self.convert_attrs_hints(self.core_registers.NMRR[14 - (2 * region):16 - (2 * region)])
                 memattrs.outerattrs = hintsattrs[2:4]
                 memattrs.outerhints = hintsattrs[0:2]
-                s_bit = self.core_registers.get_prrr_ns0() if not s else self.core_registers.get_prrr_ns1()
-                memattrs.shareable = s_bit == "1"
-                memattrs.outershareable = s_bit == "1" and not self.core_registers.PRRR[7 - region]
-            elif self.core_registers.PRRR[30 - (2 * region):32 - (2 * region)] == "0b11":
+                s_bit = self.core_registers.prrr.get_ns0() if not s else self.core_registers.prrr.get_ns1()
+                memattrs.shareable = s_bit
+                memattrs.outershareable = s_bit and not self.core_registers.prrr.get_nos_n(region)
+            elif self.core_registers.prrr.get_tr_n(region) == "0b11":
                 memattrs.type = MemType.MemType_Normal  # unknown
                 memattrs.innerattrs = BitArray(length=2)  # unknown
                 memattrs.innerhints = BitArray(length=2)  # unknown
