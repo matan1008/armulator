@@ -18,7 +18,7 @@ class Smc(AbstractOpcode):
                     processor.write_hsr("010011", hsr_string)
                     processor.core_registers.take_hyp_trap_exception()
                 else:
-                    if processor.core_registers.get_scr_scd() == "1":
+                    if processor.core_registers.scr.get_scd():
                         if processor.core_registers.is_secure():
                             print "unpredictable"
                         else:

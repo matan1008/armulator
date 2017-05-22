@@ -22,6 +22,7 @@ from armulator.all_registers.nmrr import NMRR
 from armulator.all_registers.dacr import DACR
 from armulator.all_registers.mpuir import MPUIR
 from armulator.all_registers.cpacr import CPACR
+from armulator.all_registers.scr import SCR
 
 class CoreRegisters:
     def __init__(self):
@@ -44,7 +45,7 @@ class CoreRegisters:
         self.SPSR_irq = BitArray(length=32)
         self.SPSR_fiq = BitArray(length=32)
         self.ELR_hyp = BitArray(length=32)
-        self.SCR = BitArray(length=32)
+        self.scr = SCR()
         self.NSACR = BitArray(length=32)
         self.SCTLR = BitArray(length=32)
         self.HSTR = BitArray(length=32)
@@ -655,27 +656,6 @@ class CoreRegisters:
     def get_hsctlr_c(self):
         return self.HSCTLR.bin[29]
 
-    def get_scr_ns(self):
-        return self.SCR.bin[31]
-
-    def get_scr_irq(self):
-        return self.SCR.bin[30]
-
-    def get_scr_fiq(self):
-        return self.SCR.bin[29]
-
-    def get_scr_ea(self):
-        return self.SCR.bin[28]
-
-    def get_scr_fw(self):
-        return self.SCR.bin[27]
-
-    def get_scr_aw(self):
-        return self.SCR.bin[26]
-
-    def get_scr_scd(self):
-        return self.SCR.bin[24]
-
     def get_sctlr_nmfi(self):
         return self.SCTLR.bin[4]
 
@@ -772,9 +752,6 @@ class CoreRegisters:
     def set_dfsr(self, dfsr_14):
         self.DFAR[18:32] = dfsr_14
 
-    def set_scr_ns(self, flag):
-        self.SCR[31] = flag
-
     def set_cpsr_ge(self, value):
         self.CPSR.overwrite(value, 12)
 
@@ -857,7 +834,7 @@ class CoreRegisters:
             self.set_cpsr_isetstate("11")
 
     def is_secure(self):
-        return (not HaveSecurityExt()) or (self.get_scr_ns() == "0") or (self.get_cpsr_m() == "10110")
+        return (not HaveSecurityExt()) or (not self.scr.get_ns()) or (self.get_cpsr_m() == "10110")
 
     def bad_mode(self, mode):
         if mode.bin == "10000":
@@ -1087,13 +1064,12 @@ class CoreRegisters:
             if is_excp_return:
                 self.CPSR.overwrite(value[16:22], 16)
             self.CPSR.set(value[22], 22)
-            if privileged and (self.is_secure() or self.get_scr_aw() == "1" or HaveVirtExt()):
+            if privileged and (self.is_secure() or self.scr.get_aw() or HaveVirtExt()):
                 self.CPSR.set(value[23], 23)
         if bytemask[3]:
             if privileged:
                 self.CPSR.set(value[24], 24)
-            if privileged and (not nmfi or not value[25]) and (
-                            self.is_secure() or self.get_scr_fw() == "1" or HaveVirtExt()):
+            if privileged and (not nmfi or not value[25]) and (self.is_secure() or self.scr.get_fw() or HaveVirtExt()):
                 self.CPSR.set(value[25], 25)
             if is_excp_return:
                 self.CPSR.set(value[26], 26)
@@ -1105,7 +1081,7 @@ class CoreRegisters:
                         print "unpredictable"
                     elif not self.is_secure() and value.bin[27:] == "10001" and self.get_nsacr_rfr() == "1":
                         print "unpredictable"
-                    elif self.get_scr_ns() == "0" and value.bin[27:] == "11010":
+                    elif not self.scr.get_ns() and value.bin[27:] == "11010":
                         print "unpredictable"
                     elif not self.is_secure() and self.get_cpsr_m() != "11010" and value.bin[27:] == "11010":
                         print "unpredictable"
@@ -1167,11 +1143,11 @@ class CoreRegisters:
         self.set_cpsr_j(False)
         self.set_cpsr_t(self.get_hsctlr_te() == "1")
         self.set_cpsr_e(self.get_hsctlr_ee() == "1")
-        if self.get_scr_ea() == "0":
+        if not self.scr.get_ea():
             self.set_cpsr_a(True)
-        if self.get_scr_fiq() == "0":
+        if not self.scr.get_fiq():
             self.set_cpsr_f(True)
-        if self.get_scr_irq() == "0":
+        if not self.scr.get_irq():
             self.set_cpsr_i(True)
         self.set_cpsr_itstate(BitArray(length=8))
         self.branch_to(BitArray(uint=(self.HVBAR.uint + vect_offset), length=32))
@@ -1201,7 +1177,7 @@ class CoreRegisters:
         new_spsr_value = self.CPSR
         vect_offset = 8
         if self.get_cpsr_m() == "10110":
-            self.set_scr_ns(False)
+            self.scr.set_ns(False)
         self.enter_monitor_mode(new_spsr_value, new_lr_value, vect_offset)
 
     def take_data_abort_exception(self):
@@ -1209,8 +1185,8 @@ class CoreRegisters:
         new_spsr_value = self.CPSR
         vect_offset = 16
         preferred_exceptn_return = BitArray(uint=(new_lr_value.uint - 8), length=32)
-        route_to_monitor = HaveSecurityExt() and self.get_scr_ea() == "1" and self.is_external_abort()
-        take_to_hyp = HaveVirtExt() and HaveSecurityExt() and self.get_scr_ns() == "1" and self.get_cpsr_m() == "11010"
+        route_to_monitor = HaveSecurityExt() and self.scr.get_ea() and self.is_external_abort()
+        take_to_hyp = HaveVirtExt() and HaveSecurityExt() and self.scr.get_ns() and self.get_cpsr_m() == "11010"
         route_to_hyp = (
             HaveVirtExt() and
             HaveSecurityExt() and
@@ -1231,7 +1207,7 @@ class CoreRegisters:
         )
         if route_to_monitor:
             if self.get_cpsr_m() == "10110":
-                self.set_scr_ns(False)
+                self.scr.set_ns(False)
             self.enter_monitor_mode(new_spsr_value, new_lr_value, vect_offset)
         elif take_to_hyp:
             self.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, vect_offset)
@@ -1239,12 +1215,12 @@ class CoreRegisters:
             self.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, 20)
         else:
             if HaveSecurityExt() and self.get_cpsr_m() == "10110":
-                self.set_scr_ns(False)
+                self.scr.set_ns(False)
             self.set_cpsr_m("0b10111")
             self.set_spsr(new_spsr_value)
             self.set(14, new_lr_value)
             self.set_cpsr_i(True)
-            if not HaveSecurityExt() or HaveVirtExt() or self.get_scr_ns() == "0" or self.get_scr_aw() == "1":
+            if not HaveSecurityExt() or HaveVirtExt() or not self.scr.get_ns() or self.scr.get_aw():
                 self.set_cpsr_a(True)
             self.set_cpsr_itstate(BitArray(length=8))
             self.set_cpsr_j(False)
@@ -1312,7 +1288,7 @@ class ARM1176:
     def take_reset(self):
         self.core_registers.set_cpsr_m("0b10011")
         if HaveSecurityExt():
-            self.core_registers.set_scr_ns(False)
+            self.core_registers.scr.set_ns(False)
         self.core_registers.reset_control_registers()
         if HaveAdvSIMDorVFP():
             self.core_registers.set_fpexc_en(False)
@@ -1348,7 +1324,7 @@ class ARM1176:
         new_spsr_value = self.core_registers.CPSR
         vect_offset = 8
         if self.core_registers.get_cpsr_m() == "10110":
-            self.core_registers.set_scr_ns(False)
+            self.core_registers.scr.set_ns(False)
         self.core_registers.enter_monitor_mode(new_spsr_value, new_lr_value, vect_offset)
 
     def take_data_abort_exception(self):
@@ -1358,11 +1334,11 @@ class ARM1176:
         vect_offset = 16
         preferred_exceptn_return = BitArray(uint=(new_lr_value.uint - 8), length=32)
         route_to_monitor = (HaveSecurityExt() and
-                            self.core_registers.get_scr_ea() == "1" and
+                            self.core_registers.scr.get_ea() and
                             self.core_registers.is_external_abort())
         take_to_hyp = (HaveVirtExt() and
                        HaveSecurityExt() and
-                       self.core_registers.get_scr_ns() == "1" and
+                       self.core_registers.scr.get_ns() and
                        self.core_registers.get_cpsr_m() == "11010")
         route_to_hyp = (
             HaveVirtExt() and
@@ -1397,7 +1373,7 @@ class ARM1176:
         )
         if route_to_monitor:
             if self.core_registers.get_cpsr_m() == "10110":
-                self.core_registers.set_scr_ns(False)
+                self.core_registers.scr.set_ns(False)
             self.core_registers.enter_monitor_mode(new_spsr_value, new_lr_value, vect_offset)
         elif take_to_hyp:
             self.core_registers.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, vect_offset)
@@ -1405,15 +1381,15 @@ class ARM1176:
             self.core_registers.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, 20)
         else:
             if HaveSecurityExt() and self.core_registers.get_cpsr_m() == "10110":
-                self.core_registers.set_scr_ns(False)
+                self.core_registers.scr.set_ns(False)
             self.core_registers.set_cpsr_m("0b10111")
             self.core_registers.set_spsr(new_spsr_value)
             self.core_registers.set(14, new_lr_value)
             self.core_registers.set_cpsr_i(True)
             if (not HaveSecurityExt() or
                     HaveVirtExt() or
-                    self.core_registers.get_scr_ns() == "0" or
-                    self.core_registers.get_scr_aw() == "1"):
+                    not self.core_registers.scr.get_ns() or
+                    self.core_registers.scr.get_aw()):
                 self.core_registers.set_cpsr_a(True)
             self.core_registers.set_cpsr_itstate(BitArray(length=8))
             self.core_registers.set_cpsr_j(False)
@@ -1431,7 +1407,7 @@ class ARM1176:
         vect_offset = 8
         take_to_hyp = (HaveVirtExt() and
                        HaveSecurityExt() and
-                       self.core_registers.get_scr_ns() == "1" and
+                       self.core_registers.scr.get_ns() and
                        self.core_registers.get_cpsr_m() == "11010")
         route_to_hyp = (HaveVirtExt() and
                         HaveSecurityExt() and
@@ -1445,7 +1421,7 @@ class ARM1176:
             self.core_registers.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, 20)
         else:
             if self.core_registers.get_cpsr_m() == "10110":
-                self.core_registers.set_scr_ns(False)
+                self.core_registers.scr.set_ns(False)
             self.core_registers.set_cpsr_m("0b10011")
             self.core_registers.set_spsr(new_spsr_value)
             self.core_registers.set(14, new_lr_value)
@@ -1465,7 +1441,7 @@ class ARM1176:
         vect_offset = 4
         take_to_hyp = (HaveVirtExt() and
                        HaveSecurityExt() and
-                       self.core_registers.get_scr_ns() == "1" and
+                       self.core_registers.scr.get_ns() and
                        self.core_registers.get_cpsr_m() == "11010")
         route_to_hyp = (HaveVirtExt() and
                         HaveSecurityExt() and
@@ -1480,7 +1456,7 @@ class ARM1176:
             self.core_registers.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, 20)
         else:
             if self.core_registers.get_cpsr_m() == "10110":
-                self.core_registers.set_scr_ns(False)
+                self.core_registers.scr.set_ns(False)
             self.core_registers.set_cpsr_m("0b11011")
             self.core_registers.set_spsr(new_spsr_value)
             self.core_registers.set(14, new_lr_value)
