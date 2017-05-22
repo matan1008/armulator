@@ -23,6 +23,7 @@ from armulator.all_registers.dacr import DACR
 from armulator.all_registers.mpuir import MPUIR
 from armulator.all_registers.cpacr import CPACR
 from armulator.all_registers.scr import SCR
+from armulator.all_registers.nsacr import NSACR
 
 class CoreRegisters:
     def __init__(self):
@@ -46,7 +47,7 @@ class CoreRegisters:
         self.SPSR_fiq = BitArray(length=32)
         self.ELR_hyp = BitArray(length=32)
         self.scr = SCR()
-        self.NSACR = BitArray(length=32)
+        self.nsacr = NSACR()
         self.SCTLR = BitArray(length=32)
         self.HSTR = BitArray(length=32)
         self.HSR = BitArray(length=32)
@@ -799,9 +800,6 @@ class CoreRegisters:
         self.CPSR.overwrite(state[0:6], 16)
         self.CPSR.overwrite(state[6:8], 5)
 
-    def get_nsacr_rfr(self):
-        return self.NSACR.bin[12]
-
     def get_hstr_tjdbx(self):
         return self.HSTR.bin[14]
 
@@ -952,7 +950,7 @@ class CoreRegisters:
         assert 0 <= n <= 14
         if not self.is_secure() and mode.bin == "10110":
             print "unpredictable"
-        if not self.is_secure() and mode.bin == "10001" and self.get_nsacr_rfr() == "1":
+        if not self.is_secure() and mode.bin == "10001" and self.nsacr.get_rfr():
             print "unpredictable"
         return self._R[self.look_up_rname(n, mode)]
 
@@ -960,7 +958,7 @@ class CoreRegisters:
         assert 0 <= n <= 14
         if not self.is_secure() and mode.bin == "10110":
             print "unpredictable"
-        if not self.is_secure() and mode.bin == "10001" and self.get_nsacr_rfr() == "1":
+        if not self.is_secure() and mode.bin == "10001" and self.nsacr.get_rfr():
             print "unpredictable"
         if n == 13 and value.bin[30:32] != "00" and self.current_instr_set() != InstrSet.InstrSet_ARM:
             print "unpredictable"
@@ -1079,7 +1077,7 @@ class CoreRegisters:
                 else:
                     if not self.is_secure() and value.bin[27:] == "10110":
                         print "unpredictable"
-                    elif not self.is_secure() and value.bin[27:] == "10001" and self.get_nsacr_rfr() == "1":
+                    elif not self.is_secure() and value.bin[27:] == "10001" and self.nsacr.get_rfr():
                         print "unpredictable"
                     elif not self.scr.get_ns() and value.bin[27:] == "11010":
                         print "unpredictable"
@@ -3054,7 +3052,7 @@ class ARM1176:
         assert cp_num not in (10, 11)
         if cp_num not in (14, 15):
             if HaveSecurityExt():
-                if not self.core_registers.is_secure() and not self.core_registers.NSACR[31 - cp_num]:
+                if not self.core_registers.is_secure() and not self.core_registers.nsacr.get_cp_n(cp_num):
                     raise UndefinedInstructionException()
             if not HaveVirtExt() or not self.core_registers.current_mode_is_hyp():
                 if self.core_registers.cpacr.get_cp_n(cp_num) == "0b00":

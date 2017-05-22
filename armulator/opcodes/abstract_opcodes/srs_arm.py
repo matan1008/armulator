@@ -22,8 +22,7 @@ class SrsArm(AbstractOpcode):
                 print "unpredictable"
             else:
                 if not processor.core_registers.is_secure():
-                    if (self.mode == "0b10110" or
-                            (self.mode == "0b10001" and processor.core_registers.get_nsacr_rfr() == "1")):
+                    if self.mode == "0b10110" or (self.mode == "0b10001" and processor.core_registers.nsacr.get_rfr()):
                         print "unpredictable"
                 base = processor.core_registers.get_rmode(13, self.mode)
                 address = base if self.increment else sub(base, BitArray(bin="1000"), 32)
