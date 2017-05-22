@@ -24,6 +24,8 @@ from armulator.all_registers.mpuir import MPUIR
 from armulator.all_registers.cpacr import CPACR
 from armulator.all_registers.scr import SCR
 from armulator.all_registers.nsacr import NSACR
+from armulator.all_registers.rgnr import RGNR
+
 
 class CoreRegisters:
     def __init__(self):
@@ -81,7 +83,7 @@ class CoreRegisters:
         self.dacr = DACR()
         self.mpuir = MPUIR()
         self.cpacr = CPACR()
-        self.RGNR = BitArray(length=32)
+        self.rgnr = RGNR(number_of_mpu_regions)
         self.HCPTR = BitArray(length=32)
         self.DRSRs = [BitArray(length=32) for region in xrange(number_of_mpu_regions)]
         self.DRBARs = [BitArray(length=32) for region in xrange(number_of_mpu_regions)]
@@ -500,9 +502,6 @@ class CoreRegisters:
 
     def get_event_register(self):
         return self.event_register
-
-    def get_rgnr_region(self):
-        return self.RGNR.bin[32 - number_of_mpu_regions.bit_length():32] if number_of_mpu_regions else "0"
 
     def get_vtcr_t0sz(self):
         return self.VTCR.bin[28:32]
