@@ -26,6 +26,7 @@ from armulator.all_registers.scr import SCR
 from armulator.all_registers.nsacr import NSACR
 from armulator.all_registers.rgnr import RGNR
 from armulator.all_registers.teecr import TEECR
+from armulator.all_registers.midr import MIDR
 
 
 class CoreRegisters:
@@ -95,7 +96,7 @@ class CoreRegisters:
         self.teecr = TEECR()
         self.event_register = False
         self.ELR_hyp = BitArray(length=32)
-        self.MIDR = BitArray(length=32)
+        self.midr = MIDR()
         self.CTR = BitArray(length=32)
         self.TCMTR = BitArray(length=32)
         self.TLBTR = BitArray(length=32)
@@ -1228,7 +1229,7 @@ class CoreRegisters:
         #    self._R[self.RName.RName_PC] = BitsOps.add(self._R[self.RName.RName_PC], BitArray(bin="10"), 32)
 
     def reset_control_registers(self):
-        self.MIDR = BitArray(bin="01000001000011111010011101100000")
+        self.midr.value = BitArray(bin="01000001000011111010011101100000")
         self.SCTLR = BitArray(bin="01000000000001010000000001111001")
         self.ACTLR = BitArray(bin="00000000000000000000000000000111")
         self.VBAR = BitArray(bin=implementation_defined.vbar_bin)
