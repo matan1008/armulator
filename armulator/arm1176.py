@@ -25,6 +25,7 @@ from armulator.all_registers.cpacr import CPACR
 from armulator.all_registers.scr import SCR
 from armulator.all_registers.nsacr import NSACR
 from armulator.all_registers.rgnr import RGNR
+from armulator.all_registers.teecr import TEECR
 
 
 class CoreRegisters:
@@ -91,7 +92,7 @@ class CoreRegisters:
         self.IRBARs = [BitArray(length=32) for region in xrange(number_of_mpu_regions)]
         self.IRSRs = [BitArray(length=32) for region in xrange(number_of_mpu_regions)]
         self.IRACRs = [BitArray(length=32) for region in xrange(number_of_mpu_regions)]
-        self.TEECR = BitArray(length=32)
+        self.teecr = TEECR()
         self.event_register = False
         self.ELR_hyp = BitArray(length=32)
         self.MIDR = BitArray(length=32)
@@ -490,9 +491,6 @@ class CoreRegisters:
     def get_cpsr_as_apsr(self):
         return self.CPSR & "0xF80F0000"
 
-    def get_teecr_xed(self):
-        return self.TEECR.bin[31]
-
     def pc_store_value(self):
         # not sure
         return self._R[self.RName.RName_PC]
@@ -736,9 +734,6 @@ class CoreRegisters:
 
     def set_fpexc_en(self, flag):
         self.FPEXC[1] = flag
-
-    def set_teecr_xed(self, flag):
-        self.TEECR[31] = flag
 
     def set_dfar(self, new_dfar):
         self.DFAR = new_dfar
@@ -1290,7 +1285,7 @@ class ARM1176:
         if HaveAdvSIMDorVFP():
             self.core_registers.set_fpexc_en(False)
         if HaveThumbEE():
-            self.core_registers.set_teecr_xed(False)
+            self.core_registers.teecr.set_xed(False)
         if HaveJazelle():
             self.core_registers.jmcr.set_je(False)
         self.core_registers.set_cpsr_i(True)
@@ -3106,8 +3101,7 @@ class ARM1176:
                         if not self.core_registers.current_mode_is_not_user():
                             raise UndefinedInstructionException()
                     if instr[30]:
-                        if (not self.core_registers.current_mode_is_not_user() and
-                                self.core_registers.get_teecr_xed() == "1"):
+                        if not self.core_registers.current_mode_is_not_user() and self.core_registers.teecr.get_xed():
                             raise UndefinedInstructionException()
                     if (HaveSecurityExt() and
                             HaveVirtExt() and
