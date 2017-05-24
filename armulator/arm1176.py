@@ -27,6 +27,7 @@ from armulator.all_registers.nsacr import NSACR
 from armulator.all_registers.rgnr import RGNR
 from armulator.all_registers.teecr import TEECR
 from armulator.all_registers.midr import MIDR
+from armulator.all_registers.vbar import VBAR
 
 
 class CoreRegisters:
@@ -62,7 +63,7 @@ class CoreRegisters:
         self.MVBAR = BitArray(length=32)
         self.TEEHBR = BitArray(length=32)
         self.HDCR = BitArray(length=32)
-        self.VBAR = BitArray(length=32)
+        self.vbar = VBAR()
         self.DBGDIDR = BitArray(length=32)
         self.DFSR = BitArray(length=32)
         self.DFAR = BitArray(length=32)
@@ -1125,7 +1126,7 @@ class CoreRegisters:
         if self.get_sctlr_v() == "1":
             return BitArray(bin="11111111111111110000000000000000")
         elif HaveSecurityExt():
-            return self.VBAR
+            return self.vbar.value
         else:
             return BitArray(length=32)
 
@@ -1232,7 +1233,7 @@ class CoreRegisters:
         self.midr.value = BitArray(bin="01000001000011111010011101100000")
         self.SCTLR = BitArray(bin="01000000000001010000000001111001")
         self.ACTLR = BitArray(bin="00000000000000000000000000000111")
-        self.VBAR = BitArray(bin=implementation_defined.vbar_bin)
+        self.vbar.value = BitArray(bin=implementation_defined.vbar_bin)
 
 
 class ARM1176:
