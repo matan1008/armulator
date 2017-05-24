@@ -28,6 +28,7 @@ from armulator.all_registers.rgnr import RGNR
 from armulator.all_registers.teecr import TEECR
 from armulator.all_registers.midr import MIDR
 from armulator.all_registers.vbar import VBAR
+from armulator.all_registers.ttbcr import TTBCR
 
 
 class CoreRegisters:
@@ -69,7 +70,7 @@ class CoreRegisters:
         self.DFAR = BitArray(length=32)
         self.HDFAR = BitArray(length=32)
         self.HPFAR = BitArray(length=32)
-        self.TTBCR = BitArray(length=32)
+        self.ttbcr = TTBCR()
         self.FCSEIDR = BitArray(length=32)
         self.HTCR = BitArray(length=32)
         self.HTTBR = BitArray(length=64)
@@ -535,51 +536,6 @@ class CoreRegisters:
 
     def get_fcseidr_pid(self):
         return self.FCSEIDR.bin[0:7]
-
-    def get_ttbcr_eae(self):
-        return self.TTBCR.bin[0]
-
-    def get_ttbcr_t0sz(self):
-        return self.TTBCR.bin[29:32]
-
-    def get_ttbcr_epd0(self):
-        return self.TTBCR.bin[24]
-
-    def get_ttbcr_irgn0(self):
-        return self.TTBCR.bin[22:24]
-
-    def get_ttbcr_orgn0(self):
-        return self.TTBCR.bin[20:22]
-
-    def get_ttbcr_sh0(self):
-        return self.TTBCR.bin[18:20]
-
-    def get_ttbcr_t1sz(self):
-        return self.TTBCR.bin[13:16]
-
-    def get_ttbcr_epd1(self):
-        return self.TTBCR.bin[8]
-
-    def get_ttbcr_irgn1(self):
-        return self.TTBCR.bin[6:8]
-
-    def get_ttbcr_orgn1(self):
-        return self.TTBCR.bin[4:6]
-
-    def get_ttbcr_sh1(self):
-        return self.TTBCR.bin[2:4]
-
-    def get_ttbcr_a1(self):
-        return self.TTBCR.bin[9]
-
-    def get_ttbcr_n(self):
-        return self.TTBCR.bin[29:32]
-
-    def get_ttbcr_pd0(self):
-        return self.TTBCR.bin[27]
-
-    def get_ttbcr_pd1(self):
-        return self.TTBCR.bin[26]
 
     def get_dbgdidr_version(self):
         return self.DBGDIDR.bin[12:16]
@@ -1983,7 +1939,7 @@ class ARM1176:
         domain = BitArray(length=4)  # unknown
         level = 0  # unknown
         ipavalid = False
-        ldfsr_fromat = taketohyp or self.core_registers.get_ttbcr_eae() == "1"
+        ldfsr_fromat = taketohyp or self.core_registers.ttbcr.get_eae()
         s2fs1walk = False
         mva = self.fcse_translate(address)
         self.data_abort(mva, ipaddress, domain, level, iswrite, self.DAbort.DAbort_Alignment, taketohyp,
@@ -2334,46 +2290,46 @@ class ARM1176:
                     walkaddr.paddress.ns = True
             else:
                 lookup_secure = self.core_registers.is_secure()
-                t0_size = int(self.core_registers.get_ttbcr_t0sz(), 2)
+                t0_size = self.core_registers.ttbcr.get_t0sz().uint
                 if t0_size == 0 or ia[8:t0_size + 8].uint == 0:
-                    current_level = 1 if self.core_registers.get_ttbcr_t0sz().bin[0:2] == "00" else 2
+                    current_level = 1 if self.core_registers.ttbcr.get_t0sz().bin[0:2] == "00" else 2
                     ba_lower_bound = 9 * current_level - t0_size - 4
                     base_address = self.core_registers.TTBR0_64[24:64 - ba_lower_bound] + BitArray(
                         length=ba_lower_bound)
                     if self.core_registers.TTBR0_64[64 - ba_lower_bound:61].uint != 0:
                         print "unpredictable"
                     base_found = True
-                    disabled = self.core_registers.get_ttbcr_epd0() == "1"
+                    disabled = self.core_registers.ttbcr.get_epd0()
                     start_bit = 31 - t0_size
                     walkaddr.memattrs.type = MemType.MemType_Normal
-                    hintsattrs = self.convert_attrs_hints(BitArray(bin=self.core_registers.get_ttbcr_irgn0()))
+                    hintsattrs = self.convert_attrs_hints(self.core_registers.ttbcr.get_irgn0())
                     walkaddr.memattrs.innerhints = hintsattrs[0:2]
                     walkaddr.memattrs.innerattrs = hintsattrs[2:4]
-                    hintsattrs = self.convert_attrs_hints(BitArray(bin=self.core_registers.get_ttbcr_orgn0()))
+                    hintsattrs = self.convert_attrs_hints(self.core_registers.ttbcr.get_orgn0())
                     walkaddr.memattrs.outerhints = hintsattrs[0:2]
                     walkaddr.memattrs.outerattrs = hintsattrs[2:4]
-                    walkaddr.memattrs.shareable = self.core_registers.get_ttbcr_sh0()[0] == "1"
-                    walkaddr.memattrs.outershareable = self.core_registers.get_ttbcr_sh0() == "10"
-                t1_size = int(self.core_registers.get_ttbcr_t1sz(), 2)
+                    walkaddr.memattrs.shareable = self.core_registers.ttbcr.get_sh0()[0]
+                    walkaddr.memattrs.outershareable = self.core_registers.ttbcr.get_sh0() == "0b10"
+                t1_size = self.core_registers.ttbcr.get_t1sz().uint
                 if (t1_size == 0 and not base_found) or ia[8:t1_size + 8].all(True):
-                    current_level = 1 if self.core_registers.get_ttbcr_t1sz().bin[0:2] == "00" else 2
+                    current_level = 1 if self.core_registers.ttbcr.get_t1sz().bin[0:2] == "00" else 2
                     ba_lower_bound = 9 * current_level - t1_size - 4
                     base_address = self.core_registers.TTBR1_64[24:64 - ba_lower_bound] + BitArray(
                         length=ba_lower_bound)
                     if self.core_registers.TTBR1_64[64 - ba_lower_bound:61].uint != 0:
                         print "unpredictable"
                     base_found = True
-                    disabled = self.core_registers.get_ttbcr_epd1() == "1"
+                    disabled = self.core_registers.ttbcr.get_epd1()
                     start_bit = 31 - t1_size
                     walkaddr.memattrs.type = MemType.MemType_Normal
-                    hintsattrs = self.convert_attrs_hints(BitArray(bin=self.core_registers.get_ttbcr_irgn1()))
+                    hintsattrs = self.convert_attrs_hints(self.core_registers.ttbcr.get_irgn1())
                     walkaddr.memattrs.innerhints = hintsattrs[0:2]
                     walkaddr.memattrs.innerattrs = hintsattrs[2:4]
-                    hintsattrs = self.convert_attrs_hints(BitArray(bin=self.core_registers.get_ttbcr_orgn1()))
+                    hintsattrs = self.convert_attrs_hints(self.core_registers.ttbcr.get_orgn1())
                     walkaddr.memattrs.outerhints = hintsattrs[0:2]
                     walkaddr.memattrs.outerattrs = hintsattrs[2:4]
-                    walkaddr.memattrs.shareable = self.core_registers.get_ttbcr_sh1()[0] == "1"
-                    walkaddr.memattrs.outershareable = self.core_registers.get_ttbcr_sh1() == "10"
+                    walkaddr.memattrs.shareable = self.core_registers.ttbcr.get_sh1()[0]
+                    walkaddr.memattrs.outershareable = self.core_registers.ttbcr.get_sh1() == "0b10"
         else:
             t0_size = BitArray(bin=self.core_registers.get_vtcr_t0sz()).int
             s_level = int(self.core_registers.get_vtcr_sl0(), 2)
@@ -2543,13 +2499,13 @@ class ARM1176:
         s2fs1walk = False
         domain = BitArray(length=4)  # unknown
         ttbr = BitArray(length=64)
-        n = int(self.core_registers.get_ttbcr_n, 2)
+        n = self.core_registers.ttbcr.get_n().uint
         if n == 0 or mva[0:n + 1].uint == 0:
             ttbr = self.core_registers.TTBR0_64
-            disabled = self.core_registers.get_ttbcr_pd0() == "1"
+            disabled = self.core_registers.ttbcr.get_pd1()
         else:
             ttbr = self.core_registers.TTBR1_64
-            disabled = self.core_registers.get_ttbcr_pd1() == "1"
+            disabled = self.core_registers.ttbcr.get_pd1()
             n = 0
         if HaveSecurityExt() and disabled:
             level = 1
@@ -2727,7 +2683,7 @@ class ARM1176:
                     not ishyp and
                     self.core_registers.get_hcr_tge() == "1"):
                 print "unpredictable"
-            uses_ld = ishyp or self.core_registers.get_ttbcr_eae() == "1"
+            uses_ld = ishyp or self.core_registers.ttbcr.get_eae()
             if uses_ld:
                 ia_in = BitArray(bin="00000000") + mva
                 tlbrecordS1 = self.translation_table_walk_ld(ia_in, mva, iswrite, True, s2fs1walk, size)
