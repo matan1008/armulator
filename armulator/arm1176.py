@@ -30,6 +30,7 @@ from armulator.all_registers.midr import MIDR
 from armulator.all_registers.vbar import VBAR
 from armulator.all_registers.ttbcr import TTBCR
 from armulator.all_registers.sctlr import SCTLR
+from armulator.all_registers.hstr import HSTR
 
 
 class CoreRegisters:
@@ -56,7 +57,7 @@ class CoreRegisters:
         self.scr = SCR()
         self.nsacr = NSACR()
         self.sctlr = SCTLR()
-        self.HSTR = BitArray(length=32)
+        self.hstr = HSTR()
         self.HSR = BitArray(length=32)
         self.HSCTLR = BitArray(length=32)
         self.HVBAR = BitArray(length=32)
@@ -710,12 +711,6 @@ class CoreRegisters:
     def set_cpsr_itstate(self, state):
         self.CPSR.overwrite(state[0:6], 16)
         self.CPSR.overwrite(state[6:8], 5)
-
-    def get_hstr_tjdbx(self):
-        return self.HSTR.bin[14]
-
-    def get_hstr_ttee(self):
-        return self.HSTR.bin[15]
 
     def current_instr_set(self):
         isetstate = self.get_cpsr_isetstate()
@@ -3020,7 +3015,7 @@ class ARM1176:
                             HaveVirtExt() and
                             not self.core_registers.is_secure() and
                             not self.core_registers.current_mode_is_hyp() and
-                            self.core_registers.get_hstr_ttee() == "1"):
+                            self.core_registers.hstr.get_ttee()):
                         hsr_string = bits_ops.zeros(25)
                         hsr_string[5:8] = instr[24:27]
                         hsr_string[8:11] = instr[8:11]
@@ -3055,7 +3050,7 @@ class ARM1176:
                     not self.core_registers.is_secure() and
                     not self.core_registers.current_mode_is_hyp() and
                     cr_nnum != 14 and
-                    self.core_registers.HSTR[31 - cr_nnum]):
+                    self.core_registers.hstr.get_t_n(cr_nnum)):
                 if not self.core_registers.current_mode_is_not_user() and self.instr_is_pl0_undefined(instr):
                     if implementation_defined.coproc_accepted_pl0_undefined:
                         raise UndefinedInstructionException()
