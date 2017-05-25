@@ -29,6 +29,7 @@ from armulator.all_registers.teecr import TEECR
 from armulator.all_registers.midr import MIDR
 from armulator.all_registers.vbar import VBAR
 from armulator.all_registers.ttbcr import TTBCR
+from armulator.all_registers.sctlr import SCTLR
 
 
 class CoreRegisters:
@@ -54,7 +55,7 @@ class CoreRegisters:
         self.ELR_hyp = BitArray(length=32)
         self.scr = SCR()
         self.nsacr = NSACR()
-        self.SCTLR = BitArray(length=32)
+        self.sctlr = SCTLR()
         self.HSTR = BitArray(length=32)
         self.HSR = BitArray(length=32)
         self.HSCTLR = BitArray(length=32)
@@ -612,48 +613,6 @@ class CoreRegisters:
     def get_hsctlr_c(self):
         return self.HSCTLR.bin[29]
 
-    def get_sctlr_nmfi(self):
-        return self.SCTLR.bin[4]
-
-    def get_sctlr_te(self):
-        return self.SCTLR.bin[1]
-
-    def get_sctlr_ee(self):
-        return self.SCTLR.bin[6]
-
-    def get_sctlr_v(self):
-        return self.SCTLR.bin[18]
-
-    def get_sctlr_m(self):
-        return self.SCTLR.bin[31]
-
-    def get_sctlr_afe(self):
-        return self.SCTLR.bin[2]
-
-    def get_sctlr_ha(self):
-        return self.SCTLR.bin[14]
-
-    def get_sctlr_tre(self):
-        return self.SCTLR.bin[3]
-
-    def get_sctlr_c(self):
-        return self.SCTLR.bin[29]
-
-    def get_sctlr_ie(self):
-        return self.SCTLR.bin[0]
-
-    def get_sctlr_br(self):
-        return self.SCTLR.bin[14]
-
-    def get_sctlr_a(self):
-        return self.SCTLR.bin[30]
-
-    def get_sctlr_dz(self):
-        return self.SCTLR.bin[12]
-
-    def get_sctlr_u(self):
-        return self.SCTLR.bin[9]
-
     def get_cpsr_m(self):
         return self.CPSR.bin[27:32]
 
@@ -1003,7 +962,7 @@ class CoreRegisters:
 
     def cpsr_write_by_instr(self, value, bytemask, is_excp_return):
         privileged = self.current_mode_is_not_user()
-        nmfi = self.get_sctlr_nmfi() == "1"
+        nmfi = self.sctlr.get_nmfi()
         if bytemask[0]:
             self.CPSR.overwrite(value[0:5], 0)
             if is_excp_return:
@@ -1079,7 +1038,7 @@ class CoreRegisters:
         return False
 
     def exc_vector_base(self):
-        if self.get_sctlr_v() == "1":
+        if self.sctlr.get_v():
             return BitArray(bin="11111111111111110000000000000000")
         elif HaveSecurityExt():
             return self.vbar.value
@@ -1107,8 +1066,8 @@ class CoreRegisters:
         self.set_spsr(new_spsr_value)
         self.set(14, new_lr_value)
         self.set_cpsr_j(False)
-        self.set_cpsr_t(self.get_sctlr_te() == "1")
-        self.set_cpsr_e(self.get_sctlr_ee() == "1")
+        self.set_cpsr_t(self.sctlr.get_te())
+        self.set_cpsr_e(self.sctlr.get_ee())
         self.set_cpsr_a(True)
         self.set_cpsr_f(True)
         self.set_cpsr_i(True)
@@ -1174,8 +1133,8 @@ class CoreRegisters:
                 self.set_cpsr_a(True)
             self.set_cpsr_itstate(BitArray(length=8))
             self.set_cpsr_j(False)
-            self.set_cpsr_t(self.get_sctlr_te() == "1")
-            self.set_cpsr_e(self.get_sctlr_ee() == "1")
+            self.set_cpsr_t(self.sctlr.get_te())
+            self.set_cpsr_e(self.sctlr.get_ee())
             self.branch_to(BitArray(uint=(self.exc_vector_base().uint + vect_offset), length=32))
 
     def increment_pc(self, opcode_length):
@@ -1187,7 +1146,7 @@ class CoreRegisters:
 
     def reset_control_registers(self):
         self.midr.value = BitArray(bin="01000001000011111010011101100000")
-        self.SCTLR = BitArray(bin="01000000000001010000000001111001")
+        self.sctlr.value = BitArray(bin="01000000000001010000000001111001")
         self.ACTLR = BitArray(bin="00000000000000000000000000000111")
         self.vbar.value = BitArray(bin=implementation_defined.vbar_bin)
 
@@ -1251,8 +1210,8 @@ class ARM1176:
         self.core_registers.set_cpsr_a(True)
         self.core_registers.set_cpsr_itstate(BitArray(length=8))
         self.core_registers.set_cpsr_j(False)
-        self.core_registers.set_cpsr_t(self.core_registers.get_sctlr_te() == "1")
-        self.core_registers.set_cpsr_e(self.core_registers.get_sctlr_ee() == "1")
+        self.core_registers.set_cpsr_t(self.core_registers.sctlr.get_te())
+        self.core_registers.set_cpsr_e(self.core_registers.sctlr.get_ee())
         reset_vector = (implementation_defined.impdef_reset_vector
                         if HasIMPDEFResetVactor()
                         else self.core_registers.exc_vector_base())
@@ -1343,8 +1302,8 @@ class ARM1176:
                 self.core_registers.set_cpsr_a(True)
             self.core_registers.set_cpsr_itstate(BitArray(length=8))
             self.core_registers.set_cpsr_j(False)
-            self.core_registers.set_cpsr_t(self.core_registers.get_sctlr_te() == "1")
-            self.core_registers.set_cpsr_e(self.core_registers.get_sctlr_ee() == "1")
+            self.core_registers.set_cpsr_t(self.core_registers.sctlr.get_te())
+            self.core_registers.set_cpsr_e(self.core_registers.sctlr.get_ee())
             self.core_registers.branch_to(
                 BitArray(uint=(self.core_registers.exc_vector_base().uint + vect_offset), length=32))
 
@@ -1378,8 +1337,8 @@ class ARM1176:
             self.core_registers.set_cpsr_i(True)
             self.core_registers.set_cpsr_itstate(BitArray(length=8))
             self.core_registers.set_cpsr_j(False)
-            self.core_registers.set_cpsr_t(self.core_registers.get_sctlr_te() == "1")
-            self.core_registers.set_cpsr_e(self.core_registers.get_sctlr_ee() == "1")
+            self.core_registers.set_cpsr_t(self.core_registers.sctlr.get_te())
+            self.core_registers.set_cpsr_e(self.core_registers.sctlr.get_ee())
             self.core_registers.branch_to(
                 bits_ops.add(self.core_registers.exc_vector_base(), BitArray(uint=vect_offset, length=32), 32))
 
@@ -1413,8 +1372,8 @@ class ARM1176:
             self.core_registers.set_cpsr_i(True)
             self.core_registers.set_cpsr_itstate(BitArray(length=8))
             self.core_registers.set_cpsr_j(False)
-            self.core_registers.set_cpsr_t(self.core_registers.get_sctlr_te() == "1")
-            self.core_registers.set_cpsr_e(self.core_registers.get_sctlr_ee() == "1")
+            self.core_registers.set_cpsr_t(self.core_registers.sctlr.get_te())
+            self.core_registers.set_cpsr_e(self.core_registers.sctlr.get_ee())
             self.core_registers.branch_to(
                 BitArray(uint=(self.core_registers.exc_vector_base().uint + vect_offset), length=32))
 
@@ -1698,7 +1657,7 @@ class ARM1176:
     def default_memory_attributes(self, va):
         memattrs = MemoryAttributes()
         if va[0:2] == "0b00":
-            if self.core_registers.get_sctlr_c() == "0":
+            if not self.core_registers.sctlr.get_c():
                 memattrs.type = MemType.MemType_Normal
                 memattrs.innerattrs[0:2] = "0b00"
                 memattrs.shareable = True
@@ -1707,7 +1666,7 @@ class ARM1176:
                 memattrs.innerattrs[0:2] = "0b01"
                 memattrs.shareable = False
         elif va[0:2] == "0b01":
-            if self.core_registers.get_sctlr_c() == "0" or va[2]:
+            if not self.core_registers.sctlr.get_c() or va[2]:
                 memattrs.type = MemType.MemType_Normal
                 memattrs.innerattrs[0:2] = "0b00"
                 memattrs.shareable = True
@@ -1747,7 +1706,7 @@ class ARM1176:
         ipavalid = False
         s2fs1walk = False
         ipa = BitArray(length=40)  # unknown
-        if self.core_registers.get_sctlr_afe() == "1":
+        if self.core_registers.sctlr.get_afe():
             perms.ap[2] = True
         abort = False
         if perms.ap == "0b000":
@@ -2393,14 +2352,14 @@ class ARM1176:
                 if HaveVirtExt() and (self.core_registers.current_mode_is_hyp() or not stage1):
                     big_endian = self.core_registers.get_hsctlr_ee() == "1"
                 else:
-                    big_endian = self.core_registers.get_sctlr_ee() == "1"
+                    big_endian = self.core_registers.sctlr.get_ee()
                 descriptor = self.mem[walkaddr, 8]
                 if big_endian:
                     descriptor = self.big_endian_reverse(descriptor, 8)
             else:
                 walkaddr2 = self.second_stage_translate(walkaddr, ia[8:40], 8, is_write)
                 descriptor = self.mem[walkaddr2, 8]
-                if self.core_registers.get_sctlr_ee() == "1":
+                if self.core_registers.sctlr.get_ee():
                     descriptor = self.big_endian_reverse(descriptor, 8)
             if not descriptor[-1]:
                 taketohypmode = self.core_registers.current_mode_is_hyp() or not stage1
@@ -2540,7 +2499,7 @@ class ARM1176:
         else:
             l1descaddr2 = self.second_stage_translate(l1descaddr, mva, 4, is_write)
         l1desc = self.mem[l1descaddr2, 4]
-        if self.core_registers.get_sctlr_ee() == "1":
+        if self.core_registers.sctlr.get_ee():
             l1desc = self.big_endian_reverse(l1desc, 4)
         if l1desc[30:32] == "0b00":
             level = 1
@@ -2559,7 +2518,7 @@ class ARM1176:
             else:
                 l2descaddr2 = self.second_stage_translate(l2descaddr, mva, 4, is_write)
             l2desc = self.mem[l2descaddr2, 4]
-            if self.core_registers.get_sctlr_ee() == "1":
+            if self.core_registers.sctlr.get_ee():
                 l2desc = self.big_endian_reverse(l2desc, 4)
             if l2desc[30:32] == "0b00":
                 self.data_abort(mva, ia, domain, level, is_write, self.DAbort.DAbort_Translation, taketohypmode, stage2,
@@ -2567,12 +2526,12 @@ class ARM1176:
             s = l2desc[21]
             ap = l2desc[22:23] + l2desc[26:28]
             ng = l2desc[20]
-            if self.core_registers.get_sctlr_afe() == "1" and not l2desc[27]:
-                if self.core_registers.get_sctlr_ha() == "0":
+            if self.core_registers.sctlr.get_afe() and not l2desc[27]:
+                if not self.core_registers.sctlr.get_ha():
                     self.data_abort(mva, ia, domain, level, is_write, self.DAbort.DAbort_AccessFlag, taketohypmode,
                                     stage2, ipavalid, ldfsr_format, s2fs1walk)
                 else:
-                    if self.core_registers.get_sctlr_ee() == "1":
+                    if self.core_registers.sctlr.get_ee():
                         self.mem.set_bits(l2descaddr2, 4, 3, 1, BitArray(bin="1"))
                     else:
                         self.mem.set_bits(l2descaddr2, 4, 27, 1, BitArray(bin="1"))
@@ -2597,12 +2556,12 @@ class ARM1176:
             ng = l1desc[14]
             level = 1
             ns = l1desc[12]
-            if self.core_registers.get_sctlr_afe() == "1" and not l1desc[21]:
-                if self.core_registers.get_sctlr_ha() == "0":
+            if self.core_registers.sctlr.get_afe() and not l1desc[21]:
+                if not self.core_registers.sctlr.get_ha():
                     self.data_abort(mva, ia, domain, level, is_write, self.DAbort.DAbort_AccessFlag, taketohypmode,
                                     stage2, ipavalid, ldfsr_format, s2fs1walk)
                 else:
-                    if self.core_registers.get_sctlr_ee() == "1":
+                    if self.core_registers.sctlr.get_ee():
                         self.mem.set_bits(l1descaddr2, 4, 13, 1, BitArray(bin="1"))
                     else:
                         self.mem.set_bits(l1descaddr2, 4, 21, 1, BitArray(bin="1"))
@@ -2616,7 +2575,7 @@ class ARM1176:
                 block_size = 16384
                 physicaladdressext = l1desc[23:27] + l1desc[8:12]
                 physicaladdress = l1desc[0:8] + mva[8:32]
-        if self.core_registers.get_sctlr_tre() == "0":
+        if not self.core_registers.sctlr.get_tre():
             if self.remap_regs_have_reset_values():
                 result.addrdesc.memattrs = self.default_tex_decode(texcb, s)
             else:
@@ -2676,8 +2635,7 @@ class ARM1176:
         s2fs1walk = False
         mva = self.fcse_translate(va)
         ishyp = self.core_registers.current_mode_is_hyp()
-        if (ishyp and self.core_registers.get_hsctlr_m() == "1") or (
-                not ishyp and self.core_registers.get_sctlr_m() == "1"):
+        if (ishyp and self.core_registers.get_hsctlr_m() == "1") or (not ishyp and self.core_registers.sctlr.get_m()):
             if (HaveVirtExt() and
                     not self.core_registers.is_secure() and
                     not ishyp and
@@ -2733,7 +2691,7 @@ class ARM1176:
         perms = Permissions
         result.paddress.physicaladdress = "0b00000000" + va
         # IMPLEMENTATION_DEFINED setting of result.paddress.NS;
-        if self.core_registers.get_sctlr_m() == "0":
+        if not self.core_registers.sctlr.get_m():
             result.memattrs = self.default_memory_attributes(va)
         else:
             region_found = False
@@ -2764,7 +2722,7 @@ class ARM1176:
             if region_found:
                 result.memattrs = self.default_tex_decode(texcb, s)
             else:
-                if self.core_registers.get_sctlr_br() == "0" or not ispriv:
+                if not self.core_registers.sctlr.get_br() or not ispriv:
                     ipaddress = BitArray(length=40)  # unknown
                     domain = BitArray(length=4)  # unkown
                     level = 0  # unkown
@@ -2778,7 +2736,7 @@ class ARM1176:
                 else:
                     result.memattrs = self.default_memory_attributes(va)
                     perms.ap = BitArray(bin="011")
-                    perms.xn = self.core_registers.get_sctlr_v() == "0" if va[0:4] == "0b1111" else va[0]
+                    perms.xn = not self.core_registers.sctlr.get_v() if va[0:4] == "0b1111" else va[0]
                     perms.pxn = False
             if not wasaligned and result.memattrs.type in (MemType.MemType_Device, MemType.MemType_StronglyOrdered):
                 print "unpredictable"
@@ -2840,7 +2798,7 @@ class ARM1176:
     def mem_a_with_priv_set(self, address, size, privileged, was_aligned, value):
         if address == bits_ops.align(address, size):
             va = address
-        elif ArchVersion() >= 7 or self.core_registers.get_sctlr_a() == "1" or self.core_registers.get_sctlr_u() == "1":
+        elif ArchVersion() >= 7 or self.core_registers.sctlr.get_a() or self.core_registers.sctlr.get_u():
             self.alignment_fault(address, True)
         else:
             va = bits_ops.align(address, size)
@@ -2854,7 +2812,7 @@ class ARM1176:
     def mem_a_with_priv_get(self, address, size, privileged, was_aligned):
         if address == bits_ops.align(address, size):
             va = address
-        elif ArchVersion() >= 7 or self.core_registers.get_sctlr_a() == "1" or self.core_registers.get_sctlr_u() == "1":
+        elif ArchVersion() >= 7 or self.core_registers.sctlr.get_a() or self.core_registers.sctlr.get_u():
             self.alignment_fault(address, False)
         else:
             va = bits_ops.align(address, size)
@@ -2871,7 +2829,7 @@ class ARM1176:
         return self.mem_a_with_priv_get(address, size, self.core_registers.current_mode_is_not_user(), True)
 
     def mem_u_with_priv_set(self, address, size, privileged, value):
-        if ArchVersion() < 7 and self.core_registers.get_sctlr_a() == "0" and self.core_registers.get_sctlr_u() == "0":
+        if ArchVersion() < 7 and not self.core_registers.sctlr.get_a() and not self.core_registers.sctlr.get_u():
             address = bits_ops.align(address, size)
         if address == bits_ops.align(address, size):
             self.mem_a_with_priv_set(address, size, privileged, True, value)
@@ -2880,7 +2838,7 @@ class ARM1176:
                 self.core_registers.current_mode_is_hyp() and
                 self.core_registers.get_hsctlr_a() == "1"):
             self.alignment_fault(address, True)
-        elif not self.core_registers.current_mode_is_hyp() and self.core_registers.get_sctlr_a() == "1":
+        elif not self.core_registers.current_mode_is_hyp() and self.core_registers.sctlr.get_a():
             self.alignment_fault(address, True)
         else:
             if self.core_registers.get_cpsr_e() == "1":
@@ -2891,7 +2849,7 @@ class ARM1176:
 
     def mem_u_with_priv_get(self, address, size, privileged):
         value = BitArray(length=8 * size)
-        if ArchVersion() < 7 and self.core_registers.get_sctlr_a() == "0" and self.core_registers.get_sctlr_u() == "0":
+        if ArchVersion() < 7 and not self.core_registers.sctlr.get_a() and not self.core_registers.sctlr.get_u():
             address = bits_ops.align(address, size)
         if address == bits_ops.align(address, size):
             value = self.mem_a_with_priv_get(address, size, privileged, True)
@@ -2900,7 +2858,7 @@ class ARM1176:
               self.core_registers.current_mode_is_hyp() and
               self.core_registers.get_hsctlr_a() == "1"):
             self.alignment_fault(address, False)
-        elif not self.core_registers.current_mode_is_hyp() and self.core_registers.get_sctlr_a() == "1":
+        elif not self.core_registers.current_mode_is_hyp() and self.core_registers.sctlr.get_a():
             self.alignment_fault(address, False)
         else:
             for i in xrange(size):
@@ -2926,7 +2884,7 @@ class ARM1176:
         return self.core_registers.get_cpsr_e() == "1"
 
     def unaligned_support(self):
-        return self.core_registers.get_sctlr_u() == "1"
+        return self.core_registers.sctlr.get_u()
 
     def hint_yield(self):
         # mock
@@ -2953,10 +2911,7 @@ class ARM1176:
         self.is_wait_for_interrupt = True
 
     def integer_zero_divide_trapping_enabled(self):
-        if is_armv7r_profile() and self.core_registers.get_sctlr_dz() == "1":
-            return True
-        else:
-            return False
+        return is_armv7r_profile() and self.core_registers.sctlr.get_dz()
 
     def generate_integer_zero_divide(self):
         raise UndefinedInstructionException("division by zero in the integer division instruction")
