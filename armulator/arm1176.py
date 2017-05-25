@@ -31,6 +31,7 @@ from armulator.all_registers.vbar import VBAR
 from armulator.all_registers.ttbcr import TTBCR
 from armulator.all_registers.sctlr import SCTLR
 from armulator.all_registers.hstr import HSTR
+from armulator.all_registers.hsctlr import HSCTLR
 
 
 class CoreRegisters:
@@ -59,7 +60,7 @@ class CoreRegisters:
         self.sctlr = SCTLR()
         self.hstr = HSTR()
         self.HSR = BitArray(length=32)
-        self.HSCTLR = BitArray(length=32)
+        self.hsctlr = HSCTLR()
         self.HVBAR = BitArray(length=32)
         self.jmcr = JMCR()
         self.HCR = BitArray(length=32)
@@ -599,21 +600,6 @@ class CoreRegisters:
     def get_hcr_tidcp(self):
         return self.HCR.bin[11]
 
-    def get_hsctlr_te(self):
-        return self.HSCTLR.bin[1]
-
-    def get_hsctlr_ee(self):
-        return self.HSCTLR.bin[6]
-
-    def get_hsctlr_m(self):
-        return self.HSCTLR.bin[31]
-
-    def get_hsctlr_a(self):
-        return self.HSCTLR.bin[30]
-
-    def get_hsctlr_c(self):
-        return self.HSCTLR.bin[29]
-
     def get_cpsr_m(self):
         return self.CPSR.bin[27:32]
 
@@ -1045,8 +1031,8 @@ class CoreRegisters:
         self.set_spsr(new_spsr_value)
         self.ELR_hyp = preferred_exceptn_return
         self.set_cpsr_j(False)
-        self.set_cpsr_t(self.get_hsctlr_te() == "1")
-        self.set_cpsr_e(self.get_hsctlr_ee() == "1")
+        self.set_cpsr_t(self.hsctlr.get_te())
+        self.set_cpsr_e(self.hsctlr.get_ee())
         if not self.scr.get_ea():
             self.set_cpsr_a(True)
         if not self.scr.get_fiq():
@@ -2345,7 +2331,7 @@ class ARM1176:
                     self.core_registers.is_secure() or
                     self.core_registers.current_mode_is_hyp()):
                 if HaveVirtExt() and (self.core_registers.current_mode_is_hyp() or not stage1):
-                    big_endian = self.core_registers.get_hsctlr_ee() == "1"
+                    big_endian = self.core_registers.hsctlr.get_ee()
                 else:
                     big_endian = self.core_registers.sctlr.get_ee()
                 descriptor = self.mem[walkaddr, 8]
@@ -2630,7 +2616,7 @@ class ARM1176:
         s2fs1walk = False
         mva = self.fcse_translate(va)
         ishyp = self.core_registers.current_mode_is_hyp()
-        if (ishyp and self.core_registers.get_hsctlr_m() == "1") or (not ishyp and self.core_registers.sctlr.get_m()):
+        if (ishyp and self.core_registers.hsctlr.get_m()) or (not ishyp and self.core_registers.sctlr.get_m()):
             if (HaveVirtExt() and
                     not self.core_registers.is_secure() and
                     not ishyp and
@@ -2831,7 +2817,7 @@ class ARM1176:
         elif (HaveVirtExt() and
                 not self.core_registers.is_secure() and
                 self.core_registers.current_mode_is_hyp() and
-                self.core_registers.get_hsctlr_a() == "1"):
+                self.core_registers.hsctlr.get_a()):
             self.alignment_fault(address, True)
         elif not self.core_registers.current_mode_is_hyp() and self.core_registers.sctlr.get_a():
             self.alignment_fault(address, True)
@@ -2851,7 +2837,7 @@ class ARM1176:
         elif (HaveVirtExt() and
               not self.core_registers.is_secure() and
               self.core_registers.current_mode_is_hyp() and
-              self.core_registers.get_hsctlr_a() == "1"):
+              self.core_registers.hsctlr.get_a()):
             self.alignment_fault(address, False)
         elif not self.core_registers.current_mode_is_hyp() and self.core_registers.sctlr.get_a():
             self.alignment_fault(address, False)
