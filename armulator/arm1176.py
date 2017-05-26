@@ -39,6 +39,7 @@ from armulator.all_registers.vtcr import VTCR
 from armulator.all_registers.hcptr import HCPTR
 from armulator.all_registers.rsr import DRSR, IRSR
 from armulator.all_registers.racr import DRACR, IRACR
+from armulator.all_registers.sder import SDER
 
 
 class CoreRegisters:
@@ -128,7 +129,7 @@ class CoreRegisters:
         self.ID_ISAR4 = BitArray(length=32)
         self.ID_ISAR5 = BitArray(length=32)
         self.ACTLR = BitArray(length=32)
-        self.SDER = BitArray(length=32)
+        self.sder = SDER()
         self.TTBR0 = BitArray(length=32)
         self.TTBR1 = BitArray(length=32)
         self.IFSR = BitArray(length=32)
