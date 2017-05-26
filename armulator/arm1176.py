@@ -35,6 +35,7 @@ from armulator.all_registers.hsctlr import HSCTLR
 from armulator.all_registers.hcr import HCR
 from armulator.all_registers.hdcr import HDCR
 from armulator.all_registers.htcr import HTCR
+from armulator.all_registers.vtcr import VTCR
 
 
 class CoreRegisters:
@@ -83,6 +84,7 @@ class CoreRegisters:
         self.TTBR0_64 = BitArray(length=64)
         self.TTBR1_64 = BitArray(length=64)
         self.VTCR = BitArray(length=32)
+        self.vtcr = VTCR()
         self.VTTBR = BitArray(length=64)
         self.MAIR0 = BitArray(length=32)
         self.MAIR1 = BitArray(length=32)
@@ -509,24 +511,6 @@ class CoreRegisters:
 
     def get_event_register(self):
         return self.event_register
-
-    def get_vtcr_t0sz(self):
-        return self.VTCR.bin[28:32]
-
-    def get_vtcr_s(self):
-        return self.VTCR.bin[27]
-
-    def get_vtcr_sl0(self):
-        return self.VTCR.bin[24:26]
-
-    def get_vtcr_irgn0(self):
-        return self.VTCR.bin[22:24]
-
-    def get_vtcr_orgn0(self):
-        return self.VTCR.bin[20:22]
-
-    def get_vtcr_sh0(self):
-        return self.VTCR.bin[18:20]
 
     def get_fcseidr_pid(self):
         return self.FCSEIDR.bin[0:7]
@@ -2204,14 +2188,14 @@ class ARM1176:
                     walkaddr.memattrs.shareable = self.core_registers.ttbcr.get_sh1()[0]
                     walkaddr.memattrs.outershareable = self.core_registers.ttbcr.get_sh1() == "0b10"
         else:
-            t0_size = BitArray(bin=self.core_registers.get_vtcr_t0sz()).int
-            s_level = int(self.core_registers.get_vtcr_sl0(), 2)
+            t0_size = self.core_registers.vtcr.get_t0sz().uint
+            s_level = self.core_registers.vtcr.get_sl0().uint
             ba_lower_bound = 14 - t0_size - (9 * s_level)
             if s_level == 0 and t0_size < -2:
                 print "unpredictable"
             if s_level == 1 and t0_size > 1:
                 print "unpredictable"
-            if self.core_registers.get_vtcr_sl0()[0] == "1":
+            if self.core_registers.vtcr.get_sl0()[0]:
                 print "unpredictable"
             if self.core_registers.VTTBR[64 - ba_lower_bound:61].uint != 0:
                 print "unpredictable"
@@ -2222,14 +2206,14 @@ class ARM1176:
                 start_bit = 31 - t0_size
             lookup_secure = False
             walkaddr.memattrs.type = MemType.MemType_Normal
-            hintsattrs = self.convert_attrs_hints(BitArray(bin=self.core_registers.get_vtcr_irgn0()))
+            hintsattrs = self.convert_attrs_hints(self.core_registers.vtcr.get_irgn0())
             walkaddr.memattrs.innerhints = hintsattrs[0:2]
             walkaddr.memattrs.innerattrs = hintsattrs[2:4]
-            hintsattrs = self.convert_attrs_hints(BitArray(bin=self.core_registers.get_vtcr_orgn0()))
+            hintsattrs = self.convert_attrs_hints(self.core_registers.vtcr.get_orgn0())
             walkaddr.memattrs.outerhints = hintsattrs[0:2]
             walkaddr.memattrs.outerattrs = hintsattrs[2:4]
-            walkaddr.memattrs.shareable = self.core_registers.get_vtcr_sh0()[0] == "1"
-            walkaddr.memattrs.outershareable = self.core_registers.get_vtcr_sh0() == "10"
+            walkaddr.memattrs.shareable = self.core_registers.vtcr.get_sh0()[0]
+            walkaddr.memattrs.outershareable = self.core_registers.vtcr.get_sh0() == "0b10"
         if not base_found or disabled:
             taketohypmode = self.core_registers.current_mode_is_hyp() or not stage1
             level = 1
