@@ -99,7 +99,7 @@ class CoreRegisters:
         self.cpacr = CPACR()
         self.rgnr = RGNR(number_of_mpu_regions)
         self.hcptr = HCPTR()
-        self.DRSRs = [DRSR()] * number_of_mpu_regions
+        self.drsrs = [DRSR()] * number_of_mpu_regions
         self.DRBARs = [BitArray(length=32) for region in xrange(number_of_mpu_regions)]
         self.DRACRs = [BitArray(length=32) for region in xrange(number_of_mpu_regions)]
         self.IRBARs = [BitArray(length=32) for region in xrange(number_of_mpu_regions)]
@@ -2598,7 +2598,7 @@ class ARM1176:
             texcb = BitArray(length=5)  # unknown
             s = False  # unknown
             for r in xrange(self.core_registers.mpuir.get_dregion().uint):
-                size_enable = self.core_registers.DRSRs[r]
+                size_enable = self.core_registers.drsrs[r]
                 base_address = self.core_registers.DRBARs[r]
                 access_control = self.core_registers.DRACRs[r]
                 if size_enable.get_en():
