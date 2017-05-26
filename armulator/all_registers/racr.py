@@ -1,9 +1,9 @@
 from bitstring import BitArray
 
 
-class DRACR(object):
+class RACR(object):
     """
-    Data Region Access Control Register
+    Region Access Control Register
     """
 
     def __init__(self):
@@ -44,3 +44,17 @@ class DRACR(object):
 
     def get_b(self):
         return self.value[31]
+
+
+class DRACR(RACR):
+    """
+    Data Region Access Control Register
+    """
+    pass
+
+
+class IRACR(RACR):
+    """
+    Instruction Region Access Control Register
+    """
+    pass

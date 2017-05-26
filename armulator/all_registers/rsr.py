@@ -1,9 +1,9 @@
 from bitstring import BitArray
 
 
-class DRSR(object):
+class RSR(object):
     """
-    Data Region Size and Enable Register
+    Region Size and Enable Register
     """
 
     def __init__(self):
@@ -26,3 +26,17 @@ class DRSR(object):
 
     def get_en(self):
         return self.value[31]
+
+
+class DRSR(RSR):
+    """
+    Data Region Size and Enable Register
+    """
+    pass
+
+
+class IRSR(RSR):
+    """
+    Instruction Region Size and Enable Register
+    """
+    pass

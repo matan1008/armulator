@@ -37,8 +37,8 @@ from armulator.all_registers.hdcr import HDCR
 from armulator.all_registers.htcr import HTCR
 from armulator.all_registers.vtcr import VTCR
 from armulator.all_registers.hcptr import HCPTR
-from armulator.all_registers.drsr import DRSR
-from armulator.all_registers.dracr import DRACR
+from armulator.all_registers.rsr import DRSR
+from armulator.all_registers.racr import DRACR
 
 
 class CoreRegisters:
