@@ -37,8 +37,8 @@ from armulator.all_registers.hdcr import HDCR
 from armulator.all_registers.htcr import HTCR
 from armulator.all_registers.vtcr import VTCR
 from armulator.all_registers.hcptr import HCPTR
-from armulator.all_registers.rsr import DRSR
-from armulator.all_registers.racr import DRACR
+from armulator.all_registers.rsr import DRSR, IRSR
+from armulator.all_registers.racr import DRACR, IRACR
 
 
 class CoreRegisters:
@@ -104,8 +104,8 @@ class CoreRegisters:
         self.DRBARs = [BitArray(length=32) for region in xrange(number_of_mpu_regions)]
         self.dracrs = [DRACR()] * number_of_mpu_regions
         self.IRBARs = [BitArray(length=32) for region in xrange(number_of_mpu_regions)]
-        self.IRSRs = [BitArray(length=32) for region in xrange(number_of_mpu_regions)]
-        self.IRACRs = [BitArray(length=32) for region in xrange(number_of_mpu_regions)]
+        self.irsrs = [IRSR()] * number_of_mpu_regions
+        self.iracrs = [IRACR()] * number_of_mpu_regions
         self.teecr = TEECR()
         self.event_register = False
         self.ELR_hyp = BitArray(length=32)
