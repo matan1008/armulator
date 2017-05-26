@@ -14,7 +14,7 @@ class Wfe(AbstractOpcode):
             else:
                 if (HaveVirtExt() and not processor.core_registers.is_secure() and
                         not processor.core_registers.current_mode_is_hyp() and
-                        processor.core_registers.get_hcr_twe() == "1"):
+                        processor.core_registers.hcr.get_twe()):
                     hsr_string = BitArray(length=25)
                     hsr_string[24] = True
                     processor.write_hsr(BitArray(bin="000001"), hsr_string)

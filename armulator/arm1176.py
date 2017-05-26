@@ -32,6 +32,7 @@ from armulator.all_registers.ttbcr import TTBCR
 from armulator.all_registers.sctlr import SCTLR
 from armulator.all_registers.hstr import HSTR
 from armulator.all_registers.hsctlr import HSCTLR
+from armulator.all_registers.hcr import HCR
 
 
 class CoreRegisters:
@@ -63,7 +64,7 @@ class CoreRegisters:
         self.hsctlr = HSCTLR()
         self.HVBAR = BitArray(length=32)
         self.jmcr = JMCR()
-        self.HCR = BitArray(length=32)
+        self.hcr = HCR()
         self.MVBAR = BitArray(length=32)
         self.TEEHBR = BitArray(length=32)
         self.HDCR = BitArray(length=32)
@@ -545,60 +546,6 @@ class CoreRegisters:
 
     def get_hdcr_tde(self):
         return self.HDCR.bin[23]
-
-    def get_hcr_tsc(self):
-        return self.HCR.bin[12]
-
-    def get_hcr_vm(self):
-        return self.HCR.bin[31]
-
-    def get_hcr_swio(self):
-        return self.HCR.bin[30]
-
-    def get_hcr_ptw(self):
-        return self.HCR.bin[29]
-
-    def get_hcr_fmo(self):
-        return self.HCR.bin[28]
-
-    def get_hcr_imo(self):
-        return self.HCR.bin[27]
-
-    def get_hcr_amo(self):
-        return self.HCR.bin[26]
-
-    def get_hcr_vf(self):
-        return self.HCR.bin[25]
-
-    def get_hcr_vi(self):
-        return self.HCR.bin[24]
-
-    def get_hcr_va(self):
-        return self.HCR.bin[23]
-
-    def get_hcr_fb(self):
-        return self.HCR.bin[22]
-
-    def get_hcr_bsu(self):
-        return self.HCR.bin[20:22]
-
-    def get_hcr_dc(self):
-        return self.HCR.bin[19]
-
-    def get_hcr_twi(self):
-        return self.HCR.bin[18]
-
-    def get_hcr_twe(self):
-        return self.HCR.bin[17]
-
-    def get_hcr_tid0(self):
-        return self.HCR.bin[16]
-
-    def get_hcr_tge(self):
-        return self.HCR.bin[4]
-
-    def get_hcr_tidcp(self):
-        return self.HCR.bin[11]
 
     def get_cpsr_m(self):
         return self.CPSR.bin[27:32]
@@ -1085,12 +1032,12 @@ class CoreRegisters:
                 self.second_stage_abort() or
                 (
                     self.get_cpsr_m() != "11010" and
-                    (self.is_external_abort() and self.is_async_abort() and self.get_hcr_amo() == "1") or
+                    (self.is_external_abort() and self.is_async_abort() and self.hcr.get_amo()) or
                     (self.debug_exception() and self.get_hdcr_tde() == "1")
                 ) or
                 (
                     self.get_cpsr_m() == "10000" and
-                    self.get_hcr_tge() == "1" and
+                    self.hcr.get_tge() and
                     (self.is_alignment_fault() or (self.is_external_abort() and not self.is_async_abort()))
                 )
             )
@@ -1241,7 +1188,7 @@ class ARM1176:
                     (
                         self.core_registers.is_external_abort() and
                         self.core_registers.is_async_abort() and
-                        self.core_registers.get_hcr_amo() == "1"
+                        self.core_registers.hcr.get_amo()
                     ) or
                     (
                         self.core_registers.debug_exception() and
@@ -1250,7 +1197,7 @@ class ARM1176:
                 ) or
                 (
                     self.core_registers.get_cpsr_m() == "10000" and
-                    self.core_registers.get_hcr_tge() == "1" and
+                    self.core_registers.hcr.get_tge() and
                     (
                         self.core_registers.is_alignment_fault() or
                         (
@@ -1302,7 +1249,7 @@ class ARM1176:
         route_to_hyp = (HaveVirtExt() and
                         HaveSecurityExt() and
                         not self.core_registers.is_secure() and
-                        self.core_registers.get_hcr_tge() == "1" and
+                        self.core_registers.hcr.get_tge() and
                         self.core_registers.get_cpsr_m() == "10000")
         preferred_exceptn_return = new_lr_value
         if take_to_hyp:
@@ -1336,7 +1283,7 @@ class ARM1176:
         route_to_hyp = (HaveVirtExt() and
                         HaveSecurityExt() and
                         not self.core_registers.is_secure() and
-                        self.core_registers.get_hcr_tge() == "1" and
+                        self.core_registers.hcr.get_tge() and
                         self.core_registers.get_cpsr_m() == "10000")
         return_offset = 2 if self.core_registers.get_cpsr_t() == "1" else 4
         preferred_exceptn_return = BitArray(uint=(new_lr_value.uint - return_offset), length=32)
@@ -1747,13 +1694,13 @@ class ARM1176:
         result = AddressDescriptor()
         tlbrecord_s2 = TLBRecord()
         if HaveVirtExt() and not self.core_registers.is_secure() and not self.core_registers.current_mode_is_hyp():
-            if self.core_registers.get_hcr_vm() == "1":
+            if self.core_registers.hcr.get_vm():
                 s2ia = s1_out_addr_desc.paddress.physicaladdress
                 stage1 = False
                 s2fs1walk = True
                 tlbrecord_s2 = self.translation_table_walk_ld(s2ia, mva, is_write, stage1, s2fs1walk, size)
                 self.check_permission_s2(tlbrecord_s2.perms, mva, s2ia, tlbrecord_s2.level, False, s2fs1walk)
-                if self.core_registers.get_hcr_ptw() == "1":
+                if self.core_registers.hcr.get_ptw():
                     if tlbrecord_s2.addrdesc.memattrs.type != MemType.MemType_Normal:
                         domain = BitArray(length=4)  # unknown
                         taketohypmode = True
@@ -1766,7 +1713,6 @@ class ARM1176:
                 result = self.combine_s1s2_desc(s1_out_addr_desc, tlbrecord_s2.addrdesc)
             else:
                 result = s1_out_addr_desc
-        # I guess they ment to return result
         return result
 
     def data_abort(self, vaddress, ipaddress, domain, level, iswrite, dtype, taketohypmode, secondstageabort, ipavalid,
@@ -1899,7 +1845,7 @@ class ARM1176:
 
     def alignment_fault(self, address, iswrite):
         if MemorySystemArchitecture() == MemArch.MemArch_VMSA:
-            taketohypmode = self.core_registers.current_mode_is_hyp() or self.core_registers.get_hcr_tge() == "1"
+            taketohypmode = self.core_registers.current_mode_is_hyp() or self.core_registers.hcr.get_tge()
             secondstageabort = False
             self.alignment_fault_v(address, iswrite, taketohypmode, secondstageabort)
         elif MemorySystemArchitecture() == MemArch.MemArch_PMSA:
@@ -2580,7 +2526,7 @@ class ARM1176:
     def translate_address_v_s1_off(self, va):
         result = TLBRecord()
         if (not HaveVirtExt() or
-                self.core_registers.get_hcr_dc() == "0" or
+                not self.core_registers.hcr.get_dc() or
                 self.core_registers.is_secure() or
                 self.core_registers.current_mode_is_hyp()):
             result.addrdesc.memattrs.type = MemType.MemType_StronglyOrdered
@@ -2598,7 +2544,7 @@ class ARM1176:
             result.addrdesc.memattrs.outerhints[0:2] = "0b11"
             result.addrdesc.memattrs.shareable = False
             result.addrdesc.memattrs.outershareable = False
-            if self.core_registers.get_hcr_vm() != "1":
+            if not self.core_registers.hcr.get_vm():
                 print "unpredictable"
         result.perms.ap = BitArray(length=3)  # unknown
         result.perms.xn = False
@@ -2620,7 +2566,7 @@ class ARM1176:
             if (HaveVirtExt() and
                     not self.core_registers.is_secure() and
                     not ishyp and
-                    self.core_registers.get_hcr_tge() == "1"):
+                    self.core_registers.hcr.get_tge()):
                 print "unpredictable"
             uses_ld = ishyp or self.core_registers.ttbcr.get_eae()
             if uses_ld:
@@ -2648,7 +2594,7 @@ class ARM1176:
             self.check_permission(tlbrecordS1.perms, mva, tlbrecordS1.level, tlbrecordS1.domain, iswrite, ispriv, ishyp,
                                   uses_ld)
         if HaveVirtExt() and not self.core_registers.is_secure() and not ishyp:
-            if self.core_registers.get_hcr_vm() == "1":
+            if self.core_registers.hcr.get_vm():
                 s1outputaddr = tlbrecordS1.addrdesc.paddress.physicaladdress
                 tlbrecordS2 = self.translation_table_walk_ld(s1outputaddr, mva, iswrite, False, s2fs1walk, size)
                 if (not wasaligned and
@@ -2906,7 +2852,7 @@ class ARM1176:
                 (HaveVirtExt() and
                     not self.core_registers.is_secure() and
                     not self.core_registers.current_mode_is_not_user() and
-                    self.core_registers.get_hcr_tge() == "1")):
+                    self.core_registers.hcr.get_tge())):
             hsr_string = bits_ops.zeros(25)
             hsr_string[9:25] == immediate if self.current_cond() == "0b1110" else BitArray(length=16)  # unknown
             self.write_hsr(BitArray(bin="010001"), hsr_string)
@@ -3061,7 +3007,7 @@ class ARM1176:
                     HaveVirtExt() and
                     not self.core_registers.is_secure() and
                     not self.core_registers.current_mode_is_hyp() and
-                    self.core_registers.get_hcr_tidcp() == "1" and
+                    self.core_registers.hcr.get_tidcp() and
                     not two_reg):
                 cr_mnum = instr[28:32].uint
                 if (cr_nnum == 9 and cr_mnum in (0, 1, 2, 5, 6, 7, 8)) or (
