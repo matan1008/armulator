@@ -38,6 +38,7 @@ from armulator.all_registers.htcr import HTCR
 from armulator.all_registers.vtcr import VTCR
 from armulator.all_registers.hcptr import HCPTR
 from armulator.all_registers.drsr import DRSR
+from armulator.all_registers.dracr import DRACR
 
 
 class CoreRegisters:
@@ -101,7 +102,7 @@ class CoreRegisters:
         self.hcptr = HCPTR()
         self.drsrs = [DRSR()] * number_of_mpu_regions
         self.DRBARs = [BitArray(length=32) for region in xrange(number_of_mpu_regions)]
-        self.DRACRs = [BitArray(length=32) for region in xrange(number_of_mpu_regions)]
+        self.dracrs = [DRACR()] * number_of_mpu_regions
         self.IRBARs = [BitArray(length=32) for region in xrange(number_of_mpu_regions)]
         self.IRSRs = [BitArray(length=32) for region in xrange(number_of_mpu_regions)]
         self.IRACRs = [BitArray(length=32) for region in xrange(number_of_mpu_regions)]
@@ -2600,7 +2601,7 @@ class ARM1176:
             for r in xrange(self.core_registers.mpuir.get_dregion().uint):
                 size_enable = self.core_registers.drsrs[r]
                 base_address = self.core_registers.DRBARs[r]
-                access_control = self.core_registers.DRACRs[r]
+                access_control = self.core_registers.dracrs[r]
                 if size_enable.get_en():
                     ls_bit = size_enable.get_rsize().uint + 1
                     if ls_bit < 2:
@@ -2614,10 +2615,12 @@ class ARM1176:
                         else:
                             hit = True
                         if hit:
-                            texcb = access_control[26:29] + access_control[30:32]
-                            s = access_control[29]
-                            perms.ap = access_control[21:24]
-                            perms.xn = access_control[19]
+                            texcb = (access_control.get_tex() +
+                                     BitArray(bool=access_control.get_c()) +
+                                     BitArray(bool=access_control.get_b()))
+                            s = access_control.get_s()
+                            perms.ap = access_control.get_ap()
+                            perms.xn = access_control.get_xn()
                             region_found = True
             if region_found:
                 result.memattrs = self.default_tex_decode(texcb, s)
