@@ -34,6 +34,7 @@ from armulator.all_registers.hstr import HSTR
 from armulator.all_registers.hsctlr import HSCTLR
 from armulator.all_registers.hcr import HCR
 from armulator.all_registers.hdcr import HDCR
+from armulator.all_registers.htcr import HTCR
 
 
 class CoreRegisters:
@@ -77,7 +78,7 @@ class CoreRegisters:
         self.HPFAR = BitArray(length=32)
         self.ttbcr = TTBCR()
         self.FCSEIDR = BitArray(length=32)
-        self.HTCR = BitArray(length=32)
+        self.htcr = HTCR()
         self.HTTBR = BitArray(length=64)
         self.TTBR0_64 = BitArray(length=64)
         self.TTBR1_64 = BitArray(length=64)
@@ -526,18 +527,6 @@ class CoreRegisters:
 
     def get_vtcr_sh0(self):
         return self.VTCR.bin[18:20]
-
-    def get_htcr_orgn0(self):
-        return self.HTCR.bin[20:22]
-
-    def get_htcr_irgn0(self):
-        return self.HTCR.bin[22:24]
-
-    def get_htcr_sh0(self):
-        return self.HTCR.bin[18:20]
-
-    def get_htcr_tosz(self):
-        return self.HTCR.bin[29:32]
 
     def get_fcseidr_pid(self):
         return self.FCSEIDR.bin[0:7]
@@ -2153,9 +2142,9 @@ class ARM1176:
         if stage1:
             if self.core_registers.current_mode_is_hyp():
                 lookup_secure = False
-                t0_size = int(self.core_registers.get_htcr_tosz(), 2)
+                t0_size = self.core_registers.htcr.get_t0sz().uint
                 if t0_size == 0 or ia[8:t0_size + 8].uint == 0:
-                    current_level = 1 if self.core_registers.get_htcr_tosz().bin[0:2] == "00" else 2
+                    current_level = 1 if self.core_registers.htcr.get_t0sz()[0:2] == "0b00" else 2
                     ba_lower_bound = 9 * current_level - t0_size - 4
                     base_address = self.core_registers.HTTBR[24:64 - ba_lower_bound] + BitArray(length=ba_lower_bound)
                     if self.core_registers.HTTBR[64 - ba_lower_bound:61].uint != 0:
@@ -2163,14 +2152,14 @@ class ARM1176:
                     base_found = True
                     start_bit = 31 - t0_size
                     walkaddr.memattrs.type = MemType.MemType_Normal
-                    hintsattrs = self.convert_attrs_hints(BitArray(bin=self.core_registers.get_htcr_irgn0()))
+                    hintsattrs = self.convert_attrs_hints(self.core_registers.htcr.get_irgn0())
                     walkaddr.memattrs.innerhints = hintsattrs[0:2]
                     walkaddr.memattrs.innerattrs = hintsattrs[2:4]
-                    hintsattrs = self.convert_attrs_hints(BitArray(bin=self.core_registers.get_htcr_orgn0()))
+                    hintsattrs = self.convert_attrs_hints(self.core_registers.htcr.get_orgn0())
                     walkaddr.memattrs.outerhints = hintsattrs[0:2]
                     walkaddr.memattrs.outerattrs = hintsattrs[2:4]
-                    walkaddr.memattrs.shareable = self.core_registers.get_htcr_sh0()[0] == "1"
-                    walkaddr.memattrs.outershareable = self.core_registers.get_htcr_sh0() == "10"
+                    walkaddr.memattrs.shareable = self.core_registers.htcr.get_sh0()[0]
+                    walkaddr.memattrs.outershareable = self.core_registers.htcr.get_sh0() == "0b10"
                     walkaddr.paddress.ns = True
             else:
                 lookup_secure = self.core_registers.is_secure()
