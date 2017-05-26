@@ -36,6 +36,7 @@ from armulator.all_registers.hcr import HCR
 from armulator.all_registers.hdcr import HDCR
 from armulator.all_registers.htcr import HTCR
 from armulator.all_registers.vtcr import VTCR
+from armulator.all_registers.hcptr import HCPTR
 
 
 class CoreRegisters:
@@ -96,7 +97,7 @@ class CoreRegisters:
         self.mpuir = MPUIR()
         self.cpacr = CPACR()
         self.rgnr = RGNR(number_of_mpu_regions)
-        self.HCPTR = BitArray(length=32)
+        self.hcptr = HCPTR()
         self.DRSRs = [BitArray(length=32) for region in xrange(number_of_mpu_regions)]
         self.DRBARs = [BitArray(length=32) for region in xrange(number_of_mpu_regions)]
         self.DRACRs = [BitArray(length=32) for region in xrange(number_of_mpu_regions)]
@@ -2870,7 +2871,7 @@ class ARM1176:
                 elif self.core_registers.cpacr.get_cp_n(cp_num) == "0b11":
                     pass
             if HaveSecurityExt() and HaveVirtExt() and not self.core_registers.is_secure() and \
-                    self.core_registers.HCPTR[31 - cp_num]:
+                    self.core_registers.hcptr.get_tcp_n(cp_num):
                 hsr_string = bits_ops.zeros(25)
                 hsr_string[21:25] = BitArray(uint=(cp_num & 0xF), length=4)
                 self.write_hsr(BitArray(bin="000111"), hsr_string)
