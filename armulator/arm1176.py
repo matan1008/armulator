@@ -37,6 +37,7 @@ from armulator.all_registers.hdcr import HDCR
 from armulator.all_registers.htcr import HTCR
 from armulator.all_registers.vtcr import VTCR
 from armulator.all_registers.hcptr import HCPTR
+from armulator.all_registers.drsr import DRSR
 
 
 class CoreRegisters:
@@ -98,7 +99,7 @@ class CoreRegisters:
         self.cpacr = CPACR()
         self.rgnr = RGNR(number_of_mpu_regions)
         self.hcptr = HCPTR()
-        self.DRSRs = [BitArray(length=32) for region in xrange(number_of_mpu_regions)]
+        self.DRSRs = [DRSR()] * number_of_mpu_regions
         self.DRBARs = [BitArray(length=32) for region in xrange(number_of_mpu_regions)]
         self.DRACRs = [BitArray(length=32) for region in xrange(number_of_mpu_regions)]
         self.IRBARs = [BitArray(length=32) for region in xrange(number_of_mpu_regions)]
@@ -2600,8 +2601,8 @@ class ARM1176:
                 size_enable = self.core_registers.DRSRs[r]
                 base_address = self.core_registers.DRBARs[r]
                 access_control = self.core_registers.DRACRs[r]
-                if size_enable[31]:
-                    ls_bit = size_enable[26:31].uint + 1
+                if size_enable.get_en():
+                    ls_bit = size_enable.get_rsize().uint + 1
                     if ls_bit < 2:
                         print "unpredictable"
                     if ls_bit > 2 and base_address[32 - ls_bit:30].uint != 0:
@@ -2609,7 +2610,7 @@ class ARM1176:
                     if ls_bit == 32 or va[0:32 - ls_bit] == base_address[0:32 - ls_bit]:
                         if ls_bit >= 8:
                             subregion = va[32 - ls_bit:35 - ls_bit].uint
-                            hit = not size_enable[23 - subregion]
+                            hit = not size_enable.get_sd_n(subregion)
                         else:
                             hit = True
                         if hit:

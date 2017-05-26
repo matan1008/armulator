@@ -9,8 +9,8 @@ def test_ldr_register_thumb():
     arm.take_reset()
     instr = BitArray(bin="0101100001010011")
     # setting Data Region registers
-    arm.core_registers.DRSRs[0][31] = True # enabling memory region
-    arm.core_registers.DRSRs[0][26:31] = "0b00010" # setting region size
+    arm.core_registers.DRSRs[0].set_en(True) # enabling memory region
+    arm.core_registers.DRSRs[0].set_rsize("0b00010") # setting region size
     arm.core_registers.DRBARs[0] = BitArray(hex="0x0F000000") # setting region base address
     arm.core_registers.DRACRs[0] = BitArray(hex="0x00000300") # setting access permissions
     arm.core_registers.mpuir.set_iregion("0x01") # declaring the region
