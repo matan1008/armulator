@@ -33,6 +33,7 @@ from armulator.all_registers.sctlr import SCTLR
 from armulator.all_registers.hstr import HSTR
 from armulator.all_registers.hsctlr import HSCTLR
 from armulator.all_registers.hcr import HCR
+from armulator.all_registers.hdcr import HDCR
 
 
 class CoreRegisters:
@@ -67,7 +68,7 @@ class CoreRegisters:
         self.hcr = HCR()
         self.MVBAR = BitArray(length=32)
         self.TEEHBR = BitArray(length=32)
-        self.HDCR = BitArray(length=32)
+        self.hdcr = HDCR()
         self.vbar = VBAR()
         self.DBGDIDR = BitArray(length=32)
         self.DFSR = BitArray(length=32)
@@ -543,9 +544,6 @@ class CoreRegisters:
 
     def get_dbgdidr_version(self):
         return self.DBGDIDR.bin[12:16]
-
-    def get_hdcr_tde(self):
-        return self.HDCR.bin[23]
 
     def get_cpsr_m(self):
         return self.CPSR.bin[27:32]
@@ -1033,7 +1031,7 @@ class CoreRegisters:
                 (
                     self.get_cpsr_m() != "11010" and
                     (self.is_external_abort() and self.is_async_abort() and self.hcr.get_amo()) or
-                    (self.debug_exception() and self.get_hdcr_tde() == "1")
+                    (self.debug_exception() and self.hdcr.get_tde())
                 ) or
                 (
                     self.get_cpsr_m() == "10000" and
@@ -1192,7 +1190,7 @@ class ARM1176:
                     ) or
                     (
                         self.core_registers.debug_exception() and
-                        self.core_registers.get_hdcr_tde() == "1"
+                        self.core_registers.hdcr.get_tde()
                     )
                 ) or
                 (
