@@ -40,6 +40,7 @@ from armulator.all_registers.hcptr import HCPTR
 from armulator.all_registers.rsr import DRSR, IRSR
 from armulator.all_registers.racr import DRACR, IRACR
 from armulator.all_registers.sder import SDER
+from armulator.all_registers.fcseidr import FCSEIDR
 
 
 class CoreRegisters:
@@ -82,7 +83,7 @@ class CoreRegisters:
         self.HDFAR = BitArray(length=32)
         self.HPFAR = BitArray(length=32)
         self.ttbcr = TTBCR()
-        self.FCSEIDR = BitArray(length=32)
+        self.fcseidr = FCSEIDR()
         self.htcr = HTCR()
         self.HTTBR = BitArray(length=64)
         self.TTBR0_64 = BitArray(length=64)
@@ -515,9 +516,6 @@ class CoreRegisters:
 
     def get_event_register(self):
         return self.event_register
-
-    def get_fcseidr_pid(self):
-        return self.FCSEIDR.bin[0:7]
 
     def get_dbgdidr_version(self):
         return self.DBGDIDR.bin[12:16]
@@ -1552,7 +1550,7 @@ class ARM1176:
 
     def fcse_translate(self, va):
         if va.bin[0:7] == "0000000":
-            mva = BitArray(bin=self.core_registers.get_fcseidr_pid()) + va[7:32]
+            mva = self.core_registers.fcseidr.get_pid() + va[7:32]
         else:
             mva = va
         return mva
