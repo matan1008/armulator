@@ -41,6 +41,7 @@ from armulator.all_registers.rsr import DRSR, IRSR
 from armulator.all_registers.racr import DRACR, IRACR
 from armulator.all_registers.sder import SDER
 from armulator.all_registers.fcseidr import FCSEIDR
+from armulator.all_registers.fpexc import FPEXC
 
 
 class CoreRegisters:
@@ -176,7 +177,7 @@ class CoreRegisters:
         self.SVCR_FIC = BitArray(length=32)
         self.SVCR_EDRC = BitArray(length=32)
         self.SVCSMR = BitArray(length=32)
-        self.FPEXC = BitArray(length=32)
+        self.fpexc = FPEXC()
 
     def coproc_register_name(self, coproc, crn, opc1, crm, opc2):
         if coproc == 15:
@@ -555,9 +556,6 @@ class CoreRegisters:
 
     def get_cpsr_ge(self):
         return self.CPSR.bin[12:16]
-
-    def set_fpexc_en(self, flag):
-        self.FPEXC[1] = flag
 
     def set_dfar(self, new_dfar):
         self.DFAR = new_dfar
@@ -1101,7 +1099,7 @@ class ARM1176:
             self.core_registers.scr.set_ns(False)
         self.core_registers.reset_control_registers()
         if HaveAdvSIMDorVFP():
-            self.core_registers.set_fpexc_en(False)
+            self.core_registers.fpexc.set_en(False)
         if HaveThumbEE():
             self.core_registers.teecr.set_xed(False)
         if HaveJazelle():
