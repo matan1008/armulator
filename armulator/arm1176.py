@@ -42,6 +42,7 @@ from armulator.all_registers.racr import DRACR, IRACR
 from armulator.all_registers.sder import SDER
 from armulator.all_registers.fcseidr import FCSEIDR
 from armulator.all_registers.fpexc import FPEXC
+from armulator.all_registers.hsr import HSR
 
 
 class CoreRegisters:
@@ -69,7 +70,7 @@ class CoreRegisters:
         self.nsacr = NSACR()
         self.sctlr = SCTLR()
         self.hstr = HSTR()
-        self.HSR = BitArray(length=32)
+        self.hsr = HSR()
         self.hsctlr = HSCTLR()
         self.HVBAR = BitArray(length=32)
         self.jmcr = JMCR()
@@ -1474,7 +1475,7 @@ class ARM1176:
             hsr_value[12:] = hsr_string[12:]
         else:
             hsr_value[7:] = hsr_string
-        self.core_registers.HSR = hsr_value
+        self.core_registers.hsr.value = hsr_value
 
     def switch_to_jazelle_execution(self):
         raise NotImplementedError()
