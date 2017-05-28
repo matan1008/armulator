@@ -72,7 +72,7 @@ class CoreRegisters:
         self.hstr = HSTR()
         self.hsr = HSR()
         self.hsctlr = HSCTLR()
-        self.HVBAR = BitArray(length=32)
+        self.hvbar = BitArray(length=32)
         self.jmcr = JMCR()
         self.hcr = HCR()
         self.MVBAR = BitArray(length=32)
@@ -959,7 +959,7 @@ class CoreRegisters:
         if not self.scr.get_irq():
             self.set_cpsr_i(True)
         self.set_cpsr_itstate(BitArray(length=8))
-        self.branch_to(BitArray(uint=(self.HVBAR.uint + vect_offset), length=32))
+        self.branch_to(BitArray(uint=(self.hvbar.uint + vect_offset), length=32))
 
     def enter_monitor_mode(self, new_spsr_value, new_lr_value, vect_offset):
         self.set_cpsr_m("0b10110")
