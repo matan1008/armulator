@@ -76,7 +76,7 @@ class CoreRegisters:
         self.jmcr = JMCR()
         self.hcr = HCR()
         self.mvbar = BitArray(length=32)
-        self.TEEHBR = BitArray(length=32)
+        self.teehbr = BitArray(length=32)
         self.hdcr = HDCR()
         self.vbar = VBAR()
         self.DBGDIDR = BitArray(length=32)
@@ -1544,7 +1544,7 @@ class ARM1176:
                 if self.core_registers.get(n).all(False):
                     self.core_registers.set_lr(self.core_registers.get_pc()[:-1] + BitArray(bin="1"))
                     self.core_registers.set_cpsr_itstate(BitArray(bin="00000000"))
-                    self.branch_write_pc(BitArray(uint=(self.core_registers.TEEHBR.uint - 4), length=32))
+                    self.branch_write_pc(BitArray(uint=(self.core_registers.teehbr.uint - 4), length=32))
                     raise EndOfInstruction("NullCheckIfThumbEE")
 
     def fcse_translate(self, va):
