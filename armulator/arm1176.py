@@ -75,7 +75,7 @@ class CoreRegisters:
         self.hvbar = BitArray(length=32)
         self.jmcr = JMCR()
         self.hcr = HCR()
-        self.MVBAR = BitArray(length=32)
+        self.mvbar = BitArray(length=32)
         self.TEEHBR = BitArray(length=32)
         self.hdcr = HDCR()
         self.vbar = VBAR()
@@ -441,7 +441,7 @@ class CoreRegisters:
                         if opc2 == 0:
                             return "VBAR"
                         elif opc2 == 1:
-                            return "MVBAR"
+                            return "mvbar"
                     elif crm == 1:
                         if opc2 == 0:
                             return "ISR"
@@ -972,7 +972,7 @@ class CoreRegisters:
         self.set_cpsr_f(True)
         self.set_cpsr_i(True)
         self.set_cpsr_itstate(BitArray(length=8))
-        self.branch_to(BitArray(uint=(self.MVBAR.uint + vect_offset), length=32))
+        self.branch_to(BitArray(uint=(self.mvbar.uint + vect_offset), length=32))
 
     def take_hyp_trap_exception(self):
         preferred_exceptn_return = BitArray(
