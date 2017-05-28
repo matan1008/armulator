@@ -43,6 +43,7 @@ from armulator.all_registers.sder import SDER
 from armulator.all_registers.fcseidr import FCSEIDR
 from armulator.all_registers.fpexc import FPEXC
 from armulator.all_registers.hsr import HSR
+from armulator.all_registers.dbgdidr import DBGDIDR
 
 
 class CoreRegisters:
@@ -79,7 +80,7 @@ class CoreRegisters:
         self.teehbr = BitArray(length=32)
         self.hdcr = HDCR()
         self.vbar = VBAR()
-        self.DBGDIDR = BitArray(length=32)
+        self.dbgdidr = DBGDIDR()
         self.DFSR = BitArray(length=32)
         self.DFAR = BitArray(length=32)
         self.HDFAR = BitArray(length=32)
@@ -518,9 +519,6 @@ class CoreRegisters:
 
     def get_event_register(self):
         return self.event_register
-
-    def get_dbgdidr_version(self):
-        return self.DBGDIDR.bin[12:16]
 
     def get_cpsr_m(self):
         return self.CPSR.bin[27:32]
@@ -1693,8 +1691,8 @@ class ARM1176:
             if not taketohypmode:
                 dfsr_string = BitArray(length=14)
                 if dtype in (self.DAbort.DAbort_AsyncParity, self.DAbort.DAbort_AsyncExternal,
-                             self.DAbort.DAbort_AsyncWatchpoint) or (dtype == self.DAbort.DAbort_SyncWatchpoint and int(
-                        self.core_registers.get_dbgdidr_version()) <= 4):
+                             self.DAbort.DAbort_AsyncWatchpoint) or (dtype == self.DAbort.DAbort_SyncWatchpoint and
+                        self.core_registers.dbgdidr.get_version().uint <= 4):
                     self.core_registers.set_dfar(BitArray(length=32))  # unknown
                 else:
                     self.core_registers.set_dfar(vaddress)
@@ -1771,7 +1769,7 @@ class ARM1176:
                     self.DAbort.DAbort_AsyncWatchpoint
                 ) or
                     (dtype == self.DAbort.DAbort_SyncWatchpoint and
-                        int(self.core_registers.get_dbgdidr_version()) <= 4)):
+                        self.core_registers.dbgdidr.get_version().uint <= 4)):
                 self.core_registers.set_dfar(BitArray(length=32))  # unknown
             elif dtype == self.DAbort.DAbort_SyncParity:
                 if implementation_defined.data_abort_pmsa_change_dfar:
