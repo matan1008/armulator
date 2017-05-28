@@ -44,6 +44,7 @@ from armulator.all_registers.fcseidr import FCSEIDR
 from armulator.all_registers.fpexc import FPEXC
 from armulator.all_registers.hsr import HSR
 from armulator.all_registers.dbgdidr import DBGDIDR
+from armulator.all_registers.hpfar import HPFAR
 
 
 class CoreRegisters:
@@ -84,7 +85,7 @@ class CoreRegisters:
         self.DFSR = BitArray(length=32)
         self.DFAR = BitArray(length=32)
         self.HDFAR = BitArray(length=32)
-        self.HPFAR = BitArray(length=32)
+        self.hpfar = HPFAR()
         self.ttbcr = TTBCR()
         self.fcseidr = FCSEIDR()
         self.htcr = HTCR()
@@ -561,9 +562,6 @@ class CoreRegisters:
 
     def set_hdfar(self, new_hdfar):
         self.HDFAR = new_hdfar
-
-    def set_hpfar(self, hpfar_28):
-        self.HPFAR[0:28] = hpfar_28
 
     def set_dfsr(self, dfsr_14):
         self.DFAR[18:32] = dfsr_14
@@ -1747,7 +1745,7 @@ class ARM1176:
                 ec = BitArray(length=6)
                 self.core_registers.set_hdfar(vaddress)
                 if ipavalid:
-                    self.core_registers.set_hpfar(ipaddress[0:28])
+                    self.core_registers.hpfar.set_fipa(ipaddress[0:28])
                 if secondstageabort:
                     ec[0:6] = "0b100100"
                     hsr_string[0:9] = self.ls_instruction_syndrome()
