@@ -45,6 +45,7 @@ from armulator.all_registers.fpexc import FPEXC
 from armulator.all_registers.hsr import HSR
 from armulator.all_registers.dbgdidr import DBGDIDR
 from armulator.all_registers.hpfar import HPFAR
+from armulator.all_registers.dfsr import DFSR
 
 
 class CoreRegisters:
@@ -83,6 +84,7 @@ class CoreRegisters:
         self.vbar = VBAR()
         self.dbgdidr = DBGDIDR()
         self.DFSR = BitArray(length=32)
+        self.dfsr = DFSR()
         self.dfar = BitArray(length=32)
         self.hdfar = BitArray(length=32)
         self.hpfar = HPFAR()
@@ -554,9 +556,6 @@ class CoreRegisters:
 
     def get_cpsr_ge(self):
         return self.CPSR.bin[12:16]
-
-    def set_dfsr(self, dfsr_14):
-        self.DFSR[18:32] = dfsr_14
 
     def set_cpsr_ge(self, value):
         self.CPSR.overwrite(value, 12)
@@ -1731,7 +1730,7 @@ class ARM1176:
                     temp_sdfsr = self.encode_sdfsr(dtype, level)
                     dfsr_string[3] = temp_sdfsr[0]
                     dfsr_string[10:14] = temp_sdfsr[1:5]
-                self.core_registers.set_dfsr(dfsr_string)
+                self.core_registers.dfsr.value[18:32] = dfsr_string
             else:
                 hsr_string = BitArray(length=25)
                 ec = BitArray(length=6)
@@ -1777,7 +1776,7 @@ class ARM1176:
             temp_pmsafsr = self.encode_pmsafsr(dtype, level)
             dfsr_string[3] = temp_pmsafsr[0]
             dfsr_string[10:14] = temp_pmsafsr[1:5]
-            self.core_registers.set_dfsr(dfsr_string)
+            self.core_registers.dfsr.value[18:32] = dfsr_string
         raise DataAbortException()
 
     def alignment_fault_v(self, address, iswrite, taketohyp, secondstageabort):
