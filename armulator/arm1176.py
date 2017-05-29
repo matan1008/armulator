@@ -83,16 +83,14 @@ class CoreRegisters:
         self.vbar = VBAR()
         self.dbgdidr = DBGDIDR()
         self.DFSR = BitArray(length=32)
-        self.DFAR = BitArray(length=32)
-        self.HDFAR = BitArray(length=32)
+        self.dfar = BitArray(length=32)
+        self.hdfar = BitArray(length=32)
         self.hpfar = HPFAR()
         self.ttbcr = TTBCR()
         self.fcseidr = FCSEIDR()
         self.htcr = HTCR()
         self.HTTBR = BitArray(length=64)
         self.TTBR0_64 = BitArray(length=64)
-        self.TTBR1_64 = BitArray(length=64)
-        self.VTCR = BitArray(length=32)
         self.vtcr = VTCR()
         self.VTTBR = BitArray(length=64)
         self.MAIR0 = BitArray(length=32)
@@ -266,7 +264,7 @@ class CoreRegisters:
                 if opc1 == 0:
                     if crm == 0:
                         if opc2 == 0:
-                            return "DFAR"
+                            return "dfar"
                         elif opc2 == 2:
                             return "IFAR"
             elif crn == 7:
@@ -557,14 +555,8 @@ class CoreRegisters:
     def get_cpsr_ge(self):
         return self.CPSR.bin[12:16]
 
-    def set_dfar(self, new_dfar):
-        self.DFAR = new_dfar
-
-    def set_hdfar(self, new_hdfar):
-        self.HDFAR = new_hdfar
-
     def set_dfsr(self, dfsr_14):
-        self.DFAR[18:32] = dfsr_14
+        self.DFSR[18:32] = dfsr_14
 
     def set_cpsr_ge(self, value):
         self.CPSR.overwrite(value, 12)
@@ -1691,9 +1683,9 @@ class ARM1176:
                 if dtype in (self.DAbort.DAbort_AsyncParity, self.DAbort.DAbort_AsyncExternal,
                              self.DAbort.DAbort_AsyncWatchpoint) or (dtype == self.DAbort.DAbort_SyncWatchpoint and
                         self.core_registers.dbgdidr.get_version().uint <= 4):
-                    self.core_registers.set_dfar(BitArray(length=32))  # unknown
+                    self.core_registers.dfar = BitArray(length=32)  # unknown
                 else:
-                    self.core_registers.set_dfar(vaddress)
+                    self.core_registers.dfar = vaddress
                 if ldfsr_format:
                     dfsr_string[0] = self.tlb_lookup_came_from_cache_maintenance()
                     if dtype in (self.DAbort.DAbort_AsyncExternal, self.DAbort.DAbort_SyncExternal):
@@ -1743,7 +1735,7 @@ class ARM1176:
             else:
                 hsr_string = BitArray(length=25)
                 ec = BitArray(length=6)
-                self.core_registers.set_hdfar(vaddress)
+                self.core_registers.hdfar = vaddress
                 if ipavalid:
                     self.core_registers.hpfar.set_fipa(ipaddress[0:28])
                 if secondstageabort:
@@ -1768,12 +1760,12 @@ class ARM1176:
                 ) or
                     (dtype == self.DAbort.DAbort_SyncWatchpoint and
                         self.core_registers.dbgdidr.get_version().uint <= 4)):
-                self.core_registers.set_dfar(BitArray(length=32))  # unknown
+                self.core_registers.dfar = BitArray(length=32)  # unknown
             elif dtype == self.DAbort.DAbort_SyncParity:
                 if implementation_defined.data_abort_pmsa_change_dfar:
-                    self.core_registers.set_dfar(vaddress)
+                    self.core_registers.dfar = vaddress
             else:
-                self.core_registers.set_dfar(vaddress)
+                self.core_registers.dfar = vaddress
             if dtype in (self.DAbort.DAbort_AsyncExternal, self.DAbort.DAbort_SyncExternal):
                 dfsr_string[1] = implementation_defined.dfsr_string_12
             else:
