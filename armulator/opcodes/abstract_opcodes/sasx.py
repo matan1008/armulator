@@ -17,4 +17,4 @@ class Sasx(AbstractOpcode):
             ge = "0b"
             ge += "11" if sum_ >= 0 else "00"
             ge += "11" if diff >= 0 else "00"
-            processor.core_registers.set_cpsr_ge(ge)
+            processor.core_registers.cpsr.set_ge(ge)

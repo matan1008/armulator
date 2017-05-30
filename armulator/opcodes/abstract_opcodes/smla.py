@@ -21,4 +21,4 @@ class Smla(AbstractOpcode):
             result = operand1.int * operand2.int + processor.core_registers.get(self.a).int
             processor.core_registers.set(self.d, BitArray(int=result, length=32))
             if result != BitArray(int=result, length=32).int:
-                processor.core_registers.set_cpsr_q(True)
+                processor.core_registers.cpsr.set_q(True)

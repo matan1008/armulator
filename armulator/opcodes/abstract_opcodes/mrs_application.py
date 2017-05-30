@@ -8,4 +8,4 @@ class MrsApplication(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            processor.core_registers.set(self.d, processor.core_registers.get_cpsr_as_apsr())
+            processor.core_registers.set(self.d, processor.core_registers.cpsr.get_apsr())

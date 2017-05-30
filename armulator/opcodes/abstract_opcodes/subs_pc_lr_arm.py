@@ -24,7 +24,7 @@ class SubsPcLrArm(AbstractOpcode):
                 print "unpredictable"
             else:
                 operand2 = shift(processor.core_registers.get(self.m), self.shift_t, self.shift_n,
-                                 processor.core_registers.get_cpsr_c()) if self.register_form else self.imm32
+                                 processor.core_registers.cpsr.get_c()) if self.register_form else self.imm32
                 if self.opcode == "0000":
                     result = processor.core_registers.get(self.n) & operand2
                 elif self.opcode == "0001":
@@ -37,13 +37,13 @@ class SubsPcLrArm(AbstractOpcode):
                     result = add_with_carry(processor.core_registers.get(self.n), operand2, "0")[0]
                 elif self.opcode == "0101":
                     result = add_with_carry(processor.core_registers.get(self.n), operand2,
-                                            processor.core_registers.get_cpsr_c())[0]
+                                            processor.core_registers.cpsr.get_c())[0]
                 elif self.opcode == "0110":
                     result = add_with_carry(processor.core_registers.get(self.n), ~operand2,
-                                            processor.core_registers.get_cpsr_c())[0]
+                                            processor.core_registers.cpsr.get_c())[0]
                 elif self.opcode == "0111":
                     result = add_with_carry(~processor.core_registers.get(self.n), operand2,
-                                            processor.core_registers.get_cpsr_c())[0]
+                                            processor.core_registers.cpsr.get_c())[0]
                 elif self.opcode == "1100":
                     result = processor.core_registers.get(self.n) | operand2
                 elif self.opcode == "1101":
@@ -54,9 +54,9 @@ class SubsPcLrArm(AbstractOpcode):
                     result = ~operand2
                 processor.core_registers.cpsr_write_by_instr(processor.core_registers.get_spsr(), BitArray(bin="1111"),
                                                              True)
-                if (processor.core_registers.get_cpsr_m() == "11010" and
-                        processor.core_registers.get_cpsr_j() == "1" and
-                        processor.core_registers.get_cpsr_t() == "1"):
+                if (processor.core_registers.cpsr.get_m() == "0b11010" and
+                        processor.core_registers.cpsr.get_j() and
+                        processor.core_registers.cpsr.get_t()):
                     print "unpredictable"
                 else:
                     processor.branch_write_pc(result)

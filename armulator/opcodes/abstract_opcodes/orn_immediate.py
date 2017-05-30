@@ -15,6 +15,6 @@ class OrnImmediate(AbstractOpcode):
             result = processor.core_registers.get(self.n) | ~self.imm32
             processor.core_registers.set(self.d, result)
             if self.setflags:
-                processor.core_registers.set_cpsr_n(result[0])
-                processor.core_registers.set_cpsr_z(result.all(False))
-                processor.core_registers.set_cpsr_c(self.carry)
+                processor.core_registers.cpsr.set_n(result[0])
+                processor.core_registers.cpsr.set_z(result.all(False))
+                processor.core_registers.cpsr.set_c(self.carry)

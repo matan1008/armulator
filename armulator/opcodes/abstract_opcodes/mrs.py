@@ -16,8 +16,7 @@ class Mrs(AbstractOpcode):
                 else:
                     processor.core_registers.set(self.d, processor.core_registers.get_spsr())
             else:
-                processor.core_registers.set(self.d, processor.core_registers.CPSR & BitArray(
-                        bin="11111000111111110000001111011111"))
+                processor.core_registers.set(self.d, processor.core_registers.cpsr.value & "0xF8FF03DF")
                 if not processor.core_registers.current_mode_is_not_user():
                     temp_register = processor.core_registers.get(self.d)
                     temp_register[-5:] = 0

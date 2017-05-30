@@ -15,5 +15,5 @@ class TeqImmediateA1(TeqImmediate, Opcode):
     def from_bitarray(instr, processor):
         imm12 = instr[20:32]
         rn = instr[12:16]
-        imm32, carry = arm_expand_imm_c(imm12, processor.core_registers.get_cpsr_c())
+        imm32, carry = arm_expand_imm_c(imm12, processor.core_registers.cpsr.get_c())
         return TeqImmediateA1(instr, **{"n": rn.uint, "imm32": imm32, "carry": carry})

@@ -21,4 +21,4 @@ class Smlsd(AbstractOpcode):
             result = product1 - product2 + processor.core_registers.get(self.a).int
             processor.core_registers.set(self.d, BitArray(int=result, length=33)[1:33])
             if result != BitArray(int=result, length=33)[1:33].int:
-                processor.core_registers.set_cpsr_q(True)
+                processor.core_registers.cpsr.set_q(True)

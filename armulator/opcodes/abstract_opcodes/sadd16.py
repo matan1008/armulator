@@ -17,4 +17,4 @@ class Sadd16(AbstractOpcode):
             ge = "0b"
             ge += "11" if sum2 >= 0 else "00"
             ge += "11" if sum1 >= 0 else "00"
-            processor.core_registers.set_cpsr_ge(ge)
+            processor.core_registers.cpsr.set_ge(ge)

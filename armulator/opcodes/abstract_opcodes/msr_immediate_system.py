@@ -14,7 +14,7 @@ class MsrImmediateSystem(AbstractOpcode):
                 processor.core_registers.spsr_write_by_instr(self.imm32, self.mask)
             else:
                 processor.core_registers.cpsr_write_by_instr(self.imm32, self.mask, False)
-                if (processor.core_registers.CPSR[27:32] == "0b11010" and
-                        processor.core_registers.get_cpsr_j() == "1" and
-                        processor.core_registers.get_cpsr_t() == "1"):
+                if (processor.core_registers.cpsr.get_m() == "0b11010" and
+                        processor.core_registers.cpsr.get_j() and
+                        processor.core_registers.cpsr.get_t()):
                     print "unpredictable"

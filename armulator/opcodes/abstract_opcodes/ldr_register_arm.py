@@ -18,7 +18,7 @@ class LdrRegisterArm(AbstractOpcode):
     def execute(self, processor):
         if processor.condition_passed():
             offset = shift(processor.core_registers.get(self.m), self.shift_t, self.shift_n,
-                           processor.core_registers.get_cpsr_c())
+                           processor.core_registers.cpsr.get_c())
             offset_addr = bits_add(processor.core_registers.get(self.n), offset, 32) if self.add else bits_sub(
                     processor.core_registers.get(self.n), offset, 32)
             address = offset_addr if self.index else processor.core_registers.get(self.n)

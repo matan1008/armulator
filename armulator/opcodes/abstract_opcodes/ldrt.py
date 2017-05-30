@@ -30,7 +30,7 @@ class Ldrt(AbstractOpcode):
                     pass
                 else:
                     offset = shift(processor.core_registers.get(self.m), self.shift_t, self.shift_n,
-                                   processor.core_registers.get_cpsr_c()) if self.register_form else self.imm32
+                                   processor.core_registers.cpsr.get_c()) if self.register_form else self.imm32
                     offset_addr = bits_add(processor.core_registers.get(self.n), offset, 32) if self.add else bits_sub(
                             processor.core_registers.get(self.n), offset, 32)
                     address = processor.core_registers.get(self.n) if self.post_index else offset_addr

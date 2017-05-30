@@ -17,9 +17,9 @@ class SubsPcLrThumb(AbstractOpcode):
             else:
                 operand2 = self.imm32
                 result = add_with_carry(processor.core_registers.get(self.n), ~operand2, "1")[0]
-                if (processor.core_registers.CPSR[27:32] == "0b11010" and
-                        processor.core_registers.get_cpsr_j() == "1" and
-                        processor.core_registers.get_cpsr_t() == "1"):
+                if (processor.core_registers.cpsr.get_m() == "0b11010" and
+                        processor.core_registers.cpsr.get_j() and
+                        processor.core_registers.cpsr.get_t()):
                     print "unpredictable"
                 else:
                     processor.branch_write_pc(result)

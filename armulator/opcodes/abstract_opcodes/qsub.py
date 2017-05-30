@@ -15,4 +15,4 @@ class Qsub(AbstractOpcode):
                     processor.core_registers.get(self.m).int - processor.core_registers.get(self.n).int, 32)
             processor.core_registers.set(self.d, result)
             if sat:
-                processor.core_registers.set_cpsr_q(True)
+                processor.core_registers.cpsr.set_q(True)

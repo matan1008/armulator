@@ -13,13 +13,13 @@ class SbcImmediate(AbstractOpcode):
     def execute(self, processor):
         if processor.condition_passed():
             result, carry, overflow = add_with_carry(processor.core_registers.get(self.n), ~self.imm32,
-                                                     processor.core_registers.get_cpsr_c())
+                                                     processor.core_registers.cpsr.get_c())
             if self.d == 15:
                 processor.alu_write_pc(result)
             else:
                 processor.core_registers.set(self.d, result)
                 if self.setflags:
-                    processor.core_registers.set_cpsr_n(result[0])
-                    processor.core_registers.set_cpsr_z(result.all(False))
-                    processor.core_registers.set_cpsr_c(carry)
-                    processor.core_registers.set_cpsr_v(overflow)
+                    processor.core_registers.cpsr.set_n(result[0])
+                    processor.core_registers.cpsr.set_z(result.all(False))
+                    processor.core_registers.cpsr.set_c(carry)
+                    processor.core_registers.cpsr.set_v(overflow)

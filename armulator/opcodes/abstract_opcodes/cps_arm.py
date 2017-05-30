@@ -15,7 +15,7 @@ class CpsArm(AbstractOpcode):
 
     def execute(self, processor):
         if processor.core_registers.current_mode_is_not_user():
-            cpsr_val = processor.core_registers.CPSR
+            cpsr_val = processor.core_registers.cpsr.value
             if self.enable:
                 if self.affect_a:
                     cpsr_val[23] = False

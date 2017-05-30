@@ -16,15 +16,15 @@ class SbcRegister(AbstractOpcode):
     def execute(self, processor):
         if processor.condition_passed():
             shifted = shift(processor.core_registers.get(self.m), self.shift_t, self.shift_n,
-                            processor.core_registers.get_cpsr_c())
+                            processor.core_registers.cpsr.get_c())
             result, carry, overflow = add_with_carry(processor.core_registers.get(self.n), ~shifted,
-                                                     processor.core_registers.get_cpsr_c())
+                                                     processor.core_registers.cpsr.get_c())
             if self.d == 15:
                 processor.alu_write_pc(result)
             else:
                 processor.core_registers.set(self.d, result)
                 if self.setflags:
-                    processor.core_registers.set_cpsr_n(result[0])
-                    processor.core_registers.set_cpsr_z(not result.any(True))
-                    processor.core_registers.set_cpsr_c(carry)
-                    processor.core_registers.set_cpsr_v(overflow)
+                    processor.core_registers.cpsr.set_n(result[0])
+                    processor.core_registers.cpsr.set_z(not result.any(True))
+                    processor.core_registers.cpsr.set_c(carry)
+                    processor.core_registers.cpsr.set_v(overflow)

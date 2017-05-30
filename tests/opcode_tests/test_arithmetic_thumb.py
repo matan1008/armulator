@@ -21,10 +21,10 @@ def test_add_immediate_thumb():
     arm.core_registers.set(opcode.n, BitArray(hex="0x00000000"))
     arm.execute_instruction(opcode)
     assert arm.core_registers.get(opcode.d) == BitArray(hex="0x00000001")
-    assert arm.core_registers.get_cpsr_n() == "0"
-    assert arm.core_registers.get_cpsr_z() == "0"
-    assert arm.core_registers.get_cpsr_c() == "0"
-    assert arm.core_registers.get_cpsr_v() == "0"
+    assert not arm.core_registers.cpsr.get_n()
+    assert not arm.core_registers.cpsr.get_z()
+    assert not arm.core_registers.cpsr.get_c()
+    assert not arm.core_registers.cpsr.get_v()
 
 def test_lsl_immediate_thumb():
     arm = ARM1176()
@@ -40,9 +40,9 @@ def test_lsl_immediate_thumb():
     arm.core_registers.set(opcode.m, BitArray(hex="0x00000002"))
     arm.execute_instruction(opcode)
     assert arm.core_registers.get(opcode.d) == BitArray(hex="0x00000008")
-    assert arm.core_registers.get_cpsr_n() == "0"
-    assert arm.core_registers.get_cpsr_z() == "0"
-    assert arm.core_registers.get_cpsr_c() == "0"
+    assert not arm.core_registers.cpsr.get_n()
+    assert not arm.core_registers.cpsr.get_z()
+    assert not arm.core_registers.cpsr.get_c()
 
 def test_add_register_thumb():
     arm = ARM1176()
@@ -61,10 +61,10 @@ def test_add_register_thumb():
     arm.core_registers.set(opcode.m, BitArray(hex="0x10000001"))
     arm.execute_instruction(opcode)
     assert arm.core_registers.get(opcode.d) == BitArray(hex="0x80000001")
-    assert arm.core_registers.get_cpsr_n() == "1"
-    assert arm.core_registers.get_cpsr_z() == "0"
-    assert arm.core_registers.get_cpsr_c() == "0"
-    assert arm.core_registers.get_cpsr_v() == "1"
+    assert arm.core_registers.cpsr.get_n()
+    assert not arm.core_registers.cpsr.get_z()
+    assert not arm.core_registers.cpsr.get_c()
+    assert arm.core_registers.cpsr.get_v()
 
 def test_cmp_immediate_thumb():
     arm = ARM1176()
@@ -77,10 +77,10 @@ def test_cmp_immediate_thumb():
     assert opcode.imm32 == BitArray(hex="0x00000005")
     arm.core_registers.set(opcode.n, BitArray(hex="0x00000004"))
     arm.execute_instruction(opcode)
-    assert arm.core_registers.get_cpsr_n() == "1"
-    assert arm.core_registers.get_cpsr_z() == "0"
-    assert arm.core_registers.get_cpsr_c() == "0"
-    assert arm.core_registers.get_cpsr_v() == "0"
+    assert arm.core_registers.cpsr.get_n()
+    assert not arm.core_registers.cpsr.get_z()
+    assert not arm.core_registers.cpsr.get_c()
+    assert not arm.core_registers.cpsr.get_v()
 
 def test_mul_thumb():
     arm = ARM1176()
@@ -97,8 +97,8 @@ def test_mul_thumb():
     arm.core_registers.set(opcode.m, BitArray(hex="0x00000002"))
     arm.execute_instruction(opcode)
     assert arm.core_registers.get(opcode.d) == BitArray(hex="0x00000008")
-    assert arm.core_registers.get_cpsr_n() == "0"
-    assert arm.core_registers.get_cpsr_z() == "0"
-    assert arm.core_registers.get_cpsr_c() == "0"
-    assert arm.core_registers.get_cpsr_v() == "0"
+    assert not arm.core_registers.cpsr.get_n()
+    assert not arm.core_registers.cpsr.get_z()
+    assert not arm.core_registers.cpsr.get_c()
+    assert not arm.core_registers.cpsr.get_v()
 

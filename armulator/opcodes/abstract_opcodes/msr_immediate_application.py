@@ -11,10 +11,10 @@ class MsrImmediateApplication(AbstractOpcode):
     def execute(self, processor):
         if processor.condition_passed():
             if self.write_nzcvq:
-                processor.core_registers.set_cpsr_n(self.imm32[0])
-                processor.core_registers.set_cpsr_z(self.imm32[1])
-                processor.core_registers.set_cpsr_c(self.imm32[2])
-                processor.core_registers.set_cpsr_v(self.imm32[3])
-                processor.core_registers.set_cpsr_q(self.imm32[4])
+                processor.core_registers.cpsr.set_n(self.imm32[0])
+                processor.core_registers.cpsr.set_z(self.imm32[1])
+                processor.core_registers.cpsr.set_c(self.imm32[2])
+                processor.core_registers.cpsr.set_v(self.imm32[3])
+                processor.core_registers.cpsr.set_q(self.imm32[4])
             if self.write_g:
-                processor.core_registers.set_cpsr_ge(self.imm32[12:16])
+                processor.core_registers.cpsr.set_ge(self.imm32[12:16])

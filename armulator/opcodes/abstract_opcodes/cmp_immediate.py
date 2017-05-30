@@ -11,7 +11,7 @@ class CmpImmediate(AbstractOpcode):
     def execute(self, processor):
         if processor.condition_passed():
             result, carry, overflow = add_with_carry(processor.core_registers.get(self.n), ~self.imm32, "1")
-            processor.core_registers.set_cpsr_n(result[0])
-            processor.core_registers.set_cpsr_z(result.all(False))
-            processor.core_registers.set_cpsr_c(carry)
-            processor.core_registers.set_cpsr_v(overflow)
+            processor.core_registers.cpsr.set_n(result[0])
+            processor.core_registers.cpsr.set_z(result.all(False))
+            processor.core_registers.cpsr.set_c(carry)
+            processor.core_registers.cpsr.set_v(overflow)

@@ -18,9 +18,9 @@ class Eret(AbstractOpcode):
                                 else processor.core_registers.get(14))
                 processor.core_registers.cpsr_write_by_instr(processor.core_registers.get_spsr(), BitArray(bin="1111"),
                                                              True)
-                if (processor.core_registers.CPSR[27:32] == "0b11010" and
-                        processor.core_registers.get_cpsr_j() == "1" and
-                        processor.core_registers.get_cpsr_t() == "1"):
+                if (processor.core_registers.cpsr.get_m() == "0b11010" and
+                        processor.core_registers.cpsr.get_j() and
+                        processor.core_registers.cpsr.get_t()):
                     print "unpredictable"
                 else:
                     processor.branch_write_pc(new_pc_value)

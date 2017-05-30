@@ -15,4 +15,4 @@ class Usat16(AbstractOpcode):
             result2, sat2 = unsigned_sat_q(processor.core_registers.get(self.n)[0:16].int, self.saturate_to)
             processor.core_registers.set(self.d, zero_extend(result2, 16) + zero_extend(result1, 16))
             if sat1 or sat2:
-                processor.core_registers.set_cpsr_q(True)
+                processor.core_registers.cpsr.set_q(True)

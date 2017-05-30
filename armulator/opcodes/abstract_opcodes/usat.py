@@ -15,8 +15,8 @@ class Usat(AbstractOpcode):
     def execute(self, processor):
         if processor.condition_passed():
             operand = shift(processor.core_registers.get(self.n), self.shift_t, self.shift_n,
-                            processor.core_registers.get_cpsr_c())
+                            processor.core_registers.cpsr.get_c())
             result, sat = unsigned_sat_q(operand.int, self.saturate_to)
             processor.core_registers.set(self.d, zero_extend(result, 32))
             if sat:
-                processor.core_registers.set_cpsr_q(True)
+                processor.core_registers.cpsr.set_q(True)

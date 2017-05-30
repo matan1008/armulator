@@ -22,4 +22,4 @@ class Sadd8(AbstractOpcode):
             ge += "1" if sum3 >= 0 else "0"
             ge += "1" if sum2 >= 0 else "0"
             ge += "1" if sum1 >= 0 else "0"
-            processor.core_registers.set_cpsr_ge(ge)
+            processor.core_registers.cpsr.set_ge(ge)

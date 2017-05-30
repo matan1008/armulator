@@ -23,4 +23,4 @@ class Usub8(AbstractOpcode):
             ge += "1" if diff3 >= 0 else "0"
             ge += "1" if diff2 >= 0 else "0"
             ge += "1" if diff1 >= 0 else "0"
-            processor.core_registers.set_cpsr_ge(ge)
+            processor.core_registers.cpsr.set_ge(ge)

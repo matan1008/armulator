@@ -17,6 +17,6 @@ class EorImmediateA1(EorImmediate, Opcode):
         rd = instr[16:20]
         rn = instr[12:16]
         setflags = instr[11]
-        imm32, carry = arm_expand_imm_c(imm12, processor.core_registers.get_cpsr_c())
+        imm32, carry = arm_expand_imm_c(imm12, processor.core_registers.cpsr.get_c())
         return EorImmediateA1(instr, **{"setflags": setflags, "d": rd.uint, "n": rn.uint, "imm32": imm32,
                                         "carry": carry})

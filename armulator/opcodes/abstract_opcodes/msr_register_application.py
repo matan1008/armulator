@@ -12,10 +12,10 @@ class MsrRegisterApplication(AbstractOpcode):
         if processor.condition_passed():
             temp_register = processor.core_registers.get(self.n)
             if self.write_nzcvq:
-                processor.core_registers.set_cpsr_n(temp_register[0])
-                processor.core_registers.set_cpsr_z(temp_register[1])
-                processor.core_registers.set_cpsr_c(temp_register[2])
-                processor.core_registers.set_cpsr_v(temp_register[3])
-                processor.core_registers.set_cpsr_q(temp_register[4])
+                processor.core_registers.cpsr.set_n(temp_register[0])
+                processor.core_registers.cpsr.set_z(temp_register[1])
+                processor.core_registers.cpsr.set_c(temp_register[2])
+                processor.core_registers.cpsr.set_v(temp_register[3])
+                processor.core_registers.cpsr.set_q(temp_register[4])
             if self.write_g:
-                processor.core_registers.set_cpsr_ge(temp_register[12:16])
+                processor.core_registers.cpsr.set_ge(temp_register[12:16])

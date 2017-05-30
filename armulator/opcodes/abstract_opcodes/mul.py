@@ -19,7 +19,7 @@ class Mul(AbstractOpcode):
             f_result = BitArray(int=result, length=64)[32:]
             processor.core_registers.set(self.d, f_result)
             if self.setflags:
-                processor.core_registers.set_cpsr_n(f_result[0])
-                processor.core_registers.set_cpsr_z(not f_result.any(True))
+                processor.core_registers.cpsr.set_n(f_result[0])
+                processor.core_registers.cpsr.set_z(not f_result.any(True))
                 if ArchVersion() == 4:
-                    processor.core_registers.set_cpsr_c(False)  # uknown
+                    processor.core_registers.cpsr.set_c(False)  # uknown

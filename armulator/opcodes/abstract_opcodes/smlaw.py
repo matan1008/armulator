@@ -20,4 +20,4 @@ class Smlaw(AbstractOpcode):
                 processor.core_registers.get(self.a).int << 16)
             processor.core_registers.set(self.d, BitArray(int=result, length=48)[0:32])
             if (result >> 16) != processor.core_registers.get(self.d).int:
-                processor.core_registers.set_cpsr_q(True)
+                processor.core_registers.cpsr.set_q(True)

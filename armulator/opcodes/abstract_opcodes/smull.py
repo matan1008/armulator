@@ -19,8 +19,8 @@ class Smull(AbstractOpcode):
             processor.core_registers.set(self.d_hi, f_result[0:32])
             processor.core_registers.set(self.d_lo, f_result[32:])
             if self.setflags:
-                processor.core_registers.set_cpsr_n(f_result[0])
-                processor.core_registers.set_cpsr_z(not f_result.any(True))
+                processor.core_registers.cpsr.set_n(f_result[0])
+                processor.core_registers.cpsr.set_z(not f_result.any(True))
                 if ArchVersion() == 4:
-                    processor.core_registers.set_cpsr_c(False)  # uknown
-                    processor.core_registers.set_cpsr_v(False)  # uknown
+                    processor.core_registers.cpsr.set_c(False)  # uknown
+                    processor.core_registers.cpsr.set_v(False)  # uknown

@@ -22,4 +22,4 @@ class Uadd8(AbstractOpcode):
             ge += "1" if sum3 >= 0x100 else "0"
             ge += "1" if sum2 >= 0x100 else "0"
             ge += "1" if sum1 >= 0x100 else "0"
-            processor.core_registers.set_cpsr_ge(ge)
+            processor.core_registers.cpsr.set_ge(ge)

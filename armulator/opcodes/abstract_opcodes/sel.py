@@ -10,13 +10,12 @@ class Sel(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            ge = processor.core_registers.get_cpsr_ge()
-            temp_rd = processor.core_registers.get(self.n)[0:8] if ge[0] == "1" else processor.core_registers.get(
-                    self.m)[0:8]
-            temp_rd += processor.core_registers.get(self.n)[8:16] if ge[1] == "1" else processor.core_registers.get(
+            ge = processor.core_registers.cpsr.get_ge()
+            temp_rd = processor.core_registers.get(self.n)[0:8] if ge[0] else processor.core_registers.get(self.m)[0:8]
+            temp_rd += processor.core_registers.get(self.n)[8:16] if ge[1] else processor.core_registers.get(
                     self.m)[8:16]
-            temp_rd += processor.core_registers.get(self.n)[16:24] if ge[2] == "1" else processor.core_registers.get(
+            temp_rd += processor.core_registers.get(self.n)[16:24] if ge[2] else processor.core_registers.get(
                     self.m)[16:24]
-            temp_rd += processor.core_registers.get(self.n)[24:32] if ge[3] == "1" else processor.core_registers.get(
+            temp_rd += processor.core_registers.get(self.n)[24:32] if ge[3] else processor.core_registers.get(
                     self.m)[24:32]
             processor.core_registers.set(self.d, temp_rd)

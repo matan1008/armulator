@@ -18,7 +18,7 @@ class RsbImmediate(AbstractOpcode):
             else:
                 processor.core_registers.set(self.d, result)
                 if self.setflags:
-                    processor.core_registers.set_cpsr_n(result[0])
-                    processor.core_registers.set_cpsr_z(result.all(False))
-                    processor.core_registers.set_cpsr_c(carry)
-                    processor.core_registers.set_cpsr_v(overflow)
+                    processor.core_registers.cpsr.set_n(result[0])
+                    processor.core_registers.cpsr.set_z(result.all(False))
+                    processor.core_registers.cpsr.set_c(carry)
+                    processor.core_registers.cpsr.set_v(overflow)

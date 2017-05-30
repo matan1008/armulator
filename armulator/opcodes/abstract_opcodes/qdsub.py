@@ -15,4 +15,4 @@ class Qdsub(AbstractOpcode):
             result, sat2 = signed_sat_q(processor.core_registers.get(self.m).int - doubled.int, 32)
             processor.core_registers.set(self.d, result)
             if sat1 or sat2:
-                processor.core_registers.set_cpsr_q(True)
+                processor.core_registers.cpsr.set_q(True)

@@ -22,7 +22,7 @@ class LdrRegisterThumb(AbstractOpcode):
                 pass
             else:
                 offset = shift(processor.core_registers.get(self.m), self.shift_t, self.shift_n,
-                               processor.core_registers.get_cpsr_c())
+                               processor.core_registers.cpsr.get_c())
                 offset_addr = add(processor.core_registers.get(self.n), offset, 32)
                 address = offset_addr
                 data = processor.mem_u_get(address, 4)
