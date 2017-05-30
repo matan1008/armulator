@@ -21,7 +21,7 @@ class Ldrt(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            if processor.core_registers.current_mode_is_hyp():
+            if processor.registers.current_mode_is_hyp():
                 print "unpredictable"
             else:
                 try:
@@ -29,18 +29,18 @@ class Ldrt(AbstractOpcode):
                 except EndOfInstruction:
                     pass
                 else:
-                    offset = shift(processor.core_registers.get(self.m), self.shift_t, self.shift_n,
-                                   processor.core_registers.cpsr.get_c()) if self.register_form else self.imm32
-                    offset_addr = bits_add(processor.core_registers.get(self.n), offset, 32) if self.add else bits_sub(
-                            processor.core_registers.get(self.n), offset, 32)
-                    address = processor.core_registers.get(self.n) if self.post_index else offset_addr
+                    offset = shift(processor.registers.get(self.m), self.shift_t, self.shift_n,
+                                   processor.registers.cpsr.get_c()) if self.register_form else self.imm32
+                    offset_addr = bits_add(processor.registers.get(self.n), offset, 32) if self.add else bits_sub(
+                            processor.registers.get(self.n), offset, 32)
+                    address = processor.registers.get(self.n) if self.post_index else offset_addr
                     data = processor.mem_u_unpriv_get(address, 4)
                     if self.post_index:
-                        processor.core_registers.set(self.n, offset_addr)
+                        processor.registers.set(self.n, offset_addr)
                     if processor.unaligned_support() or address[30:32] == "0b00":
-                        processor.core_registers.set(self.t, data)
+                        processor.registers.set(self.t, data)
                     else:
-                        if processor.core_registers.current_instr_set() == InstrSet.InstrSet_ARM:
-                            processor.core_registers.set(self.t, ror(data, 8 * address[30:32].uint))
+                        if processor.registers.current_instr_set() == InstrSet.InstrSet_ARM:
+                            processor.registers.set(self.t, ror(data, 8 * address[30:32].uint))
                         else:
-                            processor.core_registers.set(self.t, BitArray(length=32))  # unknown
+                            processor.registers.set(self.t, BitArray(length=32))  # unknown

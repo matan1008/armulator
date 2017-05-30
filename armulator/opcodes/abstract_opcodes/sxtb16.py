@@ -12,7 +12,7 @@ class Sxtb16(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            rotated = ror(processor.core_registers.get(self.m), self.rotation)
+            rotated = ror(processor.registers.get(self.m), self.rotation)
             temp_rd = sign_extend(rotated[8:16], 16)
             temp_rd += sign_extend(rotated[24:32], 16)
-            processor.core_registers.set(self.d, temp_rd)
+            processor.registers.set(self.d, temp_rd)

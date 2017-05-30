@@ -12,10 +12,10 @@ class SubImmediateThumb(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            result, carry, overflow = add_with_carry(processor.core_registers.get(self.n), ~self.imm32, "1")
-            processor.core_registers.set(self.d, result)
+            result, carry, overflow = add_with_carry(processor.registers.get(self.n), ~self.imm32, "1")
+            processor.registers.set(self.d, result)
             if self.setflags:
-                processor.core_registers.cpsr.set_n(result[0])
-                processor.core_registers.cpsr.set_z(result.all(0))
-                processor.core_registers.cpsr.set_c(carry)
-                processor.core_registers.cpsr.set_v(overflow)
+                processor.registers.cpsr.set_n(result[0])
+                processor.registers.cpsr.set_z(result.all(0))
+                processor.registers.cpsr.set_c(carry)
+                processor.registers.cpsr.set_v(overflow)

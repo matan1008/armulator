@@ -16,5 +16,5 @@ class AddSpPlusImmediateA1(AddSpPlusImmediate, Opcode):
         imm12 = instr[20:32]
         rd = instr[16:20]
         setflags = instr[11]
-        imm32, carry = arm_expand_imm_c(imm12, processor.core_registers.cpsr.get_c())
+        imm32, carry = arm_expand_imm_c(imm12, processor.registers.cpsr.get_c())
         return AddSpPlusImmediateA1(instr, **{"setflags": setflags, "d": rd.uint, "imm32": imm32})

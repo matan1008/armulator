@@ -14,13 +14,13 @@ class AddRegisterShiftedRegister(AbstractOpcode):
         self.shift_t = shift_t
 
     def execute(self, processor):
-        shift_n = processor.core_registers.get(self.s)[24:32].uint
-        shifted = shift(processor.core_registers.get(self.m), self.shift_t, shift_n,
-                        processor.core_registers.cpsr.get_c())
-        result, carry, overflow = add_with_carry(processor.core_registers.get(self.n), shifted, "0")
-        processor.core_registers.set(self.d, result)
+        shift_n = processor.registers.get(self.s)[24:32].uint
+        shifted = shift(processor.registers.get(self.m), self.shift_t, shift_n,
+                        processor.registers.cpsr.get_c())
+        result, carry, overflow = add_with_carry(processor.registers.get(self.n), shifted, "0")
+        processor.registers.set(self.d, result)
         if self.setflags:
-            processor.core_registers.cpsr.set_n(result[0])
-            processor.core_registers.cpsr.set_z(not result.any(True))
-            processor.core_registers.cpsr.set_c(carry)
-            processor.core_registers.cpsr.set_v(overflow)
+            processor.registers.cpsr.set_n(result[0])
+            processor.registers.cpsr.set_z(not result.any(True))
+            processor.registers.cpsr.set_c(carry)
+            processor.registers.cpsr.set_v(overflow)

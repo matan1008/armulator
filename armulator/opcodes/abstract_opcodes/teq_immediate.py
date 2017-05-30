@@ -10,7 +10,7 @@ class TeqImmediate(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            result = processor.core_registers.get(self.n) ^ self.imm32
-            processor.core_registers.cpsr.set_n(result[0])
-            processor.core_registers.cpsr.set_z(result.all(False))
-            processor.core_registers.cpsr.set_c(self.carry)
+            result = processor.registers.get(self.n) ^ self.imm32
+            processor.registers.cpsr.set_n(result[0])
+            processor.registers.cpsr.set_z(result.all(False))
+            processor.registers.cpsr.set_c(self.carry)

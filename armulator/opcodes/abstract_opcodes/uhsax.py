@@ -11,7 +11,7 @@ class Uhsax(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            sum_ = processor.core_registers.get(self.n)[16:32].uint + processor.core_registers.get(self.m)[0:16].uint
-            diff = processor.core_registers.get(self.n)[0:16].uint - processor.core_registers.get(self.m)[16:32].uint
-            processor.core_registers.set(self.d,
+            sum_ = processor.registers.get(self.n)[16:32].uint + processor.registers.get(self.m)[0:16].uint
+            diff = processor.registers.get(self.n)[0:16].uint - processor.registers.get(self.m)[16:32].uint
+            processor.registers.set(self.d,
                                          BitArray(int=diff, length=17)[0:16] + BitArray(int=sum_, length=17)[0:16])

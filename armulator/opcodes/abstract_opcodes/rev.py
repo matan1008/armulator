@@ -9,8 +9,8 @@ class Rev(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            result = processor.core_registers.get(self.m)[24:32]
-            result += processor.core_registers.get(self.m)[16:24]
-            result += processor.core_registers.get(self.m)[8:16]
-            result += processor.core_registers.get(self.m)[0:8]
-            processor.core_registers.set(self.d, result)
+            result = processor.registers.get(self.m)[24:32]
+            result += processor.registers.get(self.m)[16:24]
+            result += processor.registers.get(self.m)[8:16]
+            result += processor.registers.get(self.m)[0:8]
+            processor.registers.set(self.d, result)

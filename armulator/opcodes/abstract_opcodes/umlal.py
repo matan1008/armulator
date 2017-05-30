@@ -14,14 +14,14 @@ class Umlal(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            result = processor.core_registers.get(self.n).uint * processor.core_registers.get(self.m).uint + (
-                processor.core_registers.get(self.d_hi) + processor.core_registers.get(self.d_lo)).uint
+            result = processor.registers.get(self.n).uint * processor.registers.get(self.m).uint + (
+                processor.registers.get(self.d_hi) + processor.registers.get(self.d_lo)).uint
             f_result = BitArray(uint=result, length=64)
-            processor.core_registers.set(self.d_hi, f_result[0:32])
-            processor.core_registers.set(self.d_lo, f_result[32:])
+            processor.registers.set(self.d_hi, f_result[0:32])
+            processor.registers.set(self.d_lo, f_result[32:])
             if self.setflags:
-                processor.core_registers.cpsr.set_n(f_result[0])
-                processor.core_registers.cpsr.set_z(not f_result.any(True))
+                processor.registers.cpsr.set_n(f_result[0])
+                processor.registers.cpsr.set_z(not f_result.any(True))
                 if ArchVersion() == 4:
-                    processor.core_registers.cpsr.set_c(False)  # unknown
-                    processor.core_registers.cpsr.set_v(False)  # unknown
+                    processor.registers.cpsr.set_c(False)  # unknown
+                    processor.registers.cpsr.set_v(False)  # unknown

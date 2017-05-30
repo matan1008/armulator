@@ -24,15 +24,15 @@ class LdrhRegister(AbstractOpcode):
             except EndOfInstruction:
                 pass
             else:
-                offset = shift(processor.core_registers.get(self.m), self.shift_t, self.shift_n,
-                               processor.core_registers.cpsr.get_c())
-                offset_addr = bits_add(processor.core_registers.get(self.n), offset, 32) if self.add else bits_sub(
-                        processor.core_registers.get(self.n), offset, 32)
-                address = offset_addr if self.index else processor.core_registers.get(self.n)
+                offset = shift(processor.registers.get(self.m), self.shift_t, self.shift_n,
+                               processor.registers.cpsr.get_c())
+                offset_addr = bits_add(processor.registers.get(self.n), offset, 32) if self.add else bits_sub(
+                        processor.registers.get(self.n), offset, 32)
+                address = offset_addr if self.index else processor.registers.get(self.n)
                 data = processor.mem_u_get(address, 2)
                 if self.wback:
-                    processor.core_registers.set(self.n, offset_addr)
+                    processor.registers.set(self.n, offset_addr)
                 if processor.unaligned_support() or not address[31]:
-                    processor.core_registers.set(self.t, zero_extend(data, 32))
+                    processor.registers.set(self.t, zero_extend(data, 32))
                 else:
-                    processor.core_registers.set(self.t, BitArray(length=32))  # unknown
+                    processor.registers.set(self.t, BitArray(length=32))  # unknown

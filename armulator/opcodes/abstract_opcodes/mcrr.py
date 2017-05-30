@@ -13,6 +13,6 @@ class Mcrr(AbstractOpcode):
             if not processor.coproc_accepted(self.cp, processor.this_instr()):
                 processor.generate_coprocessor_exception()
             else:
-                processor.coproc_send_two_words(processor.core_registers.get(self.t2),
-                                                processor.core_registers.get(self.t), self.cp,
+                processor.coproc_send_two_words(processor.registers.get(self.t2),
+                                                processor.registers.get(self.t), self.cp,
                                                 processor.this_instr())

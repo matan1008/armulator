@@ -17,10 +17,10 @@ class Ldrexd(AbstractOpcode):
             except EndOfInstruction:
                 pass
             else:
-                address = processor.core_registers.get(self.n)
+                address = processor.registers.get(self.n)
                 if address[29:32] != "0b000":
                     processor.alignment_fault(address, False)
                 processor.set_exclusive_monitors(address, 8)
-                processor.core_registers.set(self.t, processor.mem_a_get(address, 4))
-                processor.core_registers.set(self.t2,
+                processor.registers.set(self.t, processor.mem_a_get(address, 4))
+                processor.registers.set(self.t2,
                                              processor.mem_a_get(BitArray(uint=address.uint + 4, length=32), 4))

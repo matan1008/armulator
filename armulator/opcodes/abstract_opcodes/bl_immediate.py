@@ -12,13 +12,13 @@ class BlImmediate(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            if processor.core_registers.current_instr_set() == InstrSet.InstrSet_ARM:
-                processor.core_registers.set_lr(sub(processor.core_registers.get_pc(), BitArray(bin="100"), 32))
+            if processor.registers.current_instr_set() == InstrSet.InstrSet_ARM:
+                processor.registers.set_lr(sub(processor.registers.get_pc(), BitArray(bin="100"), 32))
             else:
-                processor.core_registers.set_lr(processor.core_registers.get_pc()[0:31] + "0b1")
+                processor.registers.set_lr(processor.registers.get_pc()[0:31] + "0b1")
             if self.target_instr_set == InstrSet.InstrSet_ARM:
-                target_address = add(align(processor.core_registers.get_pc(), 4), self.imm32, 32)
+                target_address = add(align(processor.registers.get_pc(), 4), self.imm32, 32)
             else:
-                target_address = add(processor.core_registers.get_pc(), self.imm32, 32)
-            processor.core_registers.select_instr_set(self.target_instr_set)
+                target_address = add(processor.registers.get_pc(), self.imm32, 32)
+            processor.registers.select_instr_set(self.target_instr_set)
             processor.branch_write_pc(target_address)

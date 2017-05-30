@@ -10,9 +10,9 @@ class Enterx(AbstractOpcode):
 
     def execute(self, processor):
         if self.is_enterx:
-            if processor.core_registers.current_mode_is_hyp():
+            if processor.registers.current_mode_is_hyp():
                 raise UndefinedInstructionException()
             else:
-                processor.core_registers.select_instr_set(InstrSet.InstrSet_ThumbEE)
+                processor.registers.select_instr_set(InstrSet.InstrSet_ThumbEE)
         else:
-            processor.core_registers.select_instr_set(InstrSet.InstrSet_Thumb)
+            processor.registers.select_instr_set(InstrSet.InstrSet_Thumb)

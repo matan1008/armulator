@@ -25,7 +25,7 @@ class BlImmediateT2(BlImmediate, Opcode):
         i2 = ~(j2 ^ s)
         imm32 = sign_extend(s + i1 + i2 + imm10h + imm10l + "0b00", 32)
         target_instr_set = InstrSet.InstrSet_ARM
-        if processor.core_registers.current_instr_set() == InstrSet.InstrSet_ThumbEE or h:
+        if processor.registers.current_instr_set() == InstrSet.InstrSet_ThumbEE or h:
             raise UndefinedInstructionException()
         elif processor.in_it_block() and not processor.last_in_it_block():
             print "unpredictable"

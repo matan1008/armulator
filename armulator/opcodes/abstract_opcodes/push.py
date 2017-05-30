@@ -17,7 +17,7 @@ class Push(AbstractOpcode):
             except EndOfInstruction:
                 pass
             else:
-                address = sub(processor.core_registers.get_sp(),
+                address = sub(processor.registers.get_sp(),
                               BitArray(uint=(4 * self.registers.count(1)), length=32), 32)
                 for i in xrange(15):
                     if self.registers[15 - i]:
@@ -25,15 +25,15 @@ class Push(AbstractOpcode):
                             processor.mem_a_set(address, 4, BitArray(length=32))  # unknown
                         else:
                             if self.unaligned_allowed:
-                                processor.mem_u_set(address, 4, processor.core_registers.get(i))
+                                processor.mem_u_set(address, 4, processor.registers.get(i))
                             else:
-                                processor.mem_a_set(address, 4, processor.core_registers.get(i))
+                                processor.mem_a_set(address, 4, processor.registers.get(i))
                         address = add(address, BitArray(bin="100"), 32)
                 if self.registers[0]:
                     if self.unaligned_allowed:
-                        processor.mem_u_set(address, 4, processor.core_registers.pc_store_value())
+                        processor.mem_u_set(address, 4, processor.registers.pc_store_value())
                     else:
-                        processor.mem_a_set(address, 4, processor.core_registers.pc_store_value())
-                processor.core_registers.set_sp(
-                        sub(processor.core_registers.get_sp(), BitArray(uint=(4 * self.registers.count(1)), length=32),
+                        processor.mem_a_set(address, 4, processor.registers.pc_store_value())
+                processor.registers.set_sp(
+                        sub(processor.registers.get_sp(), BitArray(uint=(4 * self.registers.count(1)), length=32),
                             32))

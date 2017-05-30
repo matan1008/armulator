@@ -8,4 +8,4 @@ class Bx(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            processor.bx_write_pc(processor.core_registers.get(self.m))
+            processor.bx_write_pc(processor.registers.get(self.m))

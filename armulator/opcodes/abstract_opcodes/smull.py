@@ -14,13 +14,13 @@ class Smull(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            result = processor.core_registers.get(self.n).int * processor.core_registers.get(self.m).int
+            result = processor.registers.get(self.n).int * processor.registers.get(self.m).int
             f_result = BitArray(int=result, length=64)
-            processor.core_registers.set(self.d_hi, f_result[0:32])
-            processor.core_registers.set(self.d_lo, f_result[32:])
+            processor.registers.set(self.d_hi, f_result[0:32])
+            processor.registers.set(self.d_lo, f_result[32:])
             if self.setflags:
-                processor.core_registers.cpsr.set_n(f_result[0])
-                processor.core_registers.cpsr.set_z(not f_result.any(True))
+                processor.registers.cpsr.set_n(f_result[0])
+                processor.registers.cpsr.set_z(not f_result.any(True))
                 if ArchVersion() == 4:
-                    processor.core_registers.cpsr.set_c(False)  # uknown
-                    processor.core_registers.cpsr.set_v(False)  # uknown
+                    processor.registers.cpsr.set_c(False)  # uknown
+                    processor.registers.cpsr.set_v(False)  # uknown

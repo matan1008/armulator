@@ -11,8 +11,8 @@ class Ssat16(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            result1, sat1 = signed_sat_q(processor.core_registers.get(self.n)[16:32].int, self.saturate_to)
-            result2, sat2 = signed_sat_q(processor.core_registers.get(self.n)[0:16].int, self.saturate_to)
-            processor.core_registers.set(self.d, sign_extend(result2, 16) + sign_extend(result1, 16))
+            result1, sat1 = signed_sat_q(processor.registers.get(self.n)[16:32].int, self.saturate_to)
+            result2, sat2 = signed_sat_q(processor.registers.get(self.n)[0:16].int, self.saturate_to)
+            processor.registers.set(self.d, sign_extend(result2, 16) + sign_extend(result1, 16))
             if sat1 or sat2:
-                processor.core_registers.cpsr.set_q(True)
+                processor.registers.cpsr.set_q(True)

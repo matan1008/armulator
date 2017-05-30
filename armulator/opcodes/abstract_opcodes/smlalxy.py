@@ -14,11 +14,11 @@ class Smlalxy(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            operand1 = processor.core_registers.get(self.n)[0:16] if self.n_high else processor.core_registers.get(
+            operand1 = processor.registers.get(self.n)[0:16] if self.n_high else processor.registers.get(
                     self.n)[16:]
-            operand2 = processor.core_registers.get(self.m)[0:16] if self.m_high else processor.core_registers.get(
+            operand2 = processor.registers.get(self.m)[0:16] if self.m_high else processor.registers.get(
                     self.m)[16:]
-            d_total = (processor.core_registers.get(self.d_hi) + processor.core_registers.get(self.d_lo)).int
+            d_total = (processor.registers.get(self.d_hi) + processor.registers.get(self.d_lo)).int
             result = operand1.int * operand2.int + d_total
-            processor.core_registers.set(self.d_hi, BitArray(int=result, length=64)[0:32])
-            processor.core_registers.set(self.d_lo, BitArray(int=result, length=64)[32:64])
+            processor.registers.set(self.d_hi, BitArray(int=result, length=64)[0:32])
+            processor.registers.set(self.d_lo, BitArray(int=result, length=64)[32:64])

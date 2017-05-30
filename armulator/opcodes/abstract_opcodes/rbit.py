@@ -12,5 +12,5 @@ class Rbit(AbstractOpcode):
         if processor.condition_passed():
             result = BitArray(length=32)
             for i in xrange(32):
-                result[i] = processor.core_registers.get(self.m)[31 - i]
-            processor.core_registers.set(self.d, result)
+                result[i] = processor.registers.get(self.m)[31 - i]
+            processor.registers.set(self.d, result)

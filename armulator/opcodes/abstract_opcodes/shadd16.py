@@ -11,7 +11,7 @@ class Shadd16(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            sum1 = processor.core_registers.get(self.n)[16:32].int + processor.core_registers.get(self.m)[16:32].int
-            sum2 = processor.core_registers.get(self.n)[0:16].int + processor.core_registers.get(self.m)[0:16].int
-            processor.core_registers.set(self.d,
+            sum1 = processor.registers.get(self.n)[16:32].int + processor.registers.get(self.m)[16:32].int
+            sum2 = processor.registers.get(self.n)[0:16].int + processor.registers.get(self.m)[0:16].int
+            processor.registers.set(self.d,
                                          BitArray(int=sum2, length=17)[0:16] + BitArray(int=sum1, length=17)[0:16])

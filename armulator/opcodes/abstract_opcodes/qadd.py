@@ -12,7 +12,7 @@ class Qadd(AbstractOpcode):
     def execute(self, processor):
         if processor.condition_passed():
             result, sat = signed_sat_q(
-                    processor.core_registers.get(self.m).int + processor.core_registers.get(self.n).int, 32)
-            processor.core_registers.set(self.d, result)
+                    processor.registers.get(self.m).int + processor.registers.get(self.n).int, 32)
+            processor.registers.set(self.d, result)
             if sat:
-                processor.core_registers.cpsr.set_q(True)
+                processor.registers.cpsr.set_q(True)

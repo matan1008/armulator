@@ -18,12 +18,12 @@ class Strexd(AbstractOpcode):
             except EndOfInstruction:
                 pass
             else:
-                address = processor.core_registers.get(self.n)
-                value = processor.core_registers.get(self.t) + processor.core_registers.get(
-                        self.t2) if processor.big_endian() else processor.core_registers.get(
-                    self.t2) + processor.core_registers.get(self.t)
+                address = processor.registers.get(self.n)
+                value = processor.registers.get(self.t) + processor.registers.get(
+                        self.t2) if processor.big_endian() else processor.registers.get(
+                    self.t2) + processor.registers.get(self.t)
                 if processor.exclusive_monitors_pass(address, 4):
                     processor.mem_a_set(address, 8, value)
-                    processor.core_registers.set(self.d, BitArray(bin="00000000000000000000000000000000"))
+                    processor.registers.set(self.d, BitArray(bin="00000000000000000000000000000000"))
                 else:
-                    processor.core_registers.set(self.d, BitArray(bin="00000000000000000000000000000001"))
+                    processor.registers.set(self.d, BitArray(bin="00000000000000000000000000000001"))

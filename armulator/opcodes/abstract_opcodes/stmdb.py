@@ -18,7 +18,7 @@ class Stmdb(AbstractOpcode):
             except EndOfInstruction:
                 pass
             else:
-                address = sub(processor.core_registers.get(self.n),
+                address = sub(processor.registers.get(self.n),
                               BitArray(uint=(4 * self.registers.count(1)), length=32),
                               32)
                 for i in xrange(15):
@@ -26,11 +26,11 @@ class Stmdb(AbstractOpcode):
                         if i == self.n and self.wback and i != lowest_set_bit_ref(self.registers):
                             processor.mem_a_set(address, 4, BitArray(length=32))  # unknown
                         else:
-                            processor.mem_a_set(address, 4, processor.core_registers.get(i))
+                            processor.mem_a_set(address, 4, processor.registers.get(i))
                         address = add(address, BitArray(bin="100"), 32)
                 if self.registers[0]:
-                    processor.mem_a_set(address, 4, processor.core_registers.pc_store_value())
+                    processor.mem_a_set(address, 4, processor.registers.pc_store_value())
                 if self.wback:
-                    processor.core_registers.set(self.n, sub(processor.core_registers.get(self.n),
+                    processor.registers.set(self.n, sub(processor.registers.get(self.n),
                                                              BitArray(uint=(4 * self.registers.count(1)), length=32),
                                                              32))

@@ -10,5 +10,5 @@ class Cbz(AbstractOpcode):
         self.imm32 = imm32
 
     def execute(self, processor):
-        if self.nonzero != processor.core_registers.get(self.n).all(0):
-            processor.branch_write_pc(add(processor.core_registers.get_pc(), self.imm32, 32))
+        if self.nonzero != processor.registers.get(self.n).all(0):
+            processor.branch_write_pc(add(processor.registers.get_pc(), self.imm32, 32))

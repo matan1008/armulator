@@ -11,9 +11,9 @@ class MsrRegisterSystem(AbstractOpcode):
     def execute(self, processor):
         if processor.condition_passed():
             if self.write_spsr:
-                processor.core_registers.spsr_write_by_instr(processor.core_registers.get(self.n), self.mask)
+                processor.registers.spsr_write_by_instr(processor.registers.get(self.n), self.mask)
             else:
-                processor.core_registers.cpsr_write_by_instr(processor.core_registers.get(self.n), self.mask, False)
-                if (processor.core_registers.cpsr.get_m() == "0b11010" and
-                        processor.core_registers.cpsr.get_j() and processor.core_registers.cpsr.get_t()):
+                processor.registers.cpsr_write_by_instr(processor.registers.get(self.n), self.mask, False)
+                if (processor.registers.cpsr.get_m() == "0b11010" and
+                        processor.registers.cpsr.get_j() and processor.registers.cpsr.get_t()):
                     print "unpredictable"

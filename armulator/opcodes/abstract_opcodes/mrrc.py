@@ -14,5 +14,5 @@ class Mrrc(AbstractOpcode):
                 processor.generate_coprocessor_exception()
             else:
                 rt2, rt = processor.coproc_get_two_words(self.cp, processor.this_instr())
-                processor.core_registers.set(self.t2, rt2)
-                processor.core_registers.set(self.t, rt)
+                processor.registers.set(self.t2, rt2)
+                processor.registers.set(self.t, rt)

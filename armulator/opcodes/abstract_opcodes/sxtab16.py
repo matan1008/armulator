@@ -13,7 +13,7 @@ class Sxtab16(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            rotated = ror(processor.core_registers.get(self.m), self.rotation)
-            temp_rd = add(processor.core_registers.get(self.n)[0:16], sign_extend(rotated[8:16], 16), 16)
-            temp_rd += add(processor.core_registers.get(self.n)[16:32], sign_extend(rotated[24:32], 16), 16)
-            processor.core_registers.set(self.d, temp_rd)
+            rotated = ror(processor.registers.get(self.m), self.rotation)
+            temp_rd = add(processor.registers.get(self.n)[0:16], sign_extend(rotated[8:16], 16), 16)
+            temp_rd += add(processor.registers.get(self.n)[16:32], sign_extend(rotated[24:32], 16), 16)
+            processor.registers.set(self.d, temp_rd)

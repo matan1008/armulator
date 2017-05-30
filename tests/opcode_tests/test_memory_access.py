@@ -9,12 +9,12 @@ def test_ldr_register_thumb():
     arm.take_reset()
     instr = BitArray(bin="0101100001010011")
     # setting Data Region registers
-    arm.core_registers.drsrs[0].set_en(True) # enabling memory region
-    arm.core_registers.drsrs[0].set_rsize("0b00010") # setting region size
-    arm.core_registers.drbars[0] = BitArray(hex="0x0F000000") # setting region base address
-    arm.core_registers.dracrs[0].set_ap("0b011") # setting access permissions
-    arm.core_registers.mpuir.set_iregion("0x01") # declaring the region
-    arm.core_registers.mpuir.set_dregion("0x01") # declaring the region
+    arm.registers.drsrs[0].set_en(True) # enabling memory region
+    arm.registers.drsrs[0].set_rsize("0b00010") # setting region size
+    arm.registers.drbars[0] = BitArray(hex="0x0F000000") # setting region base address
+    arm.registers.dracrs[0].set_ap("0b011") # setting access permissions
+    arm.registers.mpuir.set_iregion("0x01") # declaring the region
+    arm.registers.mpuir.set_dregion("0x01") # declaring the region
     ram_memory = RAM(0x100)
     ram_memory.write(0x4, 4, "ECIN")
     arm.mem.memories.append((ram_memory, (0x0F000000, 0x0F000100)))
@@ -26,6 +26,6 @@ def test_ldr_register_thumb():
     assert opcode.t == 3
     assert opcode.shift_n == 0
     assert opcode.shift_t == SRType.SRType_LSL
-    arm.core_registers.set(opcode.n, BitArray(hex="0x0F000004"))
+    arm.registers.set(opcode.n, BitArray(hex="0x0F000004"))
     arm.execute_instruction(opcode)
-    assert arm.core_registers.get(opcode.t).bytes == "NICE"
+    assert arm.registers.get(opcode.t).bytes == "NICE"

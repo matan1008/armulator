@@ -10,16 +10,16 @@ class Smc(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            if HaveSecurityExt() and processor.core_registers.current_mode_is_not_user():
-                if (HaveVirtExt() and not processor.core_registers.is_secure() and
-                        not processor.core_registers.current_mode_is_hyp() and
-                        processor.core_registers.hcr.get_tsc()):
+            if HaveSecurityExt() and processor.registers.current_mode_is_not_user():
+                if (HaveVirtExt() and not processor.registers.is_secure() and
+                        not processor.registers.current_mode_is_hyp() and
+                        processor.registers.hcr.get_tsc()):
                     hsr_string = BitArray(25)
                     processor.write_hsr("010011", hsr_string)
-                    processor.core_registers.take_hyp_trap_exception()
+                    processor.registers.take_hyp_trap_exception()
                 else:
-                    if processor.core_registers.scr.get_scd():
-                        if processor.core_registers.is_secure():
+                    if processor.registers.scr.get_scd():
+                        if processor.registers.is_secure():
                             print "unpredictable"
                         else:
                             raise UndefinedInstructionException()

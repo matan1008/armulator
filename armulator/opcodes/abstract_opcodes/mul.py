@@ -13,13 +13,13 @@ class Mul(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            operand1 = processor.core_registers.get(self.n).int
-            operand2 = processor.core_registers.get(self.m).int
+            operand1 = processor.registers.get(self.n).int
+            operand2 = processor.registers.get(self.m).int
             result = operand1 * operand2
             f_result = BitArray(int=result, length=64)[32:]
-            processor.core_registers.set(self.d, f_result)
+            processor.registers.set(self.d, f_result)
             if self.setflags:
-                processor.core_registers.cpsr.set_n(f_result[0])
-                processor.core_registers.cpsr.set_z(not f_result.any(True))
+                processor.registers.cpsr.set_n(f_result[0])
+                processor.registers.cpsr.set_z(not f_result.any(True))
                 if ArchVersion() == 4:
-                    processor.core_registers.cpsr.set_c(False)  # uknown
+                    processor.registers.cpsr.set_c(False)  # uknown

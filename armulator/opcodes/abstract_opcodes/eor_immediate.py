@@ -12,12 +12,12 @@ class EorImmediate(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            result = processor.core_registers.get(self.n) ^ self.imm32
+            result = processor.registers.get(self.n) ^ self.imm32
             if self.d == 15:
                 processor.alu_write_pc(result)
             else:
-                processor.core_registers.set(self.d, result)
+                processor.registers.set(self.d, result)
                 if self.setflags:
-                    processor.core_registers.cpsr.set_n(result[0])
-                    processor.core_registers.cpsr.set_z(result.all(False))
-                    processor.core_registers.cpsr.set_c(self.carry)
+                    processor.registers.cpsr.set_n(result[0])
+                    processor.registers.cpsr.set_z(result.all(False))
+                    processor.registers.cpsr.set_c(self.carry)

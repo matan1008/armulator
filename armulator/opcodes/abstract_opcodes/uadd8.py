@@ -11,15 +11,15 @@ class Uadd8(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            sum1 = processor.core_registers.get(self.n)[24:32].uint + processor.core_registers.get(self.m)[24:32].uint
-            sum2 = processor.core_registers.get(self.n)[16:24].uint + processor.core_registers.get(self.m)[16:24].uint
-            sum3 = processor.core_registers.get(self.n)[8:16].uint + processor.core_registers.get(self.m)[8:16].uint
-            sum4 = processor.core_registers.get(self.n)[0:8].uint + processor.core_registers.get(self.m)[0:8].uint
-            processor.core_registers.set(self.d, BitArray(int=sum4, length=8) + BitArray(int=sum3, length=8) + BitArray(
+            sum1 = processor.registers.get(self.n)[24:32].uint + processor.registers.get(self.m)[24:32].uint
+            sum2 = processor.registers.get(self.n)[16:24].uint + processor.registers.get(self.m)[16:24].uint
+            sum3 = processor.registers.get(self.n)[8:16].uint + processor.registers.get(self.m)[8:16].uint
+            sum4 = processor.registers.get(self.n)[0:8].uint + processor.registers.get(self.m)[0:8].uint
+            processor.registers.set(self.d, BitArray(int=sum4, length=8) + BitArray(int=sum3, length=8) + BitArray(
                 int=sum2, length=8) + BitArray(int=sum1, length=8))
             ge = "0b"
             ge += "1" if sum4 >= 0x100 else "0"
             ge += "1" if sum3 >= 0x100 else "0"
             ge += "1" if sum2 >= 0x100 else "0"
             ge += "1" if sum1 >= 0x100 else "0"
-            processor.core_registers.cpsr.set_ge(ge)
+            processor.registers.cpsr.set_ge(ge)

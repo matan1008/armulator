@@ -14,8 +14,8 @@ class CpsThumb(AbstractOpcode):
         self.mode = mode
 
     def execute(self, processor):
-        if processor.core_registers.current_mode_is_not_user():
-            cpsr_val = processor.core_registers.cpsr.value
+        if processor.registers.current_mode_is_not_user():
+            cpsr_val = processor.registers.cpsr.value
             if self.enable:
                 if self.affect_a:
                     cpsr_val[23] = False
@@ -32,8 +32,8 @@ class CpsThumb(AbstractOpcode):
                     cpsr_val[25] = True
             if self.change_mode:
                 cpsr_val[27:32] = self.mode
-            processor.core_registers.cpsr_write_by_instr(cpsr_val, BitArray(bin="1111"), False)
-            if (processor.core_registers.cpsr.get_m() == "0b11010" and
-                    processor.core_registers.cpsr.get_j() and
-                    processor.core_registers.cpsr.get_t()):
+            processor.registers.cpsr_write_by_instr(cpsr_val, BitArray(bin="1111"), False)
+            if (processor.registers.cpsr.get_m() == "0b11010" and
+                    processor.registers.cpsr.get_j() and
+                    processor.registers.cpsr.get_t()):
                 print "unpredictable"

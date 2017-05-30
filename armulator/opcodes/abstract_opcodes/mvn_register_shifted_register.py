@@ -12,12 +12,12 @@ class MvnRegisterShiftedRegister(AbstractOpcode):
         self.shift_t = shift_t
 
     def execute(self, processor):
-        shift_n = processor.core_registers.get(self.s)[24:32].uint
-        shifted, carry = shift_c(processor.core_registers.get(self.m), self.shift_t, shift_n,
-                                 processor.core_registers.cpsr.get_c())
+        shift_n = processor.registers.get(self.s)[24:32].uint
+        shifted, carry = shift_c(processor.registers.get(self.m), self.shift_t, shift_n,
+                                 processor.registers.cpsr.get_c())
         result = ~shifted
-        processor.core_registers.set(self.d, result)
+        processor.registers.set(self.d, result)
         if self.setflags:
-            processor.core_registers.cpsr.set_n(result[0])
-            processor.core_registers.cpsr.set_z(not result.any(True))
-            processor.core_registers.cpsr.set_c(carry)
+            processor.registers.cpsr.set_n(result[0])
+            processor.registers.cpsr.set_z(not result.any(True))
+            processor.registers.cpsr.set_c(carry)

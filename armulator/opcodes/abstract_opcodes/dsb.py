@@ -35,12 +35,12 @@ class Dsb(AbstractOpcode):
                 domain = MBReqDomain.MBReqDomain_FullSystem
                 types = MBReqTypes.MBReqTypes_All
             if (HaveVirtExt() and
-                    not processor.core_registers.is_secure() and
-                    not processor.core_registers.current_mode_is_hyp()):
-                if processor.core_registers.hcr.get_bsu() == "0b11":
+                    not processor.registers.is_secure() and
+                    not processor.registers.current_mode_is_hyp()):
+                if processor.registers.hcr.get_bsu() == "0b11":
                     domain = MBReqDomain.MBReqDomain_FullSystem
-                if processor.core_registers.hcr.get_bsu() == "0b10" and domain != MBReqDomain.MBReqDomain_FullSystem:
+                if processor.registers.hcr.get_bsu() == "0b10" and domain != MBReqDomain.MBReqDomain_FullSystem:
                     domain = MBReqDomain.MBReqDomain_OuterShareable
-                if processor.core_registers.hcr.get_bsu() == "0b01" and domain == MBReqDomain.MBReqDomain_Nonshareable:
+                if processor.registers.hcr.get_bsu() == "0b01" and domain == MBReqDomain.MBReqDomain_Nonshareable:
                     domain = MBReqDomain.MBReqDomain_InnerShareable
             processor.data_synchronization_barrier(domain, types)

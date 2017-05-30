@@ -11,5 +11,5 @@ class Clz(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            processor.core_registers.set(self.d, BitArray(
-                    uint=count_leading_zero_bits(processor.core_registers.get(self.m)), length=32))
+            processor.registers.set(self.d, BitArray(
+                    uint=count_leading_zero_bits(processor.registers.get(self.m)), length=32))

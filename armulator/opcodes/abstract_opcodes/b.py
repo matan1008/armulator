@@ -9,4 +9,4 @@ class B(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            processor.branch_write_pc(add(processor.core_registers.get_pc(), self.imm32, 32))
+            processor.branch_write_pc(add(processor.registers.get_pc(), self.imm32, 32))

@@ -15,5 +15,5 @@ class TstImmediateA1(TstImmediate, Opcode):
     def from_bitarray(instr, processor):
         imm12 = instr[20:32]
         rn = instr[12:16]
-        imm32, carry = arm_expand_imm_c(imm12, processor.core_registers.cpsr.get_c())
+        imm32, carry = arm_expand_imm_c(imm12, processor.registers.cpsr.get_c())
         return TstImmediateA1(instr, **{"n": rn.uint, "imm32": imm32, "carry": carry})

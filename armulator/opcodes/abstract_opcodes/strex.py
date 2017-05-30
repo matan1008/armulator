@@ -19,9 +19,9 @@ class Strex(AbstractOpcode):
             except EndOfInstruction:
                 pass
             else:
-                address = add(processor.core_registers.get(self.n), self.imm32, 32)
+                address = add(processor.registers.get(self.n), self.imm32, 32)
                 if processor.exclusive_monitors_pass(address, 4):
-                    processor.mem_a_set(address, 4, processor.core_registers.get(self.t))
-                    processor.core_registers.set(self.d, BitArray(bin="00000000000000000000000000000000"))
+                    processor.mem_a_set(address, 4, processor.registers.get(self.t))
+                    processor.registers.set(self.d, BitArray(bin="00000000000000000000000000000000"))
                 else:
-                    processor.core_registers.set(self.d, BitArray(bin="00000000000000000000000000000001"))
+                    processor.registers.set(self.d, BitArray(bin="00000000000000000000000000000001"))

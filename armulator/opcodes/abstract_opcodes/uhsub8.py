@@ -11,11 +11,11 @@ class Uhsub8(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            diff1 = processor.core_registers.get(self.n)[24:32].uint - processor.core_registers.get(self.m)[24:32].uint
-            diff2 = processor.core_registers.get(self.n)[16:24].uint - processor.core_registers.get(self.m)[16:24].uint
-            diff3 = processor.core_registers.get(self.n)[8:16].uint - processor.core_registers.get(self.m)[8:16].uint
-            diff4 = processor.core_registers.get(self.n)[0:8].uint - processor.core_registers.get(self.m)[0:8].uint
-            processor.core_registers.set(self.d, BitArray(int=diff4, length=9)[0:8] + BitArray(int=diff3, length=9)[
+            diff1 = processor.registers.get(self.n)[24:32].uint - processor.registers.get(self.m)[24:32].uint
+            diff2 = processor.registers.get(self.n)[16:24].uint - processor.registers.get(self.m)[16:24].uint
+            diff3 = processor.registers.get(self.n)[8:16].uint - processor.registers.get(self.m)[8:16].uint
+            diff4 = processor.registers.get(self.n)[0:8].uint - processor.registers.get(self.m)[0:8].uint
+            processor.registers.set(self.d, BitArray(int=diff4, length=9)[0:8] + BitArray(int=diff3, length=9)[
                                                                                       0:8] + BitArray(int=diff2,
                                                                                                       length=9)[
                                                                                              0:8] + BitArray(int=diff1,

@@ -15,8 +15,8 @@ class MovImmediate(AbstractOpcode):
             if self.d == 15:
                 processor.alu_write_pc(result)
             else:
-                processor.core_registers.set(self.d, result)
+                processor.registers.set(self.d, result)
                 if self.setflags:
-                    processor.core_registers.cpsr.set_n(result[0])
-                    processor.core_registers.cpsr.set_z(result.all(False))
-                    processor.core_registers.cpsr.set_c(self.carry)
+                    processor.registers.cpsr.set_n(result[0])
+                    processor.registers.cpsr.set_z(result.all(False))
+                    processor.registers.cpsr.set_c(self.carry)

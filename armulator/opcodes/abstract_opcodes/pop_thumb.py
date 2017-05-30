@@ -17,10 +17,10 @@ class PopThumb(AbstractOpcode):
             except EndOfInstruction:
                 pass
             else:
-                address = processor.core_registers.get_sp()
+                address = processor.registers.get_sp()
                 for i in xrange(15):
                     if self.registers[15 - i]:
-                        processor.core_registers.set(
+                        processor.registers.set(
                                 i,
                                 (processor.mem_u_get(address, 4)
                                  if self.unaligned_allowed
@@ -36,8 +36,8 @@ class PopThumb(AbstractOpcode):
                     else:
                         processor.load_write_pc(processor.mem_a_get(address, 4))
                 if not self.registers[2]:
-                    processor.core_registers.set_sp(
-                            add(processor.core_registers.get_sp(),
+                    processor.registers.set_sp(
+                            add(processor.registers.get_sp(),
                                 BitArray(uint=(4 * self.registers.count(1)), length=32), 32))
                 if self.registers[2]:
-                    processor.core_registers.set_sp(BitArray(length=32))  # unknown
+                    processor.registers.set_sp(BitArray(length=32))  # unknown

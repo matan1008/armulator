@@ -10,6 +10,6 @@ class Revsh(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            result = sign_extend(processor.core_registers.get(self.m)[24:32], 24)
-            result += processor.core_registers.get(self.m)[16:24]
-            processor.core_registers.set(self.d, result)
+            result = sign_extend(processor.registers.get(self.m)[24:32], 24)
+            result += processor.registers.get(self.m)[16:24]
+            processor.registers.set(self.d, result)

@@ -12,8 +12,8 @@ class Umaal(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            result = processor.core_registers.get(self.n).uint * processor.core_registers.get(
-                self.m).uint + processor.core_registers.get(
-                    self.d_hi).uint + processor.core_registers.get(self.d_lo).uint
-            processor.core_registers.set(self.d_hi, BitArray(uint=result, length=64)[0:32])
-            processor.core_registers.set(self.d_lo, BitArray(uint=result, length=64)[32:64])
+            result = processor.registers.get(self.n).uint * processor.registers.get(
+                self.m).uint + processor.registers.get(
+                    self.d_hi).uint + processor.registers.get(self.d_lo).uint
+            processor.registers.set(self.d_hi, BitArray(uint=result, length=64)[0:32])
+            processor.registers.set(self.d_lo, BitArray(uint=result, length=64)[32:64])

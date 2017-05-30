@@ -12,7 +12,7 @@ class Smulw(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            operand2 = processor.core_registers.get(self.m)[0:16] if self.m_high else processor.core_registers.get(
+            operand2 = processor.registers.get(self.m)[0:16] if self.m_high else processor.registers.get(
                 self.m)[16:]
-            product = processor.core_registers.get(self.n).int * operand2.int
-            processor.core_registers.set(self.d, BitArray(int=product, length=48)[0:32])
+            product = processor.registers.get(self.n).int * operand2.int
+            processor.registers.set(self.d, BitArray(int=product, length=48)[0:32])

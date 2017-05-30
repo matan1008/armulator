@@ -14,9 +14,9 @@ class Mrc(AbstractOpcode):
             else:
                 value = processor.coproc_get_one_word(self.cp, processor.this_instr())
                 if self.t != 15:
-                    processor.core_registers.set(self.t, value)
+                    processor.registers.set(self.t, value)
                 else:
-                    processor.core_registers.cpsr.set_n(value[0])
-                    processor.core_registers.cpsr.set_z(value[1])
-                    processor.core_registers.cpsr.set_c(value[2])
-                    processor.core_registers.cpsr.set_v(value[3])
+                    processor.registers.cpsr.set_n(value[0])
+                    processor.registers.cpsr.set_z(value[1])
+                    processor.registers.cpsr.set_c(value[2])
+                    processor.registers.cpsr.set_v(value[3])

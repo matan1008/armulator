@@ -12,4 +12,4 @@ class Mcr(AbstractOpcode):
             if not processor.coproc_accepted(self.cp, processor.this_instr()):
                 processor.generate_coprocessor_exception()
             else:
-                processor.coproc_send_one_word(processor.core_registers.get(self.t), self.cp, processor.this_instr())
+                processor.coproc_send_one_word(processor.registers.get(self.t), self.cp, processor.this_instr())

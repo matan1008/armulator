@@ -12,8 +12,8 @@ class PldImmediate(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            address = bits_add(processor.core_registers.get(self.n), self.imm32, 32) if self.add else bits_sub(
-                    processor.core_registers.get(self.n), self.imm32, 32)
+            address = bits_add(processor.registers.get(self.n), self.imm32, 32) if self.add else bits_sub(
+                    processor.registers.get(self.n), self.imm32, 32)
             if self.is_pldw:
                 processor.hint_preload_data_for_write(address)
             else:

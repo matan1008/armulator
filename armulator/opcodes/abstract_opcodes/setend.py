@@ -7,4 +7,4 @@ class Setend(AbstractOpcode):
         self.set_bigend = set_bigend
 
     def execute(self, processor):
-        processor.core_registers.cpsr.set_e(self.set_bigend)
+        processor.registers.cpsr.set_e(self.set_bigend)

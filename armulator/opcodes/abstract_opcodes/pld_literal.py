@@ -10,6 +10,6 @@ class PldLiteral(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            address = bits_add(align(processor.core_registers.get_pc(), 4), self.imm32, 32) if self.add else bits_sub(
-                    align(processor.core_registers.get_pc(), 4), self.imm32, 32)
+            address = bits_add(align(processor.registers.get_pc(), 4), self.imm32, 32) if self.add else bits_sub(
+                    align(processor.registers.get_pc(), 4), self.imm32, 32)
             processor.hint_preload_data(address)

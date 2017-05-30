@@ -15,15 +15,15 @@ class AddRegisterThumb(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            shifted = shift(processor.core_registers.get(self.m), self.shift_t, self.shift_n,
-                            processor.core_registers.cpsr.get_c())
-            result, carry, overflow = add_with_carry(processor.core_registers.get(self.n), shifted, "0")
+            shifted = shift(processor.registers.get(self.m), self.shift_t, self.shift_n,
+                            processor.registers.cpsr.get_c())
+            result, carry, overflow = add_with_carry(processor.registers.get(self.n), shifted, "0")
             if self.d == 15:
                 processor.alu_write_pc(result)
             else:
-                processor.core_registers.set(self.d, result)
+                processor.registers.set(self.d, result)
                 if self.setflags:
-                    processor.core_registers.cpsr.set_n(result[0])
-                    processor.core_registers.cpsr.set_z(result.all(0))
-                    processor.core_registers.cpsr.set_c(carry)
-                    processor.core_registers.cpsr.set_v(overflow)
+                    processor.registers.cpsr.set_n(result[0])
+                    processor.registers.cpsr.set_z(result.all(0))
+                    processor.registers.cpsr.set_c(carry)
+                    processor.registers.cpsr.set_v(overflow)

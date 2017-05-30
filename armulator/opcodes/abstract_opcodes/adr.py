@@ -11,9 +11,9 @@ class Adr(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            result = bits_add(align(processor.core_registers.get_pc(), 4), self.imm32, 32) if self.add else bits_sub(
-                    align(processor.core_registers.get_pc(), 4), self.imm32, 32)
+            result = bits_add(align(processor.registers.get_pc(), 4), self.imm32, 32) if self.add else bits_sub(
+                    align(processor.registers.get_pc(), 4), self.imm32, 32)
             if self.d == 15:
                 processor.alu_write_pc(result)
             else:
-                processor.core_registers.set(self.d, result)
+                processor.registers.set(self.d, result)

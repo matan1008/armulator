@@ -17,5 +17,5 @@ class MovImmediateT1(MovImmediate, Opcode):
         imm8 = instr[8:16]
         imm32 = zero_extend(imm8, 32)
         set_flags = not processor.in_it_block()
-        carry = processor.core_registers.cpsr.get_c()
+        carry = processor.registers.cpsr.get_c()
         return MovImmediateT1(instr, **{"setflags": set_flags, "d": rd.uint, "imm32": imm32, "carry": carry})

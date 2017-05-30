@@ -21,9 +21,9 @@ class Tbb(AbstractOpcode):
             else:
                 if self.is_tbh:
                     halfwords = processor.mem_u_get(
-                            add(processor.core_registers.get(self.n), lsl(processor.core_registers.get(self.m), 1), 32),
+                            add(processor.registers.get(self.n), lsl(processor.registers.get(self.m), 1), 32),
                             2).uint
                 else:
                     halfwords = processor.mem_u_get(
-                        add(processor.core_registers.get(self.n), processor.core_registers.get(self.m), 32), 1).uint
-                processor.branch_write_pc(add(processor.core_registers.get_pc(), BitArray(uint=2 * halfwords), 32))
+                        add(processor.registers.get(self.n), processor.registers.get(self.m), 32), 1).uint
+                processor.branch_write_pc(add(processor.registers.get_pc(), BitArray(uint=2 * halfwords), 32))

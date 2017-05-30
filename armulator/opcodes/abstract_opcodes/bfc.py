@@ -12,8 +12,8 @@ class Bfc(AbstractOpcode):
     def execute(self, processor):
         if processor.condition_passed():
             if self.msbit >= self.lsbit:
-                temp_rd = processor.core_registers.get(self.d)
+                temp_rd = processor.registers.get(self.d)
                 temp_rd[31 - self.msbit:32 - self.lsbit] = replicate("0", self.msbit - self.lsbit + 1)
-                processor.core_registers.set(self.d, temp_rd)
+                processor.registers.set(self.d, temp_rd)
             else:
                 print "unpredictable"

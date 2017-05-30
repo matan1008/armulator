@@ -14,7 +14,7 @@ class Ubfx(AbstractOpcode):
         if processor.condition_passed():
             msbit = self.lsbit + self.widthminus1
             if msbit <= 31:
-                processor.core_registers.set(self.d, zero_extend(
-                        processor.core_registers.get(self.n)[31 - msbit:32 - self.lsbit], 32))
+                processor.registers.set(self.d, zero_extend(
+                        processor.registers.get(self.n)[31 - msbit:32 - self.lsbit], 32))
             else:
                 print "unpredictable"

@@ -14,9 +14,9 @@ class Ssat(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            operand = shift(processor.core_registers.get(self.n), self.shift_t, self.shift_n,
-                            processor.core_registers.cpsr.get_c())
+            operand = shift(processor.registers.get(self.n), self.shift_t, self.shift_n,
+                            processor.registers.cpsr.get_c())
             result, sat = signed_sat_q(operand.int, self.saturate_to)
-            processor.core_registers.set(self.d, sign_extend(result, 32))
+            processor.registers.set(self.d, sign_extend(result, 32))
             if sat:
-                processor.core_registers.cpsr.set_q(True)
+                processor.registers.cpsr.set_q(True)

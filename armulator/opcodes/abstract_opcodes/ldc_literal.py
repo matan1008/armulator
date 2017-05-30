@@ -22,10 +22,10 @@ class LdcLiteral(AbstractOpcode):
                 except EndOfInstruction:
                     pass
                 else:
-                    offset_addr = bits_add(align(processor.core_registers.get_pc(), 4), self.imm32,
-                                           32) if self.add else bits_sub(align(processor.core_registers.get_pc(), 4),
+                    offset_addr = bits_add(align(processor.registers.get_pc(), 4), self.imm32,
+                                           32) if self.add else bits_sub(align(processor.registers.get_pc(), 4),
                                                                          self.imm32, 32)
-                    address = offset_addr if self.index else align(processor.core_registers.get_pc(), 4)
+                    address = offset_addr if self.index else align(processor.registers.get_pc(), 4)
                     first_pass = True
                     while first_pass or processor.coproc_done_loading(self.cp, processor.this_instr()):
                         first_pass = False

@@ -9,4 +9,4 @@ class Movt(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            processor.core_registers.set(self.d, self.imm16 + processor.core_registers.get(self.d)[16:32])
+            processor.registers.set(self.d, self.imm16 + processor.registers.get(self.d)[16:32])

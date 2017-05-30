@@ -21,9 +21,9 @@ class LdrRegisterThumb(AbstractOpcode):
             except EndOfInstruction:
                 pass
             else:
-                offset = shift(processor.core_registers.get(self.m), self.shift_t, self.shift_n,
-                               processor.core_registers.cpsr.get_c())
-                offset_addr = add(processor.core_registers.get(self.n), offset, 32)
+                offset = shift(processor.registers.get(self.m), self.shift_t, self.shift_n,
+                               processor.registers.cpsr.get_c())
+                offset_addr = add(processor.registers.get(self.n), offset, 32)
                 address = offset_addr
                 data = processor.mem_u_get(address, 4)
                 if self.t == 15:
@@ -32,6 +32,6 @@ class LdrRegisterThumb(AbstractOpcode):
                     else:
                         print "unpredictable"
                 elif processor.unaligned_support() or address[30:32] == "0b00":
-                    processor.core_registers.set(self.t, data)
+                    processor.registers.set(self.t, data)
                 else:
-                    processor.core_registers.set(self.t, BitArray(length=32))  # unknown
+                    processor.registers.set(self.t, BitArray(length=32))  # unknown

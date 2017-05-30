@@ -15,12 +15,12 @@ class OrnRegister(AbstractOpcode):
     def execute(self, processor):
         if processor.condition_passed():
             shifted, carry = shift_c(
-                    processor.core_registers.get(self.m), self.shift_t,
-                    self.shift_n, processor.core_registers.cpsr.get_c()
+                    processor.registers.get(self.m), self.shift_t,
+                    self.shift_n, processor.registers.cpsr.get_c()
             )
-            result = processor.core_registers.get(self.n) | ~shifted
-            processor.core_registers.set(self.d, result)
+            result = processor.registers.get(self.n) | ~shifted
+            processor.registers.set(self.d, result)
             if self.setflags:
-                processor.core_registers.cpsr.set_n(result[0])
-                processor.core_registers.cpsr.set_z(not result.any(True))
-                processor.core_registers.cpsr.set_c(carry)
+                processor.registers.cpsr.set_n(result[0])
+                processor.registers.cpsr.set_z(not result.any(True))
+                processor.registers.cpsr.set_c(carry)

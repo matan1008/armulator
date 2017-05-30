@@ -10,8 +10,8 @@ class CmnImmediate(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            result, carry, overflow = add_with_carry(processor.core_registers.get(self.n), self.imm32, "0")
-            processor.core_registers.cpsr.set_n(result[0])
-            processor.core_registers.cpsr.set_z(result.all(False))
-            processor.core_registers.cpsr.set_c(carry)
-            processor.core_registers.cpsr.set_v(overflow)
+            result, carry, overflow = add_with_carry(processor.registers.get(self.n), self.imm32, "0")
+            processor.registers.cpsr.set_n(result[0])
+            processor.registers.cpsr.set_z(result.all(False))
+            processor.registers.cpsr.set_c(carry)
+            processor.registers.cpsr.set_v(overflow)

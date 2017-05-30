@@ -20,18 +20,18 @@ class LdrdLiteral(AbstractOpcode):
             except EndOfInstruction:
                 pass
             else:
-                address = bits_add(align(processor.core_registers.get_pc(), 4), self.imm32,
-                                   32) if self.add else bits_sub(align(processor.core_registers.get_pc(), 4),
+                address = bits_add(align(processor.registers.get_pc(), 4), self.imm32,
+                                   32) if self.add else bits_sub(align(processor.registers.get_pc(), 4),
                                                                  self.imm32, 32)
                 if HaveLPAE() and address[29:32] == "0b000":
                     data = processor.mem_a_get(address, 8)
                     if processor.big_endian():
-                        processor.core_registers.set(self.t, data[0:32])
-                        processor.core_registers.set(self.t2, data[32:64])
+                        processor.registers.set(self.t, data[0:32])
+                        processor.registers.set(self.t2, data[32:64])
                     else:
-                        processor.core_registers.set(self.t, data[32:64])
-                        processor.core_registers.set(self.t2, data[0:32])
+                        processor.registers.set(self.t, data[32:64])
+                        processor.registers.set(self.t2, data[0:32])
                 else:
-                    processor.core_registers.set(self.t, processor.mem_a_get(address, 4))
-                    processor.core_registers.set(self.t2,
+                    processor.registers.set(self.t, processor.mem_a_get(address, 4))
+                    processor.registers.set(self.t2,
                                                  processor.mem_a_get(bits_add(address, BitArray(bin="0b000"), 32), 4))

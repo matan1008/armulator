@@ -17,6 +17,6 @@ class Ldrex(AbstractOpcode):
             except EndOfInstruction:
                 pass
             else:
-                address = add(processor.core_registers.get(self.n), self.imm32, 32)
+                address = add(processor.registers.get(self.n), self.imm32, 32)
                 processor.set_exclusive_monitors(address, 4)
-                processor.core_registers.set(self.t, processor.mem_a_get(address, 4))
+                processor.registers.set(self.t, processor.mem_a_get(address, 4))

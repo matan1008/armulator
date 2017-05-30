@@ -12,8 +12,8 @@ class Mls(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            operand1 = processor.core_registers.get(self.n).int
-            operand2 = processor.core_registers.get(self.m).int
-            addend = processor.core_registers.get(self.a).int
+            operand1 = processor.registers.get(self.n).int
+            operand2 = processor.registers.get(self.m).int
+            addend = processor.registers.get(self.a).int
             result = addend - operand2 * operand1
-            processor.core_registers.set(self.d, BitArray(int=result, length=64)[-32:])
+            processor.registers.set(self.d, BitArray(int=result, length=64)[-32:])

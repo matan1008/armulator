@@ -18,10 +18,10 @@ class SubsPcLrThumbT1(SubsPcLrThumb, Opcode):
         n = 14
         imm8 = instr[24:32]
         imm32 = zero_extend(imm8, 32)
-        if processor.core_registers.current_mode_is_hyp():
+        if processor.registers.current_mode_is_hyp():
             raise UndefinedInstructionException()
         elif ((processor.in_it_block() and not processor.last_in_it_block()) or
-              processor.core_registers.current_instr_set() == InstrSet.InstrSet_ThumbEE):
+              processor.registers.current_instr_set() == InstrSet.InstrSet_ThumbEE):
             print "unpredictable"
         else:
             return SubsPcLrThumbT1(instr, **{"imm32": imm32, "n": n})

@@ -13,10 +13,10 @@ class CmpRegister(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            shifted = shift(processor.core_registers.get(self.m), self.shift_t, self.shift_n,
-                            processor.core_registers.cpsr.get_c())
-            result, carry, overflow = add_with_carry(processor.core_registers.get(self.n), ~shifted, "1")
-            processor.core_registers.cpsr.set_n(result[0])
-            processor.core_registers.cpsr.set_z(not result.any(True))
-            processor.core_registers.cpsr.set_c(carry)
-            processor.core_registers.cpsr.set_v(overflow)
+            shifted = shift(processor.registers.get(self.m), self.shift_t, self.shift_n,
+                            processor.registers.cpsr.get_c())
+            result, carry, overflow = add_with_carry(processor.registers.get(self.n), ~shifted, "1")
+            processor.registers.cpsr.set_n(result[0])
+            processor.registers.cpsr.set_z(not result.any(True))
+            processor.registers.cpsr.set_c(carry)
+            processor.registers.cpsr.set_v(overflow)

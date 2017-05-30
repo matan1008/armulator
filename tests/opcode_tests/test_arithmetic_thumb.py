@@ -18,13 +18,13 @@ def test_add_immediate_thumb():
     assert opcode.d == 1
     assert opcode.n == 0
     assert opcode.imm32 == BitArray(hex="0x00000001")
-    arm.core_registers.set(opcode.n, BitArray(hex="0x00000000"))
+    arm.registers.set(opcode.n, BitArray(hex="0x00000000"))
     arm.execute_instruction(opcode)
-    assert arm.core_registers.get(opcode.d) == BitArray(hex="0x00000001")
-    assert not arm.core_registers.cpsr.get_n()
-    assert not arm.core_registers.cpsr.get_z()
-    assert not arm.core_registers.cpsr.get_c()
-    assert not arm.core_registers.cpsr.get_v()
+    assert arm.registers.get(opcode.d) == BitArray(hex="0x00000001")
+    assert not arm.registers.cpsr.get_n()
+    assert not arm.registers.cpsr.get_z()
+    assert not arm.registers.cpsr.get_c()
+    assert not arm.registers.cpsr.get_v()
 
 def test_lsl_immediate_thumb():
     arm = ARM1176()
@@ -37,12 +37,12 @@ def test_lsl_immediate_thumb():
     assert opcode.d == 0
     assert opcode.m == 7
     assert opcode.shift_n == 2
-    arm.core_registers.set(opcode.m, BitArray(hex="0x00000002"))
+    arm.registers.set(opcode.m, BitArray(hex="0x00000002"))
     arm.execute_instruction(opcode)
-    assert arm.core_registers.get(opcode.d) == BitArray(hex="0x00000008")
-    assert not arm.core_registers.cpsr.get_n()
-    assert not arm.core_registers.cpsr.get_z()
-    assert not arm.core_registers.cpsr.get_c()
+    assert arm.registers.get(opcode.d) == BitArray(hex="0x00000008")
+    assert not arm.registers.cpsr.get_n()
+    assert not arm.registers.cpsr.get_z()
+    assert not arm.registers.cpsr.get_c()
 
 def test_add_register_thumb():
     arm = ARM1176()
@@ -57,14 +57,14 @@ def test_add_register_thumb():
     assert opcode.n == 2
     assert opcode.shift_n == 0
     assert opcode.shift_t == SRType.SRType_LSL
-    arm.core_registers.set(opcode.n, BitArray(hex="0x70000000"))
-    arm.core_registers.set(opcode.m, BitArray(hex="0x10000001"))
+    arm.registers.set(opcode.n, BitArray(hex="0x70000000"))
+    arm.registers.set(opcode.m, BitArray(hex="0x10000001"))
     arm.execute_instruction(opcode)
-    assert arm.core_registers.get(opcode.d) == BitArray(hex="0x80000001")
-    assert arm.core_registers.cpsr.get_n()
-    assert not arm.core_registers.cpsr.get_z()
-    assert not arm.core_registers.cpsr.get_c()
-    assert arm.core_registers.cpsr.get_v()
+    assert arm.registers.get(opcode.d) == BitArray(hex="0x80000001")
+    assert arm.registers.cpsr.get_n()
+    assert not arm.registers.cpsr.get_z()
+    assert not arm.registers.cpsr.get_c()
+    assert arm.registers.cpsr.get_v()
 
 def test_cmp_immediate_thumb():
     arm = ARM1176()
@@ -75,12 +75,12 @@ def test_cmp_immediate_thumb():
     assert type(opcode) == CmpImmediateT1
     assert opcode.n == 0
     assert opcode.imm32 == BitArray(hex="0x00000005")
-    arm.core_registers.set(opcode.n, BitArray(hex="0x00000004"))
+    arm.registers.set(opcode.n, BitArray(hex="0x00000004"))
     arm.execute_instruction(opcode)
-    assert arm.core_registers.cpsr.get_n()
-    assert not arm.core_registers.cpsr.get_z()
-    assert not arm.core_registers.cpsr.get_c()
-    assert not arm.core_registers.cpsr.get_v()
+    assert arm.registers.cpsr.get_n()
+    assert not arm.registers.cpsr.get_z()
+    assert not arm.registers.cpsr.get_c()
+    assert not arm.registers.cpsr.get_v()
 
 def test_mul_thumb():
     arm = ARM1176()
@@ -93,12 +93,12 @@ def test_mul_thumb():
     assert opcode.n == 0
     assert opcode.m == 1
     assert opcode.d == 2
-    arm.core_registers.set(opcode.n, BitArray(hex="0x00000004"))
-    arm.core_registers.set(opcode.m, BitArray(hex="0x00000002"))
+    arm.registers.set(opcode.n, BitArray(hex="0x00000004"))
+    arm.registers.set(opcode.m, BitArray(hex="0x00000002"))
     arm.execute_instruction(opcode)
-    assert arm.core_registers.get(opcode.d) == BitArray(hex="0x00000008")
-    assert not arm.core_registers.cpsr.get_n()
-    assert not arm.core_registers.cpsr.get_z()
-    assert not arm.core_registers.cpsr.get_c()
-    assert not arm.core_registers.cpsr.get_v()
+    assert arm.registers.get(opcode.d) == BitArray(hex="0x00000008")
+    assert not arm.registers.cpsr.get_n()
+    assert not arm.registers.cpsr.get_z()
+    assert not arm.registers.cpsr.get_c()
+    assert not arm.registers.cpsr.get_v()
 

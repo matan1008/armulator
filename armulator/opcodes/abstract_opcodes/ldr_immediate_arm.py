@@ -15,18 +15,18 @@ class LdrImmediateArm(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            offset_addr = bits_add(processor.core_registers.get(self.n), self.imm32, 32) if self.add else bits_sub(
-                    processor.core_registers.get(self.n), self.imm32, 32)
-            address = offset_addr if self.index else processor.core_registers.get(self.n)
+            offset_addr = bits_add(processor.registers.get(self.n), self.imm32, 32) if self.add else bits_sub(
+                    processor.registers.get(self.n), self.imm32, 32)
+            address = offset_addr if self.index else processor.registers.get(self.n)
             data = processor.mem_u_get(address, 4)
             if self.wback:
-                processor.core_registers.set(self.n, offset_addr)
+                processor.registers.set(self.n, offset_addr)
             if self.t == 15:
                 if address[30:32] == "0b00":
                     processor.load_write_pc(data)
                 else:
                     print "unpredictable"
             elif processor.unaligned_support() or address[30:32] == "0b00":
-                processor.core_registers.set(self.t, data)
+                processor.registers.set(self.t, data)
             else:
-                processor.core_registers.set(self.t, ror(data, 8 * address[30:32].uint))
+                processor.registers.set(self.t, ror(data, 8 * address[30:32].uint))

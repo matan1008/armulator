@@ -13,8 +13,8 @@ class Smmla(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            result = (processor.core_registers.get(self.a).int << 32) + processor.core_registers.get(
-                self.n).int * processor.core_registers.get(self.m).int
+            result = (processor.registers.get(self.a).int << 32) + processor.registers.get(
+                self.n).int * processor.registers.get(self.m).int
             if self.round:
                 result += 0x80000000
-            processor.core_registers.set(self.d, BitArray(int=result, length=64)[0:32])
+            processor.registers.set(self.d, BitArray(int=result, length=64)[0:32])

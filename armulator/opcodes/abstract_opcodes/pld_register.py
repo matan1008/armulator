@@ -15,10 +15,10 @@ class PldRegister(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            offset = shift(processor.core_registers.get(self.m), self.shift_t, self.shift_n,
-                           processor.core_registers.cpsr.get_c())
-            address = bits_add(processor.core_registers.get(self.n), offset, 32) if self.add else bits_sub(
-                    processor.core_registers.get(self.n), offset, 32)
+            offset = shift(processor.registers.get(self.m), self.shift_t, self.shift_n,
+                           processor.registers.cpsr.get_c())
+            address = bits_add(processor.registers.get(self.n), offset, 32) if self.add else bits_sub(
+                    processor.registers.get(self.n), offset, 32)
             if self.is_pldw:
                 processor.hint_preload_data_for_write(address)
             else:

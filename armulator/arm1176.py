@@ -14,947 +14,12 @@ from memory import Memory
 from permissions import Permissions
 from enums import *
 import opcodes
-from armulator.all_registers.sunavcr import SUNAVCR
-from armulator.all_registers.pmcr import PMCR
-from armulator.all_registers.jmcr import JMCR
-from armulator.all_registers.prrr import PRRR
-from armulator.all_registers.nmrr import NMRR
-from armulator.all_registers.dacr import DACR
-from armulator.all_registers.mpuir import MPUIR
-from armulator.all_registers.cpacr import CPACR
-from armulator.all_registers.scr import SCR
-from armulator.all_registers.nsacr import NSACR
-from armulator.all_registers.rgnr import RGNR
-from armulator.all_registers.teecr import TEECR
-from armulator.all_registers.midr import MIDR
-from armulator.all_registers.vbar import VBAR
-from armulator.all_registers.ttbcr import TTBCR
-from armulator.all_registers.sctlr import SCTLR
-from armulator.all_registers.hstr import HSTR
-from armulator.all_registers.hsctlr import HSCTLR
-from armulator.all_registers.hcr import HCR
-from armulator.all_registers.hdcr import HDCR
-from armulator.all_registers.htcr import HTCR
-from armulator.all_registers.vtcr import VTCR
-from armulator.all_registers.hcptr import HCPTR
-from armulator.all_registers.rsr import DRSR, IRSR
-from armulator.all_registers.racr import DRACR, IRACR
-from armulator.all_registers.sder import SDER
-from armulator.all_registers.fcseidr import FCSEIDR
-from armulator.all_registers.fpexc import FPEXC
-from armulator.all_registers.hsr import HSR
-from armulator.all_registers.dbgdidr import DBGDIDR
-from armulator.all_registers.hpfar import HPFAR
-from armulator.all_registers.dfsr import DFSR
-from armulator.all_registers.cpsr import CPSR
-
-
-class CoreRegisters:
-    def __init__(self):
-        rnames = ("RName_0usr RName_1usr RName_2usr RName_3usr RName_4usr RName_5usr RName_6usr RName_7usr "
-                  "RName_8usr RName_8fiq RName_9usr RName_9fiq RName_10usr RName_10fiq RName_11usr RName_11fiq "
-                  "RName_12usr RName_12fiq RName_SPusr RName_SPfiq RName_SPirq RName_SPsvc RName_SPabt RName_SPund "
-                  "RName_SPmon RName_SPhyp RName_LRusr RName_LRfiq RName_LRirq RName_LRsvc RName_LRabt RName_LRund "
-                  "RName_LRmon RName_PC")
-        self.RName = Enum("RName", rnames)
-        self._R = {}
-        self.changed_registers = [False] * 16
-        for register in self.RName:
-            self._R[register] = BitArray(length=32)
-        self.cpsr = CPSR()
-        self.spsr_hyp = BitArray(length=32)
-        self.spsr_svc = BitArray(length=32)
-        self.spsr_abt = BitArray(length=32)
-        self.spsr_und = BitArray(length=32)
-        self.spsr_mon = BitArray(length=32)
-        self.spsr_irq = BitArray(length=32)
-        self.spsr_fiq = BitArray(length=32)
-        self.elr_hyp = BitArray(length=32)
-        self.scr = SCR()
-        self.nsacr = NSACR()
-        self.sctlr = SCTLR()
-        self.hstr = HSTR()
-        self.hsr = HSR()
-        self.hsctlr = HSCTLR()
-        self.hvbar = BitArray(length=32)
-        self.jmcr = JMCR()
-        self.hcr = HCR()
-        self.mvbar = BitArray(length=32)
-        self.teehbr = BitArray(length=32)
-        self.hdcr = HDCR()
-        self.vbar = VBAR()
-        self.dbgdidr = DBGDIDR()
-        self.dfsr = DFSR()
-        self.dfar = BitArray(length=32)
-        self.hdfar = BitArray(length=32)
-        self.hpfar = HPFAR()
-        self.ttbcr = TTBCR()
-        self.fcseidr = FCSEIDR()
-        self.htcr = HTCR()
-        self.httbr = BitArray(length=64)
-        self.ttbr0_64 = BitArray(length=64)
-        self.ttbr1_64 = BitArray(length=64)
-        self.vtcr = VTCR()
-        self.vttbr = BitArray(length=64)
-        self.mair0 = BitArray(length=32)
-        self.mair1 = BitArray(length=32)
-        self.hmair0 = BitArray(length=32)
-        self.hmair1 = BitArray(length=32)
-        self.prrr = PRRR()
-        self.nmrr = NMRR()
-        self.dacr = DACR()
-        self.mpuir = MPUIR()
-        self.cpacr = CPACR()
-        self.rgnr = RGNR(number_of_mpu_regions)
-        self.hcptr = HCPTR()
-        self.drsrs = [DRSR()] * number_of_mpu_regions
-        self.drbars = [BitArray(length=32)] * number_of_mpu_regions
-        self.dracrs = [DRACR()] * number_of_mpu_regions
-        self.irbars = [BitArray(length=32)] * number_of_mpu_regions
-        self.irsrs = [IRSR()] * number_of_mpu_regions
-        self.iracrs = [IRACR()] * number_of_mpu_regions
-        self.teecr = TEECR()
-        self.event_register = False
-        self.midr = MIDR()
-        self.ctr = BitArray(length=32)
-        self.tcmtr = BitArray(length=32)
-        self.tlbtr = BitArray(length=32)
-        self.id_pfr0 = BitArray(length=32)
-        self.id_pfr1 = BitArray(length=32)
-        self.id_dfr0 = BitArray(length=32)
-        self.id_afr0 = BitArray(length=32)
-        self.id_mmfr0 = BitArray(length=32)
-        self.id_mmfr1 = BitArray(length=32)
-        self.id_mmfr2 = BitArray(length=32)
-        self.id_mmfr3 = BitArray(length=32)
-        self.id_isar0 = BitArray(length=32)
-        self.id_isar1 = BitArray(length=32)
-        self.id_isar2 = BitArray(length=32)
-        self.id_isar3 = BitArray(length=32)
-        self.id_isar4 = BitArray(length=32)
-        self.id_isar5 = BitArray(length=32)
-        self.actlr = BitArray(length=32)
-        self.sder = SDER()
-        self.ttbr0 = BitArray(length=32)
-        self.ttbr1 = BitArray(length=32)
-        self.ifsr = BitArray(length=32)
-        self.ifar = BitArray(length=32)
-        self.par = BitArray(length=32)
-        self.cdsr = BitArray(length=32)
-        self.dclr = BitArray(length=32)
-        self.iclr = BitArray(length=32)
-        self.dtcmrr = BitArray(length=32)
-        self.dtcm_nsacr = BitArray(length=32)
-        self.itcm_nsacr = BitArray(length=32)
-        self.tcmsr = BitArray(length=32)
-        self.cbor = BitArray(length=32)
-        self.tlblr = BitArray(length=32)
-        self.dmaispr = BitArray(length=32)
-        self.dmaisqr = BitArray(length=32)
-        self.dmaisrr = BitArray(length=32)
-        self.dmaisir = BitArray(length=32)
-        self.dmauar = BitArray(length=32)
-        self.dmacnr = BitArray(length=32)
-        self.stop_dmaer = BitArray(length=32)
-        self.start_dmaer = BitArray(length=32)
-        self.clear_dmaer = BitArray(length=32)
-        self.dmacr = BitArray(length=32)
-        self.dmaisar = BitArray(length=32)
-        self.dmaesar = BitArray(length=32)
-        self.dmaiear = BitArray(length=32)
-        self.dmacsr = BitArray(length=32)
-        self.dmacidr = BitArray(length=32)
-        self.isr = BitArray(length=32)
-        self.contextidr = BitArray(length=32)
-        self.tpidrurw = BitArray(length=32)
-        self.tpidruro = BitArray(length=32)
-        self.tpidrprw = BitArray(length=32)
-        self.ppmrr = BitArray(length=32)
-        self.sunavcr = SUNAVCR()
-        self.pmcr = PMCR()
-        self.ccr = BitArray(length=32)
-        self.cr0 = BitArray(length=32)
-        self.cr1 = BitArray(length=32)
-        self.svcr_rc = BitArray(length=32)
-        self.svcr_ic = BitArray(length=32)
-        self.svcr_fic = BitArray(length=32)
-        self.svcr_edrc = BitArray(length=32)
-        self.svcsmr = BitArray(length=32)
-        self.fpexc = FPEXC()
-
-    def coproc_register_name(self, coproc, crn, opc1, crm, opc2):
-        if coproc == 15:
-            if crn == 0:
-                if opc1 == 0:
-                    if crm == 0:
-                        if opc2 == 0:
-                            return "MIDR"
-                        elif opc2 == 1:
-                            return "ctr"
-                        elif opc2 == 2:
-                            return "tcmtr"
-                        elif opc2 == 3:
-                            return "tlbtr"
-                    elif crm == 1:
-                        if opc2 == 0:
-                            return "id_pfr0"
-                        elif opc2 == 1:
-                            return "id_pfr1"
-                        elif opc2 == 2:
-                            return "id_dfr0"
-                        elif opc2 == 3:
-                            return "id_afr0"
-                        elif opc2 == 4:
-                            return "id_mmfr0"
-                        elif opc2 == 5:
-                            return "id_mmfr1"
-                        elif opc2 == 6:
-                            return "id_mmfr2"
-                        elif opc2 == 7:
-                            return "id_mmfr3"
-                    elif crm == 2:
-                        if opc2 == 0:
-                            return "id_isar0"
-                        elif opc2 == 1:
-                            return "id_isar1"
-                        elif opc2 == 2:
-                            return "id_isar2"
-                        elif opc2 == 3:
-                            return "id_isar3"
-                        elif opc2 == 4:
-                            return "id_isar4"
-                        elif opc2 == 5:
-                            return "id_isar5"
-            elif crn == 1:
-                if opc1 == 0:
-                    if crm == 0:
-                        if opc2 == 0:
-                            return "SCTLR"
-                        elif opc2 == 1:
-                            return "actlr"
-                        elif opc2 == 2:
-                            return "CPACR"
-                    elif crm == 1:
-                        if opc2 == 0:
-                            return "SCR"
-                        elif opc2 == 1:
-                            return "SDER"
-                        elif opc2 == 2:
-                            return "NSACR"
-            elif crn == 2:
-                if opc1 == 0:
-                    if crm == 0:
-                        if opc2 == 0:
-                            return "ttbr0"
-                        elif opc2 == 1:
-                            return "ttbr1"
-                        elif opc2 == 2:
-                            return "TTBCR"
-            elif crn == 3:
-                if opc1 == 0:
-                    if crm == 0:
-                        if opc2 == 0:
-                            return "DACR"
-            elif crn == 5:
-                if opc1 == 0:
-                    if crm == 0:
-                        if opc2 == 0:
-                            return "DFSR"
-                        elif opc2 == 1:
-                            return "ifsr"
-            elif crn == 6:
-                if opc1 == 0:
-                    if crm == 0:
-                        if opc2 == 0:
-                            return "dfar"
-                        elif opc2 == 2:
-                            return "ifar"
-            elif crn == 7:
-                if opc1 == 0:
-                    if crm == 0:
-                        if opc2 == 4:
-                            return "CP15WFI"
-                    elif crm == 4:
-                        if opc2 == 0:
-                            return "par"
-                    elif crm == 5:
-                        if opc2 == 0:
-                            return "ICIALLU"
-                        elif opc2 == 1:
-                            return "ICIMVAU"
-                        elif opc2 == 2:
-                            return "ICISW"
-                        elif opc2 == 4:
-                            return "CP15ISB"
-                        elif opc2 == 6:
-                            return "BPIALL"
-                        elif opc2 == 7:
-                            return "BPIMVA"
-                    elif crm == 6:
-                        if opc2 == 0:
-                            return "DCIALL"
-                        elif opc2 == 1:
-                            return "DCIMVAC"
-                        elif opc2 == 2:
-                            return "DCISW"
-                    elif crm == 7:
-                        if opc2 == 0:
-                            return "Invalidate Both Caches"
-                    elif crm == 8:
-                        if opc2 == 0:
-                            return "ATS1CPR"
-                        elif opc2 == 1:
-                            return "ATS1CPW"
-                        elif opc2 == 2:
-                            return "ATS1CUR"
-                        elif opc2 == 3:
-                            return "ATS1CUW"
-                        elif opc2 == 4:
-                            return "ATS12NSOPR"
-                        elif opc2 == 5:
-                            return "ATS12NSOPW"
-                        elif opc2 == 6:
-                            return "ATS12NSOUR"
-                        elif opc2 == 7:
-                            return "ATS12NSOUW"
-                    elif crm == 10:
-                        if opc2 == 0:
-                            return "DCCALL"
-                        elif opc2 == 1:
-                            return "DCCMVAC"
-                        elif opc2 == 2:
-                            return "DCCSW"
-                        elif opc2 == 4:
-                            return "CP15DSB"
-                        elif opc2 == 5:
-                            return "CP15DMB"
-                        elif opc2 == 6:
-                            return "cdsr"
-                    elif crm == 13:
-                        if opc2 == 1:
-                            return "Prefetch Instruction Cache Line"
-                    elif crm == 14:
-                        if opc2 == 0:
-                            return "DCCIALL"
-                        elif opc2 == 1:
-                            return "DCCIMVAC"
-                        elif opc2 == 2:
-                            return "DCCISW"
-            elif crn == 8:
-                if opc1 == 0:
-                    if crm == 5:
-                        if opc2 == 0:
-                            return "Invalidate Instruction TLB unlocked entries"
-                        elif opc2 == 1:
-                            return "Invalidate Instruction TLB entry by MVA"
-                        elif opc2 == 2:
-                            return "Invalidate Instruction TLB entry on ASID match"
-                    elif crm == 6:
-                        if opc2 == 0:
-                            return "Invalidate Data TLB unlocked entries"
-                        elif opc2 == 1:
-                            return "Invalidate Data TLB entry by MVA"
-                        elif opc2 == 2:
-                            return "Invalidate Data TLB entry on ASID match"
-                    elif crm == 7:
-                        if opc2 == 0:
-                            return "Invalidate unified TLB unlocked entries"
-                        elif opc2 == 1:
-                            return "Invalidate unified TLB entry by MVA"
-                        elif opc2 == 2:
-                            return "Invalidate unified TLB entry on ASID match"
-            elif crn == 9:
-                if opc1 == 0:
-                    if crm == 0:
-                        if opc2 == 0:
-                            return "dclr"
-                        elif opc2 == 0:
-                            return "iclr"
-                    elif crm == 1:
-                        if opc2 == 0:
-                            return "dtcmrr"
-                        elif opc2 == 1:
-                            return "ITCMRR"
-                        elif opc2 == 2:
-                            return "dtcm_nsacr"
-                        elif opc2 == 3:
-                            return "itcm_nsacr"
-                    elif crm == 2:
-                        if opc2 == 0:
-                            return "tcmsr"
-                    elif crm == 8:
-                        if opc2 == 0:
-                            return "cbor"
-            elif crn == 10:
-                if opc1 == 0:
-                    if crm == 0:
-                        if opc2 == 0:
-                            return "tlblr"
-                    elif crm == 2:
-                        if opc2 == 0:
-                            return "PRRR"
-                        elif opc2 == 1:
-                            return "NMRR"
-            elif crn == 11:
-                if opc1 == 0:
-                    if crm == 0:
-                        if opc2 == 0:
-                            return "dmaispr"
-                        elif opc2 == 1:
-                            return "dmaisqr"
-                        elif opc2 == 2:
-                            return "dmaisrr"
-                        elif opc2 == 3:
-                            return "dmaisir"
-                    elif crm == 1:
-                        if opc2 == 0:
-                            return "dmauar"
-                    elif crm == 2:
-                        if opc2 == 0:
-                            return "dmacnr"
-                    elif crm == 3:
-                        if opc2 == 0:
-                            return "stop_dmaer"
-                        elif opc2 == 1:
-                            return "start_dmaer"
-                        elif opc2 == 2:
-                            return "clear_dmaer"
-                    elif crm == 4:
-                        if opc2 == 0:
-                            return "dmacr"
-                    elif crm == 5:
-                        if opc2 == 0:
-                            return "dmaisar"
-                    elif crm == 6:
-                        if opc2 == 0:
-                            return "dmaesar"
-                    elif crm == 7:
-                        if opc2 == 0:
-                            return "dmaiear"
-                    elif crm == 8:
-                        if opc2 == 0:
-                            return "dmacsr"
-                    elif crm == 8:
-                        if opc2 == 0:
-                            return "dmacidr"
-            elif crn == 12:
-                if opc1 == 0:
-                    if crm == 0:
-                        if opc2 == 0:
-                            return "VBAR"
-                        elif opc2 == 1:
-                            return "mvbar"
-                    elif crm == 1:
-                        if opc2 == 0:
-                            return "isr"
-            elif crn == 13:
-                if opc1 == 0:
-                    if crm == 0:
-                        if opc2 == 0:
-                            return "FCSEIDR"
-                        elif opc2 == 1:
-                            return "contextidr"
-                        elif opc2 == 2:
-                            return "tpidrurw"
-                        elif opc2 == 3:
-                            return "tpidruro"
-                        elif opc2 == 4:
-                            return "tpidrprw"
-            elif crn == 15:
-                if opc1 == 0:
-                    if crm == 2:
-                        if opc2 == 4:
-                            return "ppmrr"
-                    elif crm == 9:
-                        if opc2 == 0:
-                            return "SUNAVCR"
-                    elif crm == 12:
-                        if opc2 == 0:
-                            return "PMCR"
-                        elif opc2 == 1:
-                            return "ccr"
-                        elif opc2 == 2:
-                            return "cr0"
-                        elif opc2 == 3:
-                            return "cr1"
-                        elif opc2 == 4:
-                            return "svcr_rc"
-                        elif opc2 == 5:
-                            return "svcr_ic"
-                        elif opc2 == 6:
-                            return "svcr_fic"
-                        elif opc2 == 7:
-                            return "svcr_edrc"
-                    elif crm == 13:
-                        if opc2 == 1:
-                            return "Start reset counter"
-                        elif opc2 == 2:
-                            return "Start interrupt counter"
-                        elif opc2 == 3:
-                            return " Start reset and interrupt counters"
-                        elif opc2 == 4:
-                            return "Start fast interrupt counter"
-                        elif opc2 == 5:
-                            return "Start reset and fast interrupt counters"
-                        elif opc2 == 6:
-                            return " Start interrupt and fast interrupt counters"
-                        elif opc2 == 7:
-                            return "Start reset, interrupt and fast interrupt counters"
-                    elif crm == 14:
-                        if opc2 == 0:
-                            return "svcsmr"
-                elif opc1 == 1:
-                    if crm == 13:
-                        # unknown
-                        pass
-
-    def pc_store_value(self):
-        # not sure
-        return self._R[self.RName.RName_PC]
-
-    def set_event_register(self, flag):
-        self.event_register = flag
-
-    def get_event_register(self):
-        return self.event_register
-
-    def current_instr_set(self):
-        isetstate = self.cpsr.get_isetstate()
-        if isetstate == "0b00":
-            result = InstrSet.InstrSet_ARM
-        if isetstate == "0b01":
-            result = InstrSet.InstrSet_Thumb
-        if isetstate == "0b10":
-            result = InstrSet.InstrSet_Jazelle
-        if isetstate == "0b11":
-            result = InstrSet.InstrSet_ThumbEE
-        return result
-
-    def select_instr_set(self, iset):
-        if iset == InstrSet.InstrSet_ARM:
-            if self.current_instr_set() == InstrSet.InstrSet_ThumbEE:
-                print "unpredictable"
-            else:
-                self.cpsr.set_isetstate("0b00")
-        if iset == InstrSet.InstrSet_Thumb:
-            self.cpsr.set_isetstate("0b01")
-        if iset == InstrSet.InstrSet_Jazelle:
-            self.cpsr.set_isetstate("0b10")
-        if iset == InstrSet.InstrSet_ThumbEE:
-            self.cpsr.set_isetstate("0b11")
-
-    def is_secure(self):
-        return (not HaveSecurityExt()) or (not self.scr.get_ns()) or (self.cpsr.get_m() == "0b10110")
-
-    def bad_mode(self, mode):
-        if mode.bin == "10000":
-            result = False
-        elif mode.bin == "10001":
-            result = False
-        elif mode.bin == "10010":
-            result = False
-        elif mode.bin == "10011":
-            result = False
-        elif mode.bin == "10110":
-            result = not HaveSecurityExt()
-        elif mode.bin == "10111":
-            result = False
-        elif mode.bin == "11010":
-            result = not HaveVirtExt()
-        elif mode.bin == "11011":
-            result = False
-        elif mode.bin == "11111":
-            result = False
-        else:
-            result = True
-        return result
-
-    def current_mode_is_not_user(self):
-        if self.bad_mode(self.cpsr.get_m()):
-            print "unpredictable"
-        if self.cpsr.get_m() == "0b10000":
-            return False
-        return True
-
-    def current_mode_is_hyp(self):
-        if self.bad_mode(self.cpsr.get_m()):
-            print "unpredictable"
-        if self.cpsr.get_m() == "0b11010":
-            return True
-        return False
-
-    def current_mode_is_user_or_system(self):
-        if self.bad_mode(self.cpsr.get_m()):
-            print "unpredictable"
-        if self.cpsr.get_m() == "0b10000":
-            return True
-        if self.cpsr.get_m() == "0b11111":
-            return True
-        return False
-
-    def r_bank_select(self, mode, usr, fiq, irq, svc, abt, und, mon, hyp):
-        if self.bad_mode(mode):
-            print "unpredictable"
-            result = usr
-        else:
-            if mode.bin == "10000":
-                result = usr
-            elif mode.bin == "10001":
-                result = fiq
-            elif mode.bin == "10010":
-                result = irq
-            elif mode.bin == "10011":
-                result = svc
-            elif mode.bin == "10110":
-                result = mon
-            elif mode.bin == "10111":
-                result = abt
-            elif mode.bin == "11010":
-                result = hyp
-            elif mode.bin == "11011":
-                result = und
-            elif mode.bin == "11111":
-                result = usr
-        return result
-
-    def r_fiq_bank_select(self, mode, usr, fiq):
-        return self.r_bank_select(mode, usr, fiq, usr, usr, usr, usr, usr, usr)
-
-    def look_up_rname(self, n, mode):
-        assert 0 <= n <= 14
-        if n is 0:
-            result = self.RName.RName_0usr
-        elif n is 1:
-            result = self.RName.RName_1usr
-        elif n is 2:
-            result = self.RName.RName_2usr
-        elif n is 3:
-            result = self.RName.RName_3usr
-        elif n is 4:
-            result = self.RName.RName_4usr
-        elif n is 5:
-            result = self.RName.RName_5usr
-        elif n is 6:
-            result = self.RName.RName_6usr
-        elif n is 7:
-            result = self.RName.RName_7usr
-        elif n is 8:
-            result = self.r_fiq_bank_select(mode, self.RName.RName_8usr, self.RName.RName_8fiq)
-        elif n is 9:
-            result = self.r_fiq_bank_select(mode, self.RName.RName_9usr, self.RName.RName_9fiq)
-        elif n is 10:
-            result = self.r_fiq_bank_select(mode, self.RName.RName_10usr, self.RName.RName_10fiq)
-        elif n is 11:
-            result = self.r_fiq_bank_select(mode, self.RName.RName_11usr, self.RName.RName_11fiq)
-        elif n is 12:
-            result = self.r_fiq_bank_select(mode, self.RName.RName_12usr, self.RName.RName_12fiq)
-        elif n is 13:
-            result = self.r_bank_select(mode, self.RName.RName_SPusr, self.RName.RName_SPfiq,
-                                        self.RName.RName_SPirq, self.RName.RName_SPsvc, self.RName.RName_SPabt,
-                                        self.RName.RName_SPund, self.RName.RName_SPmon, self.RName.RName_SPhyp)
-        elif n is 14:
-            result = self.r_bank_select(mode, self.RName.RName_LRusr, self.RName.RName_LRfiq,
-                                        self.RName.RName_LRirq, self.RName.RName_LRsvc, self.RName.RName_LRabt,
-                                        self.RName.RName_LRund, self.RName.RName_LRmon, self.RName.RName_LRusr)
-        return result
-
-    def get_rmode(self, n, mode):
-        assert 0 <= n <= 14
-        if not self.is_secure() and mode.bin == "10110":
-            print "unpredictable"
-        if not self.is_secure() and mode.bin == "10001" and self.nsacr.get_rfr():
-            print "unpredictable"
-        return self._R[self.look_up_rname(n, mode)]
-
-    def set_rmode(self, n, mode, value):
-        assert 0 <= n <= 14
-        if not self.is_secure() and mode.bin == "10110":
-            print "unpredictable"
-        if not self.is_secure() and mode.bin == "10001" and self.nsacr.get_rfr():
-            print "unpredictable"
-        if n == 13 and value.bin[30:32] != "00" and self.current_instr_set() != InstrSet.InstrSet_ARM:
-            print "unpredictable"
-        self._R[self.look_up_rname(n, mode)] = value
-
-    def get(self, n):
-        assert 0 <= n <= 15
-        if n == 15:
-            offset = "1000" if (self.current_instr_set() == InstrSet.InstrSet_ARM) else "100"
-            result = bits_ops.add(self._R[self.RName.RName_PC], BitArray(bin=offset), 32)
-        else:
-            result = self.get_rmode(n, self.cpsr.get_m())
-        return result
-
-    def set(self, n, value):
-        assert 0 <= n <= 14
-        self.changed_registers[n] = True
-        self.set_rmode(n, self.cpsr.get_m(), value)
-
-    def get_sp(self):
-        return self.get(13)
-
-    def set_sp(self, value):
-        self.set(13, value)
-
-    def get_lr(self):
-        return self.get(14)
-
-    def set_lr(self, value):
-        self.set(14, value)
-
-    def get_pc(self):
-        return self.get(15)
-
-    def branch_to(self, address):
-        self.changed_registers[15] = True
-        self._R[self.RName.RName_PC] = address
-
-    def get_spsr(self):
-        if self.bad_mode(self.cpsr.get_m()):
-            print "unpredictable"
-            result = BitArray(length=32)
-        else:
-            result = BitArray(length=32)
-            if self.cpsr.get_m() == "0b10001":
-                result = self.spsr_fiq
-            elif self.cpsr.get_m() == "0b10010":
-                result = self.spsr_irq
-            elif self.cpsr.get_m() == "0b10011":
-                result = self.spsr_svc
-            elif self.cpsr.get_m() == "0b10110":
-                result = self.spsr_mon
-            elif self.cpsr.get_m() == "0b10111":
-                result = self.spsr_abt
-            elif self.cpsr.get_m() == "0b11010":
-                result = self.spsr_hyp
-            elif self.cpsr.get_m() == "0b11011":
-                result = self.spsr_und
-            else:
-                print "unpredictable"
-        return result
-
-    def set_spsr(self, value):
-        if self.bad_mode(self.cpsr.get_m()):
-            print "unpredictable"
-        else:
-            if self.cpsr.get_m() == "0b10001":
-                self.spsr_fiq = value
-            elif self.cpsr.get_m() == "0b10010":
-                self.spsr_irq = value
-            elif self.cpsr.get_m() == "0b10011":
-                self.spsr_svc = value
-            elif self.cpsr.get_m() == "0b10110":
-                self.spsr_mon = value
-            elif self.cpsr.get_m() == "0b10111":
-                self.spsr_abt = value
-            elif self.cpsr.get_m() == "0b11010":
-                self.spsr_hyp = value
-            elif self.cpsr.get_m() == "0b11011":
-                self.spsr_und = value
-            else:
-                print "unpredictable"
-
-    def it_advance(self):
-        if self.cpsr.get_it()[-3:] == "0b000":
-            self.cpsr.set_it("0b00000000")
-        else:
-            itstate = self.cpsr.get_it()
-            itstate.overwrite(shift.lsl(itstate[4:], 1), 4)
-
-    def cpsr_write_by_instr(self, value, bytemask, is_excp_return):
-        privileged = self.current_mode_is_not_user()
-        nmfi = self.sctlr.get_nmfi()
-        if bytemask[0]:
-            self.cpsr.value.overwrite(value[0:5], 0)
-            if is_excp_return:
-                self.cpsr.value.overwrite(value[5:8], 5)
-        if bytemask[1]:
-            self.cpsr.set_ge(value[12:16])
-        if bytemask[2]:
-            if is_excp_return:
-                self.cpsr.value.overwrite(value[16:22], 16)
-            self.cpsr.set_e(value[22])
-            if privileged and (self.is_secure() or self.scr.get_aw() or HaveVirtExt()):
-                self.cpsr.set_a(value[23])
-        if bytemask[3]:
-            if privileged:
-                self.cpsr.set_i(value[24])
-            if privileged and (not nmfi or not value[25]) and (self.is_secure() or self.scr.get_fw() or HaveVirtExt()):
-                self.cpsr.set_f(value[25])
-            if is_excp_return:
-                self.cpsr.set_t(value[26])
-            if privileged:
-                if self.bad_mode(value[27:]):
-                    print "unpredictable"
-                else:
-                    if not self.is_secure() and value.bin[27:] == "10110":
-                        print "unpredictable"
-                    elif not self.is_secure() and value.bin[27:] == "10001" and self.nsacr.get_rfr():
-                        print "unpredictable"
-                    elif not self.scr.get_ns() and value.bin[27:] == "11010":
-                        print "unpredictable"
-                    elif not self.is_secure() and self.cpsr.get_m() != "0b11010" and value.bin[27:] == "11010":
-                        print "unpredictable"
-                    elif self.cpsr.get_m() == "0b11010" and value.bin[27:] != "11010" and not is_excp_return:
-                        print "unpredictable"
-                    else:
-                        self.cpsr.set_m(value[27:32])
-
-    def spsr_write_by_instr(self, value, bytemask):
-        if self.current_mode_is_user_or_system():
-            print "unpredictable"
-        spsr = self.get_spsr()
-        if bytemask[0]:
-            spsr.overwrite(value[0:5], 0)
-        if bytemask[1]:
-            spsr.overwrite(value[12:16], 12)
-        if bytemask[2]:
-            spsr.overwrite(value[16:24], 16)
-        if bytemask[3]:
-            spsr.overwrite(value[24:27], 24)
-            if self.bad_mode(value[27:]):
-                print "unpredictable"
-            else:
-                spsr.overwrite(value[27:], 27)
-        self.set_spsr(spsr)
-
-    def is_external_abort(self):
-        # mock
-        return False
-
-    def second_stage_abort(self):
-        # mock
-        return False
-
-    def is_async_abort(self):
-        # mock
-        return False
-
-    def debug_exception(self):
-        # mock
-        return False
-
-    def is_alignment_fault(self):
-        # mock
-        return False
-
-    def exc_vector_base(self):
-        if self.sctlr.get_v():
-            return BitArray(bin="11111111111111110000000000000000")
-        elif HaveSecurityExt():
-            return self.vbar.value
-        else:
-            return BitArray(length=32)
-
-    def enter_hyp_mode(self, new_spsr_value, preferred_exceptn_return, vect_offset):
-        self.cpsr.set_m("0b11010")
-        self.set_spsr(new_spsr_value)
-        self.elr_hyp = preferred_exceptn_return
-        self.cpsr.set_j(False)
-        self.cpsr.set_t(self.hsctlr.get_te())
-        self.cpsr.set_e(self.hsctlr.get_ee())
-        if not self.scr.get_ea():
-            self.cpsr.set_a(True)
-        if not self.scr.get_fiq():
-            self.cpsr.set_f(True)
-        if not self.scr.get_irq():
-            self.cpsr.set_i(True)
-        self.cpsr.set_it(BitArray(length=8))
-        self.branch_to(BitArray(uint=(self.hvbar.uint + vect_offset), length=32))
-
-    def enter_monitor_mode(self, new_spsr_value, new_lr_value, vect_offset):
-        self.cpsr.set_m("0b10110")
-        self.set_spsr(new_spsr_value)
-        self.set(14, new_lr_value)
-        self.cpsr.set_j(False)
-        self.cpsr.set_t(self.sctlr.get_te())
-        self.cpsr.set_e(self.sctlr.get_ee())
-        self.cpsr.set_a(True)
-        self.cpsr.set_f(True)
-        self.cpsr.set_i(True)
-        self.cpsr.set_it(BitArray(length=8))
-        self.branch_to(BitArray(uint=(self.mvbar.uint + vect_offset), length=32))
-
-    def take_hyp_trap_exception(self):
-        preferred_exceptn_return = BitArray(
-            uint=(self.get_pc().uint - 4 if self.cpsr.get_t() else self.get_pc().uint - 8), length=32)
-        new_spsr_value = self.cpsr.value
-        self.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, 20)
-
-    def take_smc_exception(self):
-        self.it_advance()
-        new_lr_value = self.get_pc() if self.cpsr.get_t() else BitArray(uint=(self.get_pc().uint - 4), length=32)
-        new_spsr_value = self.cpsr.value
-        vect_offset = 8
-        if self.cpsr.get_m() == "0b10110":
-            self.scr.set_ns(False)
-        self.enter_monitor_mode(new_spsr_value, new_lr_value, vect_offset)
-
-    def take_data_abort_exception(self):
-        new_lr_value = BitArray(uint=self.get_pc().uint + 4, length=32) if self.cpsr.get_t() else self.get_pc()
-        new_spsr_value = self.cpsr.value
-        vect_offset = 16
-        preferred_exceptn_return = BitArray(uint=(new_lr_value.uint - 8), length=32)
-        route_to_monitor = HaveSecurityExt() and self.scr.get_ea() and self.is_external_abort()
-        take_to_hyp = HaveVirtExt() and HaveSecurityExt() and self.scr.get_ns() and self.cpsr.get_m() == "0b11010"
-        route_to_hyp = (
-            HaveVirtExt() and
-            HaveSecurityExt() and
-            not self.is_secure() and
-            (
-                self.second_stage_abort() or
-                (
-                    self.cpsr.get_m() != "0b11010" and
-                    (self.is_external_abort() and self.is_async_abort() and self.hcr.get_amo()) or
-                    (self.debug_exception() and self.hdcr.get_tde())
-                ) or
-                (
-                    self.cpsr.get_m() == "0b10000" and
-                    self.hcr.get_tge() and
-                    (self.is_alignment_fault() or (self.is_external_abort() and not self.is_async_abort()))
-                )
-            )
-        )
-        if route_to_monitor:
-            if self.cpsr.get_m() == "0b10110":
-                self.scr.set_ns(False)
-            self.enter_monitor_mode(new_spsr_value, new_lr_value, vect_offset)
-        elif take_to_hyp:
-            self.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, vect_offset)
-        elif route_to_hyp:
-            self.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, 20)
-        else:
-            if HaveSecurityExt() and self.cpsr.get_m() == "0b10110":
-                self.scr.set_ns(False)
-            self.cpsr.set_m("0b10111")
-            self.set_spsr(new_spsr_value)
-            self.set(14, new_lr_value)
-            self.cpsr.set_i(True)
-            if not HaveSecurityExt() or HaveVirtExt() or not self.scr.get_ns() or self.scr.get_aw():
-                self.cpsr.set_a(True)
-            self.cpsr.set_it(BitArray(length=8))
-            self.cpsr.set_j(False)
-            self.cpsr.set_t(self.sctlr.get_te())
-            self.cpsr.set_e(self.sctlr.get_ee())
-            self.branch_to(BitArray(uint=(self.exc_vector_base().uint + vect_offset), length=32))
-
-    def increment_pc(self, opcode_length):
-        self._R[self.RName.RName_PC] = bits_ops.add(self._R[self.RName.RName_PC], BitArray(bin=bin(opcode_length)), 32)
-        # if self.current_instr_set() == self.InstrSet.InstrSet_ARM:
-        #    self._R[self.RName.RName_PC] = BitsOps.add(self._R[self.RName.RName_PC], BitArray(bin="100"), 32)
-        # elif self.current_instr_set() == self.InstrSet.InstrSet_Thumb:
-        #    self._R[self.RName.RName_PC] = BitsOps.add(self._R[self.RName.RName_PC], BitArray(bin="10"), 32)
-
-    def reset_control_registers(self):
-        self.midr.value = BitArray(bin="01000001000011111010011101100000")
-        self.sctlr.value = BitArray(bin="01000000000001010000000001111001")
-        self.actlr = BitArray(bin="00000000000000000000000000000111")
-        self.vbar.value = BitArray(bin=implementation_defined.vbar_bin)
+from armulator.registers import Registers
 
 
 class ARM1176:
     def __init__(self):
-        self.core_registers = CoreRegisters()
+        self.registers = Registers()
         self.run = True
         self.opcode = BitArray(length=32)
         dabort = ("DAbort_AccessFlag DAbort_Alignment DAbort_Background DAbort_Domain DAbort_Permission "
@@ -974,209 +39,209 @@ class ARM1176:
     def start(self):
         self.take_reset()
 
-    def print_core_registers(self):
-        print "{0}:{1}".format("R0", self.core_registers.get(0))
-        print "{0}:{1}".format("R1", self.core_registers.get(1))
-        print "{0}:{1}".format("R2", self.core_registers.get(2))
-        print "{0}:{1}".format("R3", self.core_registers.get(3))
-        print "{0}:{1}".format("R4", self.core_registers.get(4))
-        print "{0}:{1}".format("R5", self.core_registers.get(5))
-        print "{0}:{1}".format("R6", self.core_registers.get(6))
-        print "{0}:{1}".format("R7", self.core_registers.get(7))
-        print "{0}:{1}".format("R8", self.core_registers.get(8))
-        print "{0}:{1}".format("R9", self.core_registers.get(9))
-        print "{0}:{1}".format("R10", self.core_registers.get(10))
-        print "{0}:{1}".format("R11", self.core_registers.get(11))
-        print "{0}:{1}".format("R12", self.core_registers.get(12))
-        print "{0}:{1}".format("SP", self.core_registers.get_sp())
-        print "{0}:{1}".format("LR", self.core_registers.get_lr())
-        print "{0}:{1}".format("PC", self.core_registers.pc_store_value())
-        print "{0}:{1}".format("CPSR", self.core_registers.cpsr.value)
-        # print "{0}:{1}".format(, self.core_registers.)
-        # print "{0}:{1}".format(, self.core_registers.)
+    def print_registers(self):
+        print "{0}:{1}".format("R0", self.registers.get(0))
+        print "{0}:{1}".format("R1", self.registers.get(1))
+        print "{0}:{1}".format("R2", self.registers.get(2))
+        print "{0}:{1}".format("R3", self.registers.get(3))
+        print "{0}:{1}".format("R4", self.registers.get(4))
+        print "{0}:{1}".format("R5", self.registers.get(5))
+        print "{0}:{1}".format("R6", self.registers.get(6))
+        print "{0}:{1}".format("R7", self.registers.get(7))
+        print "{0}:{1}".format("R8", self.registers.get(8))
+        print "{0}:{1}".format("R9", self.registers.get(9))
+        print "{0}:{1}".format("R10", self.registers.get(10))
+        print "{0}:{1}".format("R11", self.registers.get(11))
+        print "{0}:{1}".format("R12", self.registers.get(12))
+        print "{0}:{1}".format("SP", self.registers.get_sp())
+        print "{0}:{1}".format("LR", self.registers.get_lr())
+        print "{0}:{1}".format("PC", self.registers.pc_store_value())
+        print "{0}:{1}".format("CPSR", self.registers.cpsr.value)
+        # print "{0}:{1}".format(, self.registers.)
+        # print "{0}:{1}".format(, self.registers.)
 
     def take_reset(self):
-        self.core_registers.cpsr.set_m("0b10011")
+        self.registers.cpsr.set_m("0b10011")
         if HaveSecurityExt():
-            self.core_registers.scr.set_ns(False)
-        self.core_registers.reset_control_registers()
+            self.registers.scr.set_ns(False)
+        self.registers.reset_control_registers()
         if HaveAdvSIMDorVFP():
-            self.core_registers.fpexc.set_en(False)
+            self.registers.fpexc.set_en(False)
         if HaveThumbEE():
-            self.core_registers.teecr.set_xed(False)
+            self.registers.teecr.set_xed(False)
         if HaveJazelle():
-            self.core_registers.jmcr.set_je(False)
-        self.core_registers.cpsr.set_i(True)
-        self.core_registers.cpsr.set_f(True)
-        self.core_registers.cpsr.set_a(True)
-        self.core_registers.cpsr.set_it(BitArray(length=8))
-        self.core_registers.cpsr.set_j(False)
-        self.core_registers.cpsr.set_t(self.core_registers.sctlr.get_te())
-        self.core_registers.cpsr.set_e(self.core_registers.sctlr.get_ee())
+            self.registers.jmcr.set_je(False)
+        self.registers.cpsr.set_i(True)
+        self.registers.cpsr.set_f(True)
+        self.registers.cpsr.set_a(True)
+        self.registers.cpsr.set_it(BitArray(length=8))
+        self.registers.cpsr.set_j(False)
+        self.registers.cpsr.set_t(self.registers.sctlr.get_te())
+        self.registers.cpsr.set_e(self.registers.sctlr.get_ee())
         reset_vector = (implementation_defined.impdef_reset_vector
                         if HasIMPDEFResetVactor()
-                        else self.core_registers.exc_vector_base())
+                        else self.registers.exc_vector_base())
         reset_vector[31] = False
-        self.core_registers.branch_to(reset_vector)
+        self.registers.branch_to(reset_vector)
 
     def take_hyp_trap_exception(self):
-        preferred_exceptn_return = BitArray(uint=(self.core_registers.get_pc().uint - 4
-                                                  if self.core_registers.cpsr.get_t()
-                                                  else self.core_registers.get_pc().uint - 8),
+        preferred_exceptn_return = BitArray(uint=(self.registers.get_pc().uint - 4
+                                                  if self.registers.cpsr.get_t()
+                                                  else self.registers.get_pc().uint - 8),
                                             length=32)
-        new_spsr_value = self.core_registers.cpsr.value
-        self.core_registers.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, 20)
+        new_spsr_value = self.registers.cpsr.value
+        self.registers.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, 20)
 
     def take_smc_exception(self):
-        self.core_registers.it_advance()
-        new_lr_value = self.core_registers.get_pc() if self.core_registers.cpsr.get_t() else BitArray(
-            uint=(self.core_registers.get_pc().uint - 4), length=32)
-        new_spsr_value = self.core_registers.cpsr.value
+        self.registers.it_advance()
+        new_lr_value = self.registers.get_pc() if self.registers.cpsr.get_t() else BitArray(
+            uint=(self.registers.get_pc().uint - 4), length=32)
+        new_spsr_value = self.registers.cpsr.value
         vect_offset = 8
-        if self.core_registers.cpsr.get_m() == "0b10110":
-            self.core_registers.scr.set_ns(False)
-        self.core_registers.enter_monitor_mode(new_spsr_value, new_lr_value, vect_offset)
+        if self.registers.cpsr.get_m() == "0b10110":
+            self.registers.scr.set_ns(False)
+        self.registers.enter_monitor_mode(new_spsr_value, new_lr_value, vect_offset)
 
     def take_data_abort_exception(self):
-        new_lr_value = BitArray(uint=self.core_registers.get_pc().uint + 4,
-                                length=32) if self.core_registers.cpsr.get_t() else self.core_registers.get_pc()
-        new_spsr_value = self.core_registers.cpsr.value
+        new_lr_value = BitArray(uint=self.registers.get_pc().uint + 4,
+                                length=32) if self.registers.cpsr.get_t() else self.registers.get_pc()
+        new_spsr_value = self.registers.cpsr.value
         vect_offset = 16
         preferred_exceptn_return = BitArray(uint=(new_lr_value.uint - 8), length=32)
         route_to_monitor = (HaveSecurityExt() and
-                            self.core_registers.scr.get_ea() and
-                            self.core_registers.is_external_abort())
+                            self.registers.scr.get_ea() and
+                            self.registers.is_external_abort())
         take_to_hyp = (HaveVirtExt() and
                        HaveSecurityExt() and
-                       self.core_registers.scr.get_ns() and
-                       self.core_registers.cpsr.get_m() == "0b11010")
+                       self.registers.scr.get_ns() and
+                       self.registers.cpsr.get_m() == "0b11010")
         route_to_hyp = (
             HaveVirtExt() and
             HaveSecurityExt() and
-            not self.core_registers.is_secure() and
+            not self.registers.is_secure() and
             (
-                self.core_registers.second_stage_abort() or
+                self.registers.second_stage_abort() or
                 (
-                    self.core_registers.cpsr.get_m() != "0b11010" and
+                    self.registers.cpsr.get_m() != "0b11010" and
                     (
-                        self.core_registers.is_external_abort() and
-                        self.core_registers.is_async_abort() and
-                        self.core_registers.hcr.get_amo()
+                        self.registers.is_external_abort() and
+                        self.registers.is_async_abort() and
+                        self.registers.hcr.get_amo()
                     ) or
                     (
-                        self.core_registers.debug_exception() and
-                        self.core_registers.hdcr.get_tde()
+                        self.registers.debug_exception() and
+                        self.registers.hdcr.get_tde()
                     )
                 ) or
                 (
-                    self.core_registers.cpsr.get_m() == "0b10000" and
-                    self.core_registers.hcr.get_tge() and
+                    self.registers.cpsr.get_m() == "0b10000" and
+                    self.registers.hcr.get_tge() and
                     (
-                        self.core_registers.is_alignment_fault() or
+                        self.registers.is_alignment_fault() or
                         (
-                            self.core_registers.is_external_abort() and
-                            not self.core_registers.is_async_abort()
+                            self.registers.is_external_abort() and
+                            not self.registers.is_async_abort()
                         )
                     )
                 )
             )
         )
         if route_to_monitor:
-            if self.core_registers.cpsr.get_m() == "0b10110":
-                self.core_registers.scr.set_ns(False)
-            self.core_registers.enter_monitor_mode(new_spsr_value, new_lr_value, vect_offset)
+            if self.registers.cpsr.get_m() == "0b10110":
+                self.registers.scr.set_ns(False)
+            self.registers.enter_monitor_mode(new_spsr_value, new_lr_value, vect_offset)
         elif take_to_hyp:
-            self.core_registers.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, vect_offset)
+            self.registers.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, vect_offset)
         elif route_to_hyp:
-            self.core_registers.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, 20)
+            self.registers.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, 20)
         else:
-            if HaveSecurityExt() and self.core_registers.cpsr.get_m() == "0b10110":
-                self.core_registers.scr.set_ns(False)
-            self.core_registers.cpsr.set_m("0b10111")
-            self.core_registers.set_spsr(new_spsr_value)
-            self.core_registers.set(14, new_lr_value)
-            self.core_registers.cpsr.set_i(True)
+            if HaveSecurityExt() and self.registers.cpsr.get_m() == "0b10110":
+                self.registers.scr.set_ns(False)
+            self.registers.cpsr.set_m("0b10111")
+            self.registers.set_spsr(new_spsr_value)
+            self.registers.set(14, new_lr_value)
+            self.registers.cpsr.set_i(True)
             if (not HaveSecurityExt() or
                     HaveVirtExt() or
-                    not self.core_registers.scr.get_ns() or
-                    self.core_registers.scr.get_aw()):
-                self.core_registers.cpsr.set_a(True)
-            self.core_registers.cpsr.set_it(BitArray(length=8))
-            self.core_registers.cpsr.set_j(False)
-            self.core_registers.cpsr.set_t(self.core_registers.sctlr.get_te())
-            self.core_registers.cpsr.set_e(self.core_registers.sctlr.get_ee())
-            self.core_registers.branch_to(
-                BitArray(uint=(self.core_registers.exc_vector_base().uint + vect_offset), length=32))
+                    not self.registers.scr.get_ns() or
+                    self.registers.scr.get_aw()):
+                self.registers.cpsr.set_a(True)
+            self.registers.cpsr.set_it(BitArray(length=8))
+            self.registers.cpsr.set_j(False)
+            self.registers.cpsr.set_t(self.registers.sctlr.get_te())
+            self.registers.cpsr.set_e(self.registers.sctlr.get_ee())
+            self.registers.branch_to(
+                BitArray(uint=(self.registers.exc_vector_base().uint + vect_offset), length=32))
 
     def take_svc_exception(self):
-        self.core_registers.it_advance()
-        new_lr_value = bits_ops.sub(self.core_registers.get_pc(), BitArray(bin="10"),
-                                    32) if self.core_registers.cpsr.get_t() else bits_ops.sub(
-            self.core_registers.get_pc(), BitArray(bin="100"), 32)
-        new_spsr_value = self.core_registers.cpsr.value
+        self.registers.it_advance()
+        new_lr_value = bits_ops.sub(self.registers.get_pc(), BitArray(bin="10"),
+                                    32) if self.registers.cpsr.get_t() else bits_ops.sub(
+            self.registers.get_pc(), BitArray(bin="100"), 32)
+        new_spsr_value = self.registers.cpsr.value
         vect_offset = 8
         take_to_hyp = (HaveVirtExt() and
                        HaveSecurityExt() and
-                       self.core_registers.scr.get_ns() and
-                       self.core_registers.cpsr.get_m() == "0b11010")
+                       self.registers.scr.get_ns() and
+                       self.registers.cpsr.get_m() == "0b11010")
         route_to_hyp = (HaveVirtExt() and
                         HaveSecurityExt() and
-                        not self.core_registers.is_secure() and
-                        self.core_registers.hcr.get_tge() and
-                        self.core_registers.cpsr.get_m() == "0b10000")
+                        not self.registers.is_secure() and
+                        self.registers.hcr.get_tge() and
+                        self.registers.cpsr.get_m() == "0b10000")
         preferred_exceptn_return = new_lr_value
         if take_to_hyp:
-            self.core_registers.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, vect_offset)
+            self.registers.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, vect_offset)
         elif route_to_hyp:
-            self.core_registers.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, 20)
+            self.registers.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, 20)
         else:
-            if self.core_registers.cpsr.get_m() == "0b10110":
-                self.core_registers.scr.set_ns(False)
-            self.core_registers.cpsr.set_m("0b10011")
-            self.core_registers.set_spsr(new_spsr_value)
-            self.core_registers.set(14, new_lr_value)
-            self.core_registers.cpsr.set_i(True)
-            self.core_registers.cpsr.set_it(BitArray(length=8))
-            self.core_registers.cpsr.set_j(False)
-            self.core_registers.cpsr.set_t(self.core_registers.sctlr.get_te())
-            self.core_registers.cpsr.set_e(self.core_registers.sctlr.get_ee())
-            self.core_registers.branch_to(
-                bits_ops.add(self.core_registers.exc_vector_base(), BitArray(uint=vect_offset, length=32), 32))
+            if self.registers.cpsr.get_m() == "0b10110":
+                self.registers.scr.set_ns(False)
+            self.registers.cpsr.set_m("0b10011")
+            self.registers.set_spsr(new_spsr_value)
+            self.registers.set(14, new_lr_value)
+            self.registers.cpsr.set_i(True)
+            self.registers.cpsr.set_it(BitArray(length=8))
+            self.registers.cpsr.set_j(False)
+            self.registers.cpsr.set_t(self.registers.sctlr.get_te())
+            self.registers.cpsr.set_e(self.registers.sctlr.get_ee())
+            self.registers.branch_to(
+                bits_ops.add(self.registers.exc_vector_base(), BitArray(uint=vect_offset, length=32), 32))
 
     def take_undef_instr_exception(self):
-        new_lr_value = BitArray(uint=(self.core_registers.get_pc().uint - 2),
-                                length=32) if self.core_registers.cpsr.get_t() else BitArray(
-            uint=(self.core_registers.get_pc().uint - 4), length=32)
-        new_spsr_value = self.core_registers.cpsr.value
+        new_lr_value = BitArray(uint=(self.registers.get_pc().uint - 2),
+                                length=32) if self.registers.cpsr.get_t() else BitArray(
+            uint=(self.registers.get_pc().uint - 4), length=32)
+        new_spsr_value = self.registers.cpsr.value
         vect_offset = 4
         take_to_hyp = (HaveVirtExt() and
                        HaveSecurityExt() and
-                       self.core_registers.scr.get_ns() and
-                       self.core_registers.cpsr.get_m() == "0b11010")
+                       self.registers.scr.get_ns() and
+                       self.registers.cpsr.get_m() == "0b11010")
         route_to_hyp = (HaveVirtExt() and
                         HaveSecurityExt() and
-                        not self.core_registers.is_secure() and
-                        self.core_registers.hcr.get_tge() and
-                        self.core_registers.cpsr.get_m() == "0b10000")
-        return_offset = 2 if self.core_registers.cpsr.get_t() else 4
+                        not self.registers.is_secure() and
+                        self.registers.hcr.get_tge() and
+                        self.registers.cpsr.get_m() == "0b10000")
+        return_offset = 2 if self.registers.cpsr.get_t() else 4
         preferred_exceptn_return = BitArray(uint=(new_lr_value.uint - return_offset), length=32)
         if take_to_hyp:
-            self.core_registers.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, vect_offset)
+            self.registers.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, vect_offset)
         elif route_to_hyp:
-            self.core_registers.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, 20)
+            self.registers.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, 20)
         else:
-            if self.core_registers.cpsr.get_m() == "0b10110":
-                self.core_registers.scr.set_ns(False)
-            self.core_registers.cpsr.set_m("0b11011")
-            self.core_registers.set_spsr(new_spsr_value)
-            self.core_registers.set(14, new_lr_value)
-            self.core_registers.cpsr.set_i(True)
-            self.core_registers.cpsr.set_it(BitArray(length=8))
-            self.core_registers.cpsr.set_j(False)
-            self.core_registers.cpsr.set_t(self.core_registers.sctlr.get_te())
-            self.core_registers.cpsr.set_e(self.core_registers.sctlr.get_ee())
-            self.core_registers.branch_to(
-                BitArray(uint=(self.core_registers.exc_vector_base().uint + vect_offset), length=32))
+            if self.registers.cpsr.get_m() == "0b10110":
+                self.registers.scr.set_ns(False)
+            self.registers.cpsr.set_m("0b11011")
+            self.registers.set_spsr(new_spsr_value)
+            self.registers.set(14, new_lr_value)
+            self.registers.cpsr.set_i(True)
+            self.registers.cpsr.set_it(BitArray(length=8))
+            self.registers.cpsr.set_j(False)
+            self.registers.cpsr.set_t(self.registers.sctlr.get_te())
+            self.registers.cpsr.set_e(self.registers.sctlr.get_ee())
+            self.registers.branch_to(
+                BitArray(uint=(self.registers.exc_vector_base().uint + vect_offset), length=32))
 
     def big_endian_reverse(self, value, n):
         assert n == 1 or n == 2 or n == 4 or n == 8
@@ -1310,7 +375,7 @@ class ARM1176:
         return result
 
     def current_cond(self):
-        if self.core_registers.current_instr_set() == InstrSet.InstrSet_ARM:
+        if self.registers.current_instr_set() == InstrSet.InstrSet_ARM:
             result = self.opcode[0:4]
         elif self.opcode.length == 16 and self.opcode.bin[0:4] == "1101":
             result = self.opcode[4:8]
@@ -1318,9 +383,9 @@ class ARM1176:
                 self.opcode[19]:
             result = self.opcode[6:10]
         else:
-            if self.core_registers.cpsr.get_it()[4:8] != "0b0000":
-                result = self.core_registers.cpsr.get_it()[0:4]
-            elif self.core_registers.cpsr.get_it() == "0b00000000":
+            if self.registers.cpsr.get_it()[4:8] != "0b0000":
+                result = self.registers.cpsr.get_it()[0:4]
+            elif self.registers.cpsr.get_it() == "0b00000000":
                 result = BitArray(bin="1110")
             else:
                 print "unpredictable"
@@ -1329,20 +394,20 @@ class ARM1176:
     def condition_passed(self):
         cond = self.current_cond()
         if cond.bin[0:3] == "000":
-            result = self.core_registers.cpsr.get_z()
+            result = self.registers.cpsr.get_z()
         elif cond.bin[0:3] == "001":
-            result = self.core_registers.cpsr.get_c()
+            result = self.registers.cpsr.get_c()
         elif cond.bin[0:3] == "010":
-            result = self.core_registers.cpsr.get_n()
+            result = self.registers.cpsr.get_n()
         elif cond.bin[0:3] == "011":
-            result = self.core_registers.cpsr.get_v()
+            result = self.registers.cpsr.get_v()
         elif cond.bin[0:3] == "100":
-            result = self.core_registers.cpsr.get_c() and not self.core_registers.cpsr.get_z()
+            result = self.registers.cpsr.get_c() and not self.registers.cpsr.get_z()
         elif cond.bin[0:3] == "101":
-            result = self.core_registers.cpsr.get_n() == self.core_registers.cpsr.get_v()
+            result = self.registers.cpsr.get_n() == self.registers.cpsr.get_v()
         elif cond.bin[0:3] == "110":
-            result = (self.core_registers.cpsr.get_n() == self.core_registers.cpsr.get_v() and
-                      not self.core_registers.cpsr.get_z())
+            result = (self.registers.cpsr.get_n() == self.registers.cpsr.get_v() and
+                      not self.registers.cpsr.get_z())
         elif cond.bin[0:3] == "111":
             result = True
         if cond[3] and cond.bin != "1111":
@@ -1361,7 +426,7 @@ class ARM1176:
         if (ec.uint in (0x0, 0x20, 0x21)) or (ec.uint in (0x24, 0x25) and hsr_string[7]):
             hsr_value[6] = 1 if self.this_instr_length() == 32 else 0
         if ec.bin[0:2] == "00" and ec.bin[2:6] != "0000":
-            if self.core_registers.current_instr_set() == InstrSet.InstrSet_ARM:
+            if self.registers.current_instr_set() == InstrSet.InstrSet_ARM:
                 hsr_value[7] = True
                 hsr_value[8:12] = self.current_cond()
             else:
@@ -1376,45 +441,45 @@ class ARM1176:
             hsr_value[12:] = hsr_string[12:]
         else:
             hsr_value[7:] = hsr_string
-        self.core_registers.hsr.value = hsr_value
+        self.registers.hsr.value = hsr_value
 
     def switch_to_jazelle_execution(self):
         raise NotImplementedError()
 
     def branch_write_pc(self, address):
-        if self.core_registers.current_instr_set() == InstrSet.InstrSet_ARM:
+        if self.registers.current_instr_set() == InstrSet.InstrSet_ARM:
             if ArchVersion() < 6 and address.bin[29:] != "00":
                 print "unpredictable"
-            self.core_registers.branch_to(address[:-2] + BitArray(bin="00"))
-        elif self.core_registers.current_instr_set() == InstrSet.InstrSet_Jazelle:
+            self.registers.branch_to(address[:-2] + BitArray(bin="00"))
+        elif self.registers.current_instr_set() == InstrSet.InstrSet_Jazelle:
             if JazelleAcceptsExecution():
-                self.core_registers.branch_to(address)
+                self.registers.branch_to(address)
             else:
-                self.core_registers.branch_to(address[:-2] + BitArray(bin="00"))
+                self.registers.branch_to(address[:-2] + BitArray(bin="00"))
         else:
             address.set(False, 31)
-            self.core_registers.branch_to(address)
+            self.registers.branch_to(address)
 
     def bx_write_pc(self, address):
-        if self.core_registers.current_instr_set() == InstrSet.InstrSet_ThumbEE:
+        if self.registers.current_instr_set() == InstrSet.InstrSet_ThumbEE:
             if address[31]:
                 address.set(False, 31)
-                self.core_registers.branch_to(address)
+                self.registers.branch_to(address)
             else:
                 print "unpredictable"
         else:
             if address[31]:
-                self.core_registers.select_instr_set(InstrSet.InstrSet_Thumb)
+                self.registers.select_instr_set(InstrSet.InstrSet_Thumb)
                 address.set(False, 31)
-                self.core_registers.branch_to(address)
+                self.registers.branch_to(address)
             elif not address[30]:
-                self.core_registers.select_instr_set(InstrSet.InstrSet_ARM)
-                self.core_registers.branch_to(address)
+                self.registers.select_instr_set(InstrSet.InstrSet_ARM)
+                self.registers.branch_to(address)
             else:
                 print "unpredictable"
 
     def alu_write_pc(self, address):
-        if ArchVersion() >= 7 and self.core_registers.current_instr_set() == InstrSet.InstrSet_ARM:
+        if ArchVersion() >= 7 and self.registers.current_instr_set() == InstrSet.InstrSet_ARM:
             self.bx_write_pc(address)
         else:
             self.branch_write_pc(address)
@@ -1434,23 +499,23 @@ class ARM1176:
         raise NotImplementedError()
 
     def null_check_if_thumbee(self, n):
-        if self.core_registers.current_instr_set() == InstrSet.InstrSet_ThumbEE:
+        if self.registers.current_instr_set() == InstrSet.InstrSet_ThumbEE:
             if n == 15:
-                if bits_ops.align(self.core_registers.get_pc(), 4).all(False):
+                if bits_ops.align(self.registers.get_pc(), 4).all(False):
                     print "unpredictable"
             elif n == 13:
-                if self.core_registers.get_sp().all(False):
+                if self.registers.get_sp().all(False):
                     print "unpredictable"
             else:
-                if self.core_registers.get(n).all(False):
-                    self.core_registers.set_lr(self.core_registers.get_pc()[:-1] + BitArray(bin="1"))
-                    self.core_registers.cpsr.set_it(BitArray(bin="00000000"))
-                    self.branch_write_pc(BitArray(uint=(self.core_registers.teehbr.uint - 4), length=32))
+                if self.registers.get(n).all(False):
+                    self.registers.set_lr(self.registers.get_pc()[:-1] + BitArray(bin="1"))
+                    self.registers.cpsr.set_it(BitArray(bin="00000000"))
+                    self.branch_write_pc(BitArray(uint=(self.registers.teehbr.uint - 4), length=32))
                     raise EndOfInstruction("NullCheckIfThumbEE")
 
     def fcse_translate(self, va):
         if va.bin[0:7] == "0000000":
-            mva = self.core_registers.fcseidr.get_pid() + va[7:32]
+            mva = self.registers.fcseidr.get_pid() + va[7:32]
         else:
             mva = va
         return mva
@@ -1458,7 +523,7 @@ class ARM1176:
     def default_memory_attributes(self, va):
         memattrs = MemoryAttributes()
         if va[0:2] == "0b00":
-            if not self.core_registers.sctlr.get_c():
+            if not self.registers.sctlr.get_c():
                 memattrs.type = MemType.MemType_Normal
                 memattrs.innerattrs[0:2] = "0b00"
                 memattrs.shareable = True
@@ -1467,7 +532,7 @@ class ARM1176:
                 memattrs.innerattrs[0:2] = "0b01"
                 memattrs.shareable = False
         elif va[0:2] == "0b01":
-            if not self.core_registers.sctlr.get_c() or va[2]:
+            if not self.registers.sctlr.get_c() or va[2]:
                 memattrs.type = MemType.MemType_Normal
                 memattrs.innerattrs[0:2] = "0b00"
                 memattrs.shareable = True
@@ -1507,7 +572,7 @@ class ARM1176:
         ipavalid = False
         s2fs1walk = False
         ipa = BitArray(length=40)  # unknown
-        if self.core_registers.sctlr.get_afe():
+        if self.registers.sctlr.get_afe():
             perms.ap[2] = True
         abort = False
         if perms.ap == "0b000":
@@ -1552,28 +617,28 @@ class ARM1176:
         ldfsr_format = False
         s2fs1walk = False
         permission_check = False
-        if self.core_registers.dacr.get_d_n(domain.uint) == "0b00":
+        if self.registers.dacr.get_d_n(domain.uint) == "0b00":
             self.data_abort(mva, ipaddress, domain, level, iswrite, self.DAbort.DAbort_Domain, taketohypmode,
                             secondstageabort, ipavalid, ldfsr_format, s2fs1walk)
-        elif self.core_registers.dacr.get_d_n(domain.uint) == "0b01":
+        elif self.registers.dacr.get_d_n(domain.uint) == "0b01":
             permission_check = True
-        if self.core_registers.dacr.get_d_n(domain.uint) == "0b10":
+        if self.registers.dacr.get_d_n(domain.uint) == "0b10":
             print "unpredictable"
-        if self.core_registers.dacr.get_d_n(domain.uint) == "0b11":
+        if self.registers.dacr.get_d_n(domain.uint) == "0b11":
             permission_check = False
         return permission_check
 
     def second_stage_translate(self, s1_out_addr_desc, mva, size, is_write):
         result = AddressDescriptor()
         tlbrecord_s2 = TLBRecord()
-        if HaveVirtExt() and not self.core_registers.is_secure() and not self.core_registers.current_mode_is_hyp():
-            if self.core_registers.hcr.get_vm():
+        if HaveVirtExt() and not self.registers.is_secure() and not self.registers.current_mode_is_hyp():
+            if self.registers.hcr.get_vm():
                 s2ia = s1_out_addr_desc.paddress.physicaladdress
                 stage1 = False
                 s2fs1walk = True
                 tlbrecord_s2 = self.translation_table_walk_ld(s2ia, mva, is_write, stage1, s2fs1walk, size)
                 self.check_permission_s2(tlbrecord_s2.perms, mva, s2ia, tlbrecord_s2.level, False, s2fs1walk)
-                if self.core_registers.hcr.get_ptw():
+                if self.registers.hcr.get_ptw():
                     if tlbrecord_s2.addrdesc.memattrs.type != MemType.MemType_Normal:
                         domain = BitArray(length=4)  # unknown
                         taketohypmode = True
@@ -1595,10 +660,10 @@ class ARM1176:
                 dfsr_string = BitArray(length=14)
                 if dtype in (self.DAbort.DAbort_AsyncParity, self.DAbort.DAbort_AsyncExternal,
                              self.DAbort.DAbort_AsyncWatchpoint) or (dtype == self.DAbort.DAbort_SyncWatchpoint and
-                        self.core_registers.dbgdidr.get_version().uint <= 4):
-                    self.core_registers.dfar = BitArray(length=32)  # unknown
+                        self.registers.dbgdidr.get_version().uint <= 4):
+                    self.registers.dfar = BitArray(length=32)  # unknown
                 else:
-                    self.core_registers.dfar = vaddress
+                    self.registers.dfar = vaddress
                 if ldfsr_format:
                     dfsr_string[0] = self.tlb_lookup_came_from_cache_maintenance()
                     if dtype in (self.DAbort.DAbort_AsyncExternal, self.DAbort.DAbort_SyncExternal):
@@ -1644,13 +709,13 @@ class ARM1176:
                     temp_sdfsr = self.encode_sdfsr(dtype, level)
                     dfsr_string[3] = temp_sdfsr[0]
                     dfsr_string[10:14] = temp_sdfsr[1:5]
-                self.core_registers.dfsr.value[18:32] = dfsr_string
+                self.registers.dfsr.value[18:32] = dfsr_string
             else:
                 hsr_string = BitArray(length=25)
                 ec = BitArray(length=6)
-                self.core_registers.hdfar = vaddress
+                self.registers.hdfar = vaddress
                 if ipavalid:
-                    self.core_registers.hpfar.set_fipa(ipaddress[0:28])
+                    self.registers.hpfar.set_fipa(ipaddress[0:28])
                 if secondstageabort:
                     ec[0:6] = "0b100100"
                     hsr_string[0:9] = self.ls_instruction_syndrome()
@@ -1672,13 +737,13 @@ class ARM1176:
                     self.DAbort.DAbort_AsyncWatchpoint
                 ) or
                     (dtype == self.DAbort.DAbort_SyncWatchpoint and
-                        self.core_registers.dbgdidr.get_version().uint <= 4)):
-                self.core_registers.dfar = BitArray(length=32)  # unknown
+                        self.registers.dbgdidr.get_version().uint <= 4)):
+                self.registers.dfar = BitArray(length=32)  # unknown
             elif dtype == self.DAbort.DAbort_SyncParity:
                 if implementation_defined.data_abort_pmsa_change_dfar:
-                    self.core_registers.dfar = vaddress
+                    self.registers.dfar = vaddress
             else:
-                self.core_registers.dfar = vaddress
+                self.registers.dfar = vaddress
             if dtype in (self.DAbort.DAbort_AsyncExternal, self.DAbort.DAbort_SyncExternal):
                 dfsr_string[1] = implementation_defined.dfsr_string_12
             else:
@@ -1690,7 +755,7 @@ class ARM1176:
             temp_pmsafsr = self.encode_pmsafsr(dtype, level)
             dfsr_string[3] = temp_pmsafsr[0]
             dfsr_string[10:14] = temp_pmsafsr[1:5]
-            self.core_registers.dfsr.value[18:32] = dfsr_string
+            self.registers.dfsr.value[18:32] = dfsr_string
         raise DataAbortException()
 
     def alignment_fault_v(self, address, iswrite, taketohyp, secondstageabort):
@@ -1698,7 +763,7 @@ class ARM1176:
         domain = BitArray(length=4)  # unknown
         level = 0  # unknown
         ipavalid = False
-        ldfsr_fromat = taketohyp or self.core_registers.ttbcr.get_eae()
+        ldfsr_fromat = taketohyp or self.registers.ttbcr.get_eae()
         s2fs1walk = False
         mva = self.fcse_translate(address)
         self.data_abort(mva, ipaddress, domain, level, iswrite, self.DAbort.DAbort_Alignment, taketohyp,
@@ -1718,7 +783,7 @@ class ARM1176:
 
     def alignment_fault(self, address, iswrite):
         if MemorySystemArchitecture() == MemArch.MemArch_VMSA:
-            taketohypmode = self.core_registers.current_mode_is_hyp() or self.core_registers.hcr.get_tge()
+            taketohypmode = self.registers.current_mode_is_hyp() or self.registers.hcr.get_tge()
             secondstageabort = False
             self.alignment_fault_v(address, iswrite, taketohypmode, secondstageabort)
         elif MemorySystemArchitecture() == MemArch.MemArch_PMSA:
@@ -1769,10 +834,10 @@ class ARM1176:
 
     def mair_decode(self, attr):
         memattrs = MemoryAttributes()
-        if self.core_registers.current_mode_is_hyp():
-            mair = self.core_registers.hmair1 + self.core_registers.hmair0
+        if self.registers.current_mode_is_hyp():
+            mair = self.registers.hmair1 + self.registers.hmair0
         else:
-            mair = self.core_registers.mair1 + self.core_registers.mair0
+            mair = self.registers.mair1 + self.registers.mair0
         index = attr.uint
         attrfield = mair[56 - (8 * index):64 - (8 * index)]
         if attrfield[0:4] == "0b0000":
@@ -1980,7 +1045,7 @@ class ARM1176:
             # IMPLEMENTATION_DEFINED setting of memattrs
             pass
         else:
-            if self.core_registers.prrr.get_tr_n(region) == "0b00":
+            if self.registers.prrr.get_tr_n(region) == "0b00":
                 memattrs.type = MemType.MemType_StronglyOrdered
                 memattrs.innerattrs = BitArray(length=2)  # unknown
                 memattrs.innerhints = BitArray(length=2)  # unknown
@@ -1988,7 +1053,7 @@ class ARM1176:
                 memattrs.outerhints = BitArray(length=2)  # unknown
                 memattrs.shareable = True
                 memattrs.outershareable = True
-            elif self.core_registers.prrr.get_tr_n(region) == "0b01":
+            elif self.registers.prrr.get_tr_n(region) == "0b01":
                 memattrs.type = MemType.MemType_Device
                 memattrs.innerattrs = BitArray(length=2)  # unknown
                 memattrs.outerattrs = BitArray(length=2)  # unknown
@@ -1996,18 +1061,18 @@ class ARM1176:
                 memattrs.outerhints = BitArray(length=2)  # unknown
                 memattrs.shareable = True
                 memattrs.outershareable = True
-            elif self.core_registers.prrr.get_tr_n(region) == "0b10":
+            elif self.registers.prrr.get_tr_n(region) == "0b10":
                 memattrs.type = MemType.MemType_Normal
-                hintsattrs = self.convert_attrs_hints(self.core_registers.nmrr.get_ir_n(region))
+                hintsattrs = self.convert_attrs_hints(self.registers.nmrr.get_ir_n(region))
                 memattrs.innerattrs = hintsattrs[2:4]
                 memattrs.innerhints = hintsattrs[0:2]
-                hintsattrs = self.convert_attrs_hints(self.core_registers.nmrr.get_or_n(region))
+                hintsattrs = self.convert_attrs_hints(self.registers.nmrr.get_or_n(region))
                 memattrs.outerattrs = hintsattrs[2:4]
                 memattrs.outerhints = hintsattrs[0:2]
-                s_bit = self.core_registers.prrr.get_ns0() if not s else self.core_registers.prrr.get_ns1()
+                s_bit = self.registers.prrr.get_ns0() if not s else self.registers.prrr.get_ns1()
                 memattrs.shareable = s_bit
-                memattrs.outershareable = s_bit and not self.core_registers.prrr.get_nos_n(region)
-            elif self.core_registers.prrr.get_tr_n(region) == "0b11":
+                memattrs.outershareable = s_bit and not self.registers.prrr.get_nos_n(region)
+            elif self.registers.prrr.get_tr_n(region) == "0b11":
                 memattrs.type = MemType.MemType_Normal  # unknown
                 memattrs.innerattrs = BitArray(length=2)  # unknown
                 memattrs.innerhints = BitArray(length=2)  # unknown
@@ -2026,98 +1091,98 @@ class ARM1176:
         base_found = False
         disabled = False
         if stage1:
-            if self.core_registers.current_mode_is_hyp():
+            if self.registers.current_mode_is_hyp():
                 lookup_secure = False
-                t0_size = self.core_registers.htcr.get_t0sz().uint
+                t0_size = self.registers.htcr.get_t0sz().uint
                 if t0_size == 0 or ia[8:t0_size + 8].uint == 0:
-                    current_level = 1 if self.core_registers.htcr.get_t0sz()[0:2] == "0b00" else 2
+                    current_level = 1 if self.registers.htcr.get_t0sz()[0:2] == "0b00" else 2
                     ba_lower_bound = 9 * current_level - t0_size - 4
-                    base_address = self.core_registers.httbr[24:64 - ba_lower_bound] + BitArray(length=ba_lower_bound)
-                    if self.core_registers.httbr[64 - ba_lower_bound:61].uint != 0:
+                    base_address = self.registers.httbr[24:64 - ba_lower_bound] + BitArray(length=ba_lower_bound)
+                    if self.registers.httbr[64 - ba_lower_bound:61].uint != 0:
                         print "unpredictable"
                     base_found = True
                     start_bit = 31 - t0_size
                     walkaddr.memattrs.type = MemType.MemType_Normal
-                    hintsattrs = self.convert_attrs_hints(self.core_registers.htcr.get_irgn0())
+                    hintsattrs = self.convert_attrs_hints(self.registers.htcr.get_irgn0())
                     walkaddr.memattrs.innerhints = hintsattrs[0:2]
                     walkaddr.memattrs.innerattrs = hintsattrs[2:4]
-                    hintsattrs = self.convert_attrs_hints(self.core_registers.htcr.get_orgn0())
+                    hintsattrs = self.convert_attrs_hints(self.registers.htcr.get_orgn0())
                     walkaddr.memattrs.outerhints = hintsattrs[0:2]
                     walkaddr.memattrs.outerattrs = hintsattrs[2:4]
-                    walkaddr.memattrs.shareable = self.core_registers.htcr.get_sh0()[0]
-                    walkaddr.memattrs.outershareable = self.core_registers.htcr.get_sh0() == "0b10"
+                    walkaddr.memattrs.shareable = self.registers.htcr.get_sh0()[0]
+                    walkaddr.memattrs.outershareable = self.registers.htcr.get_sh0() == "0b10"
                     walkaddr.paddress.ns = True
             else:
-                lookup_secure = self.core_registers.is_secure()
-                t0_size = self.core_registers.ttbcr.get_t0sz().uint
+                lookup_secure = self.registers.is_secure()
+                t0_size = self.registers.ttbcr.get_t0sz().uint
                 if t0_size == 0 or ia[8:t0_size + 8].uint == 0:
-                    current_level = 1 if self.core_registers.ttbcr.get_t0sz().bin[0:2] == "00" else 2
+                    current_level = 1 if self.registers.ttbcr.get_t0sz().bin[0:2] == "00" else 2
                     ba_lower_bound = 9 * current_level - t0_size - 4
-                    base_address = self.core_registers.ttbr0_64[24:64 - ba_lower_bound] + BitArray(
+                    base_address = self.registers.ttbr0_64[24:64 - ba_lower_bound] + BitArray(
                         length=ba_lower_bound)
-                    if self.core_registers.ttbr0_64[64 - ba_lower_bound:61].uint != 0:
+                    if self.registers.ttbr0_64[64 - ba_lower_bound:61].uint != 0:
                         print "unpredictable"
                     base_found = True
-                    disabled = self.core_registers.ttbcr.get_epd0()
+                    disabled = self.registers.ttbcr.get_epd0()
                     start_bit = 31 - t0_size
                     walkaddr.memattrs.type = MemType.MemType_Normal
-                    hintsattrs = self.convert_attrs_hints(self.core_registers.ttbcr.get_irgn0())
+                    hintsattrs = self.convert_attrs_hints(self.registers.ttbcr.get_irgn0())
                     walkaddr.memattrs.innerhints = hintsattrs[0:2]
                     walkaddr.memattrs.innerattrs = hintsattrs[2:4]
-                    hintsattrs = self.convert_attrs_hints(self.core_registers.ttbcr.get_orgn0())
+                    hintsattrs = self.convert_attrs_hints(self.registers.ttbcr.get_orgn0())
                     walkaddr.memattrs.outerhints = hintsattrs[0:2]
                     walkaddr.memattrs.outerattrs = hintsattrs[2:4]
-                    walkaddr.memattrs.shareable = self.core_registers.ttbcr.get_sh0()[0]
-                    walkaddr.memattrs.outershareable = self.core_registers.ttbcr.get_sh0() == "0b10"
-                t1_size = self.core_registers.ttbcr.get_t1sz().uint
+                    walkaddr.memattrs.shareable = self.registers.ttbcr.get_sh0()[0]
+                    walkaddr.memattrs.outershareable = self.registers.ttbcr.get_sh0() == "0b10"
+                t1_size = self.registers.ttbcr.get_t1sz().uint
                 if (t1_size == 0 and not base_found) or ia[8:t1_size + 8].all(True):
-                    current_level = 1 if self.core_registers.ttbcr.get_t1sz().bin[0:2] == "00" else 2
+                    current_level = 1 if self.registers.ttbcr.get_t1sz().bin[0:2] == "00" else 2
                     ba_lower_bound = 9 * current_level - t1_size - 4
-                    base_address = self.core_registers.ttbr1_64[24:64 - ba_lower_bound] + BitArray(
+                    base_address = self.registers.ttbr1_64[24:64 - ba_lower_bound] + BitArray(
                         length=ba_lower_bound)
-                    if self.core_registers.ttbr1_64[64 - ba_lower_bound:61].uint != 0:
+                    if self.registers.ttbr1_64[64 - ba_lower_bound:61].uint != 0:
                         print "unpredictable"
                     base_found = True
-                    disabled = self.core_registers.ttbcr.get_epd1()
+                    disabled = self.registers.ttbcr.get_epd1()
                     start_bit = 31 - t1_size
                     walkaddr.memattrs.type = MemType.MemType_Normal
-                    hintsattrs = self.convert_attrs_hints(self.core_registers.ttbcr.get_irgn1())
+                    hintsattrs = self.convert_attrs_hints(self.registers.ttbcr.get_irgn1())
                     walkaddr.memattrs.innerhints = hintsattrs[0:2]
                     walkaddr.memattrs.innerattrs = hintsattrs[2:4]
-                    hintsattrs = self.convert_attrs_hints(self.core_registers.ttbcr.get_orgn1())
+                    hintsattrs = self.convert_attrs_hints(self.registers.ttbcr.get_orgn1())
                     walkaddr.memattrs.outerhints = hintsattrs[0:2]
                     walkaddr.memattrs.outerattrs = hintsattrs[2:4]
-                    walkaddr.memattrs.shareable = self.core_registers.ttbcr.get_sh1()[0]
-                    walkaddr.memattrs.outershareable = self.core_registers.ttbcr.get_sh1() == "0b10"
+                    walkaddr.memattrs.shareable = self.registers.ttbcr.get_sh1()[0]
+                    walkaddr.memattrs.outershareable = self.registers.ttbcr.get_sh1() == "0b10"
         else:
-            t0_size = self.core_registers.vtcr.get_t0sz().uint
-            s_level = self.core_registers.vtcr.get_sl0().uint
+            t0_size = self.registers.vtcr.get_t0sz().uint
+            s_level = self.registers.vtcr.get_sl0().uint
             ba_lower_bound = 14 - t0_size - (9 * s_level)
             if s_level == 0 and t0_size < -2:
                 print "unpredictable"
             if s_level == 1 and t0_size > 1:
                 print "unpredictable"
-            if self.core_registers.vtcr.get_sl0()[0]:
+            if self.registers.vtcr.get_sl0()[0]:
                 print "unpredictable"
-            if self.core_registers.vttbr[64 - ba_lower_bound:61].uint != 0:
+            if self.registers.vttbr[64 - ba_lower_bound:61].uint != 0:
                 print "unpredictable"
             if t0_size == -8 or ia[0:t0_size + 8].uint == 0:
                 current_level = 2 - s_level
-                base_address = self.core_registers.vttbr[24:64 - ba_lower_bound] + BitArray(length=ba_lower_bound)
+                base_address = self.registers.vttbr[24:64 - ba_lower_bound] + BitArray(length=ba_lower_bound)
                 base_found = True
                 start_bit = 31 - t0_size
             lookup_secure = False
             walkaddr.memattrs.type = MemType.MemType_Normal
-            hintsattrs = self.convert_attrs_hints(self.core_registers.vtcr.get_irgn0())
+            hintsattrs = self.convert_attrs_hints(self.registers.vtcr.get_irgn0())
             walkaddr.memattrs.innerhints = hintsattrs[0:2]
             walkaddr.memattrs.innerattrs = hintsattrs[2:4]
-            hintsattrs = self.convert_attrs_hints(self.core_registers.vtcr.get_orgn0())
+            hintsattrs = self.convert_attrs_hints(self.registers.vtcr.get_orgn0())
             walkaddr.memattrs.outerhints = hintsattrs[0:2]
             walkaddr.memattrs.outerattrs = hintsattrs[2:4]
-            walkaddr.memattrs.shareable = self.core_registers.vtcr.get_sh0()[0]
-            walkaddr.memattrs.outershareable = self.core_registers.vtcr.get_sh0() == "0b10"
+            walkaddr.memattrs.shareable = self.registers.vtcr.get_sh0()[0]
+            walkaddr.memattrs.outershareable = self.registers.vtcr.get_sh0() == "0b10"
         if not base_found or disabled:
-            taketohypmode = self.core_registers.current_mode_is_hyp() or not stage1
+            taketohypmode = self.registers.current_mode_is_hyp() or not stage1
             level = 1
             ipavalid = not stage1
             self.data_abort(va, ia, domain, level, is_write, self.DAbort.DAbort_Translation, taketohypmode, not stage1,
@@ -2147,29 +1212,29 @@ class ARM1176:
                 walkaddr.paddress.ns = True
             if (not HaveVirtExt() or
                     not stage1 or
-                    self.core_registers.is_secure() or
-                    self.core_registers.current_mode_is_hyp()):
-                if HaveVirtExt() and (self.core_registers.current_mode_is_hyp() or not stage1):
-                    big_endian = self.core_registers.hsctlr.get_ee()
+                    self.registers.is_secure() or
+                    self.registers.current_mode_is_hyp()):
+                if HaveVirtExt() and (self.registers.current_mode_is_hyp() or not stage1):
+                    big_endian = self.registers.hsctlr.get_ee()
                 else:
-                    big_endian = self.core_registers.sctlr.get_ee()
+                    big_endian = self.registers.sctlr.get_ee()
                 descriptor = self.mem[walkaddr, 8]
                 if big_endian:
                     descriptor = self.big_endian_reverse(descriptor, 8)
             else:
                 walkaddr2 = self.second_stage_translate(walkaddr, ia[8:40], 8, is_write)
                 descriptor = self.mem[walkaddr2, 8]
-                if self.core_registers.sctlr.get_ee():
+                if self.registers.sctlr.get_ee():
                     descriptor = self.big_endian_reverse(descriptor, 8)
             if not descriptor[-1]:
-                taketohypmode = self.core_registers.current_mode_is_hyp() or not stage1
+                taketohypmode = self.registers.current_mode_is_hyp() or not stage1
                 ipavalid = not stage1
                 self.data_abort(va, ia, domain, current_level, is_write, self.DAbort.DAbort_Translation, taketohypmode,
                                 not stage1, ipavalid, ldfsr_format, s2fs1walk)
             else:
                 if not descriptor[-2]:
                     if current_level == 3:
-                        taketohypmode = self.core_registers.current_mode_is_hyp() or not stage1
+                        taketohypmode = self.registers.current_mode_is_hyp() or not stage1
                         ipavalid = not stage1
                         self.data_abort(va, ia, domain, current_level, is_write, self.DAbort.DAbort_Translation,
                                         taketohypmode, not stage1, ipavalid, ldfsr_format, s2fs1walk)
@@ -2194,7 +1259,7 @@ class ARM1176:
                         attrs[0] = True
                     if table_pxn:
                         attrs[1] = True
-                    if self.core_registers.is_secure() and not lookup_secure:
+                    if self.registers.is_secure() and not lookup_secure:
                         attrs[3] = True
                     if not table_rw:
                         attrs[7] = True
@@ -2205,7 +1270,7 @@ class ARM1176:
             else:
                 current_level += 1
         if not attrs[4]:
-            taketohypmode = self.core_registers.current_mode_is_hyp() or not stage1
+            taketohypmode = self.registers.current_mode_is_hyp() or not stage1
             ipavalid = not stage1
             self.data_abort(va, ia, domain, current_level, is_write, self.DAbort.DAbort_AccessFlag, taketohypmode,
                             not stage1, ipavalid, ldfsr_format, s2fs1walk)
@@ -2233,7 +1298,7 @@ class ARM1176:
             result.addrdesc.paddress.ns = attrs[9]
         else:
             result.addrdesc.paddress.ns = True
-        if stage1 and self.core_registers.current_mode_is_hyp():
+        if stage1 and self.registers.current_mode_is_hyp():
             if not attrs[8]:
                 print "unpredictable"
             if not table_user:
@@ -2258,20 +1323,20 @@ class ARM1176:
         s2fs1walk = False
         domain = BitArray(length=4)  # unknown
         ttbr = BitArray(length=64)
-        n = self.core_registers.ttbcr.get_n().uint
+        n = self.registers.ttbcr.get_n().uint
         if n == 0 or mva[0:n + 1].uint == 0:
-            ttbr = self.core_registers.ttbr0_64
-            disabled = self.core_registers.ttbcr.get_pd1()
+            ttbr = self.registers.ttbr0_64
+            disabled = self.registers.ttbcr.get_pd1()
         else:
-            ttbr = self.core_registers.ttbr1_64
-            disabled = self.core_registers.ttbcr.get_pd1()
+            ttbr = self.registers.ttbr1_64
+            disabled = self.registers.ttbcr.get_pd1()
             n = 0
         if HaveSecurityExt() and disabled:
             level = 1
             self.data_abort(mva, ia, domain, level, is_write, self.DAbort.DAbort_Translation, taketohypmode, stage2,
                             ipavalid, ldfsr_format, s2fs1walk)
         l1descaddr.paddress.physicaladdress = "0b00000000" + ttbr[32:n + 50] + mva[n:12] + "0b00"
-        l1descaddr.paddress.ns = not self.core_registers.is_secure()
+        l1descaddr.paddress.ns = not self.registers.is_secure()
         l1descaddr.memattrs.type = MemType.MemType_Normal
         l1descaddr.memattrs.shareable = ttbr[62]
         l1descaddr.memattrs.outershareable = ttbr[62] and not ttbr[58]
@@ -2294,12 +1359,12 @@ class ARM1176:
                 l1descaddr.memattrs.innerhints[0:2] = ("0b01"
                                                        if implementation_defined.translation_walk_sd_l1descaddr_hints_01
                                                        else "0b11")
-        if not HaveVirtExt() or self.core_registers.is_secure():
+        if not HaveVirtExt() or self.registers.is_secure():
             l1descaddr2 = l1descaddr
         else:
             l1descaddr2 = self.second_stage_translate(l1descaddr, mva, 4, is_write)
         l1desc = self.mem[l1descaddr2, 4]
-        if self.core_registers.sctlr.get_ee():
+        if self.registers.sctlr.get_ee():
             l1desc = self.big_endian_reverse(l1desc, 4)
         if l1desc[30:32] == "0b00":
             level = 1
@@ -2311,14 +1376,14 @@ class ARM1176:
             pxn = l1desc[29]
             ns = l1desc[28]
             l2descaddr.paddress.physicaladdress = "0b00000000" + l1desc[0:22] + mva[12:20] + "0b00"
-            l2descaddr.paddress.ns = not self.core_registers.is_secure()
+            l2descaddr.paddress.ns = not self.registers.is_secure()
             l2descaddr.memattrs = l1descaddr.memattrs
-            if not HaveVirtExt() or self.core_registers.is_secure():
+            if not HaveVirtExt() or self.registers.is_secure():
                 l2descaddr2 = l2descaddr
             else:
                 l2descaddr2 = self.second_stage_translate(l2descaddr, mva, 4, is_write)
             l2desc = self.mem[l2descaddr2, 4]
-            if self.core_registers.sctlr.get_ee():
+            if self.registers.sctlr.get_ee():
                 l2desc = self.big_endian_reverse(l2desc, 4)
             if l2desc[30:32] == "0b00":
                 self.data_abort(mva, ia, domain, level, is_write, self.DAbort.DAbort_Translation, taketohypmode, stage2,
@@ -2326,12 +1391,12 @@ class ARM1176:
             s = l2desc[21]
             ap = l2desc[22:23] + l2desc[26:28]
             ng = l2desc[20]
-            if self.core_registers.sctlr.get_afe() and not l2desc[27]:
-                if not self.core_registers.sctlr.get_ha():
+            if self.registers.sctlr.get_afe() and not l2desc[27]:
+                if not self.registers.sctlr.get_ha():
                     self.data_abort(mva, ia, domain, level, is_write, self.DAbort.DAbort_AccessFlag, taketohypmode,
                                     stage2, ipavalid, ldfsr_format, s2fs1walk)
                 else:
-                    if self.core_registers.sctlr.get_ee():
+                    if self.registers.sctlr.get_ee():
                         self.mem.set_bits(l2descaddr2, 4, 3, 1, BitArray(bin="1"))
                     else:
                         self.mem.set_bits(l2descaddr2, 4, 27, 1, BitArray(bin="1"))
@@ -2356,12 +1421,12 @@ class ARM1176:
             ng = l1desc[14]
             level = 1
             ns = l1desc[12]
-            if self.core_registers.sctlr.get_afe() and not l1desc[21]:
-                if not self.core_registers.sctlr.get_ha():
+            if self.registers.sctlr.get_afe() and not l1desc[21]:
+                if not self.registers.sctlr.get_ha():
                     self.data_abort(mva, ia, domain, level, is_write, self.DAbort.DAbort_AccessFlag, taketohypmode,
                                     stage2, ipavalid, ldfsr_format, s2fs1walk)
                 else:
-                    if self.core_registers.sctlr.get_ee():
+                    if self.registers.sctlr.get_ee():
                         self.mem.set_bits(l1descaddr2, 4, 13, 1, BitArray(bin="1"))
                     else:
                         self.mem.set_bits(l1descaddr2, 4, 21, 1, BitArray(bin="1"))
@@ -2375,7 +1440,7 @@ class ARM1176:
                 block_size = 16384
                 physicaladdressext = l1desc[23:27] + l1desc[8:12]
                 physicaladdress = l1desc[0:8] + mva[8:32]
-        if not self.core_registers.sctlr.get_tre():
+        if not self.registers.sctlr.get_tre():
             if self.remap_regs_have_reset_values():
                 result.addrdesc.memattrs = self.default_tex_decode(texcb, s)
             else:
@@ -2393,15 +1458,15 @@ class ARM1176:
         result.level = level
         result.blocksize = block_size
         result.addrdesc.paddress.physicaladdress = physicaladdressext + physicaladdress
-        result.addrdesc.paddress.ns = ns if self.core_registers.is_secure() else True
+        result.addrdesc.paddress.ns = ns if self.registers.is_secure() else True
         return result
 
     def translate_address_v_s1_off(self, va):
         result = TLBRecord()
         if (not HaveVirtExt() or
-                not self.core_registers.hcr.get_dc() or
-                self.core_registers.is_secure() or
-                self.core_registers.current_mode_is_hyp()):
+                not self.registers.hcr.get_dc() or
+                self.registers.is_secure() or
+                self.registers.current_mode_is_hyp()):
             result.addrdesc.memattrs.type = MemType.MemType_StronglyOrdered
             result.addrdesc.memattrs.innerattrs = BitArray(length=2)  # unknown
             result.addrdesc.memattrs.innerhints = BitArray(length=2)  # unknown
@@ -2417,7 +1482,7 @@ class ARM1176:
             result.addrdesc.memattrs.outerhints[0:2] = "0b11"
             result.addrdesc.memattrs.shareable = False
             result.addrdesc.memattrs.outershareable = False
-            if not self.core_registers.hcr.get_vm():
+            if not self.registers.hcr.get_vm():
                 print "unpredictable"
         result.perms.ap = BitArray(length=3)  # unknown
         result.perms.xn = False
@@ -2427,21 +1492,21 @@ class ARM1176:
         result.level = 0  # unknown
         result.blocksize = 0  # unknown
         result.addrdesc.paddress.physicaladdress = "0b00000000" + va
-        result.addrdesc.paddress.ns = not self.core_registers.is_secure()
+        result.addrdesc.paddress.ns = not self.registers.is_secure()
         return result
 
     def translate_address_v(self, va, ispriv, iswrite, size, wasaligned):
         result = AddressDescriptor()
         s2fs1walk = False
         mva = self.fcse_translate(va)
-        ishyp = self.core_registers.current_mode_is_hyp()
-        if (ishyp and self.core_registers.hsctlr.get_m()) or (not ishyp and self.core_registers.sctlr.get_m()):
+        ishyp = self.registers.current_mode_is_hyp()
+        if (ishyp and self.registers.hsctlr.get_m()) or (not ishyp and self.registers.sctlr.get_m()):
             if (HaveVirtExt() and
-                    not self.core_registers.is_secure() and
+                    not self.registers.is_secure() and
                     not ishyp and
-                    self.core_registers.hcr.get_tge()):
+                    self.registers.hcr.get_tge()):
                 print "unpredictable"
-            uses_ld = ishyp or self.core_registers.ttbcr.get_eae()
+            uses_ld = ishyp or self.registers.ttbcr.get_eae()
             if uses_ld:
                 ia_in = BitArray(bin="00000000") + mva
                 tlbrecordS1 = self.translation_table_walk_ld(ia_in, mva, iswrite, True, s2fs1walk, size)
@@ -2466,8 +1531,8 @@ class ARM1176:
         if check_permission:
             self.check_permission(tlbrecordS1.perms, mva, tlbrecordS1.level, tlbrecordS1.domain, iswrite, ispriv, ishyp,
                                   uses_ld)
-        if HaveVirtExt() and not self.core_registers.is_secure() and not ishyp:
-            if self.core_registers.hcr.get_vm():
+        if HaveVirtExt() and not self.registers.is_secure() and not ishyp:
+            if self.registers.hcr.get_vm():
                 s1outputaddr = tlbrecordS1.addrdesc.paddress.physicaladdress
                 tlbrecordS2 = self.translation_table_walk_ld(s1outputaddr, mva, iswrite, False, s2fs1walk, size)
                 if (not wasaligned and
@@ -2491,16 +1556,16 @@ class ARM1176:
         perms = Permissions
         result.paddress.physicaladdress = "0b00000000" + va
         # IMPLEMENTATION_DEFINED setting of result.paddress.NS;
-        if not self.core_registers.sctlr.get_m():
+        if not self.registers.sctlr.get_m():
             result.memattrs = self.default_memory_attributes(va)
         else:
             region_found = False
             texcb = BitArray(length=5)  # unknown
             s = False  # unknown
-            for r in xrange(self.core_registers.mpuir.get_dregion().uint):
-                size_enable = self.core_registers.drsrs[r]
-                base_address = self.core_registers.drbars[r]
-                access_control = self.core_registers.dracrs[r]
+            for r in xrange(self.registers.mpuir.get_dregion().uint):
+                size_enable = self.registers.drsrs[r]
+                base_address = self.registers.drbars[r]
+                access_control = self.registers.dracrs[r]
                 if size_enable.get_en():
                     ls_bit = size_enable.get_rsize().uint + 1
                     if ls_bit < 2:
@@ -2524,7 +1589,7 @@ class ARM1176:
             if region_found:
                 result.memattrs = self.default_tex_decode(texcb, s)
             else:
-                if not self.core_registers.sctlr.get_br() or not ispriv:
+                if not self.registers.sctlr.get_br() or not ispriv:
                     ipaddress = BitArray(length=40)  # unknown
                     domain = BitArray(length=4)  # unkown
                     level = 0  # unkown
@@ -2538,7 +1603,7 @@ class ARM1176:
                 else:
                     result.memattrs = self.default_memory_attributes(va)
                     perms.ap = BitArray(bin="011")
-                    perms.xn = not self.core_registers.sctlr.get_v() if va[0:4] == "0b1111" else va[0]
+                    perms.xn = not self.registers.sctlr.get_v() if va[0:4] == "0b1111" else va[0]
                     perms.pxn = False
             if not wasaligned and result.memattrs.type in (MemType.MemType_Device, MemType.MemType_StronglyOrdered):
                 print "unpredictable"
@@ -2582,7 +1647,7 @@ class ARM1176:
         if address != bits_ops.align(address, size):
             self.alignment_fault(address, True)
         else:
-            memaddrdesc = self.translate_address(address, self.core_registers.current_mode_is_not_user(), True, size,
+            memaddrdesc = self.translate_address(address, self.registers.current_mode_is_not_user(), True, size,
                                                  True)
         passed = self.is_exclusive_local(memaddrdesc.paddress, ProcessorID(), size)
         if passed:
@@ -2592,7 +1657,7 @@ class ARM1176:
         return passed
 
     def set_exclusive_monitors(self, address, size):
-        memaddrdesc = self.translate_address(address, self.core_registers.current_mode_is_not_user(), False, size, True)
+        memaddrdesc = self.translate_address(address, self.registers.current_mode_is_not_user(), False, size, True)
         if memaddrdesc.memattrs.shareable:
             self.mark_exclusive_global(memaddrdesc.paddress, ProcessorID(), size)
         self.mark_exclusive_local(memaddrdesc.paddress, ProcessorID(), size)
@@ -2600,50 +1665,50 @@ class ARM1176:
     def mem_a_with_priv_set(self, address, size, privileged, was_aligned, value):
         if address == bits_ops.align(address, size):
             va = address
-        elif ArchVersion() >= 7 or self.core_registers.sctlr.get_a() or self.core_registers.sctlr.get_u():
+        elif ArchVersion() >= 7 or self.registers.sctlr.get_a() or self.registers.sctlr.get_u():
             self.alignment_fault(address, True)
         else:
             va = bits_ops.align(address, size)
         memaddrdesc = self.translate_address(va, privileged, True, size, was_aligned)
         if memaddrdesc.memattrs.shareable:
             self.clear_exclusive_by_address(memaddrdesc.paddress, ProcessorID(), size)
-        if self.core_registers.cpsr.get_e():
+        if self.registers.cpsr.get_e():
             value = self.big_endian_reverse(value, size)
         self.mem[memaddrdesc, size] = value
 
     def mem_a_with_priv_get(self, address, size, privileged, was_aligned):
         if address == bits_ops.align(address, size):
             va = address
-        elif ArchVersion() >= 7 or self.core_registers.sctlr.get_a() or self.core_registers.sctlr.get_u():
+        elif ArchVersion() >= 7 or self.registers.sctlr.get_a() or self.registers.sctlr.get_u():
             self.alignment_fault(address, False)
         else:
             va = bits_ops.align(address, size)
         memaddrdesc = self.translate_address(va, privileged, False, size, was_aligned)
         value = self.mem[memaddrdesc, size]
-        if self.core_registers.cpsr.get_e():
+        if self.registers.cpsr.get_e():
             value = self.big_endian_reverse(value, size)
         return value
 
     def mem_a_set(self, address, size, value):
-        self.mem_a_with_priv_set(address, size, self.core_registers.current_mode_is_not_user(), True, value)
+        self.mem_a_with_priv_set(address, size, self.registers.current_mode_is_not_user(), True, value)
 
     def mem_a_get(self, address, size):
-        return self.mem_a_with_priv_get(address, size, self.core_registers.current_mode_is_not_user(), True)
+        return self.mem_a_with_priv_get(address, size, self.registers.current_mode_is_not_user(), True)
 
     def mem_u_with_priv_set(self, address, size, privileged, value):
-        if ArchVersion() < 7 and not self.core_registers.sctlr.get_a() and not self.core_registers.sctlr.get_u():
+        if ArchVersion() < 7 and not self.registers.sctlr.get_a() and not self.registers.sctlr.get_u():
             address = bits_ops.align(address, size)
         if address == bits_ops.align(address, size):
             self.mem_a_with_priv_set(address, size, privileged, True, value)
         elif (HaveVirtExt() and
-                not self.core_registers.is_secure() and
-                self.core_registers.current_mode_is_hyp() and
-                self.core_registers.hsctlr.get_a()):
+                not self.registers.is_secure() and
+                self.registers.current_mode_is_hyp() and
+                self.registers.hsctlr.get_a()):
             self.alignment_fault(address, True)
-        elif not self.core_registers.current_mode_is_hyp() and self.core_registers.sctlr.get_a():
+        elif not self.registers.current_mode_is_hyp() and self.registers.sctlr.get_a():
             self.alignment_fault(address, True)
         else:
-            if self.core_registers.cpsr.get_e():
+            if self.registers.cpsr.get_e():
                 value = self.big_endian_reverse(value, size)
             for i in xrange(size):
                 self.mem_a_with_priv_set(BitArray(uint=address.uint + i, length=32), 1, privileged, False,
@@ -2651,22 +1716,22 @@ class ARM1176:
 
     def mem_u_with_priv_get(self, address, size, privileged):
         value = BitArray(length=8 * size)
-        if ArchVersion() < 7 and not self.core_registers.sctlr.get_a() and not self.core_registers.sctlr.get_u():
+        if ArchVersion() < 7 and not self.registers.sctlr.get_a() and not self.registers.sctlr.get_u():
             address = bits_ops.align(address, size)
         if address == bits_ops.align(address, size):
             value = self.mem_a_with_priv_get(address, size, privileged, True)
         elif (HaveVirtExt() and
-              not self.core_registers.is_secure() and
-              self.core_registers.current_mode_is_hyp() and
-              self.core_registers.hsctlr.get_a()):
+              not self.registers.is_secure() and
+              self.registers.current_mode_is_hyp() and
+              self.registers.hsctlr.get_a()):
             self.alignment_fault(address, False)
-        elif not self.core_registers.current_mode_is_hyp() and self.core_registers.sctlr.get_a():
+        elif not self.registers.current_mode_is_hyp() and self.registers.sctlr.get_a():
             self.alignment_fault(address, False)
         else:
             for i in xrange(size):
                 value[value.len - 8 - 8 * i:value.len - 8 * i] = self.mem_a_with_priv_get(
                     BitArray(uint=address.uint + i, length=32), 1, privileged, False)
-            if self.core_registers.cpsr.get_e():
+            if self.registers.cpsr.get_e():
                 value = self.big_endian_reverse(value, size)
         return value
 
@@ -2677,16 +1742,16 @@ class ARM1176:
         self.mem_u_with_priv_set(address, size, False, value)
 
     def mem_u_get(self, address, size):
-        return self.mem_u_with_priv_get(address, size, self.core_registers.current_mode_is_not_user())
+        return self.mem_u_with_priv_get(address, size, self.registers.current_mode_is_not_user())
 
     def mem_u_set(self, address, size, value):
-        self.mem_u_with_priv_set(address, size, self.core_registers.current_mode_is_not_user(), value)
+        self.mem_u_with_priv_set(address, size, self.registers.current_mode_is_not_user(), value)
 
     def big_endian(self):
-        return self.core_registers.cpsr.get_e()
+        return self.registers.cpsr.get_e()
 
     def unaligned_support(self):
-        return self.core_registers.sctlr.get_u()
+        return self.registers.sctlr.get_u()
 
     def hint_yield(self):
         # mock
@@ -2694,13 +1759,13 @@ class ARM1176:
         pass
 
     def clear_event_register(self):
-        self.core_registers.set_event_register(False)
+        self.registers.set_event_register(False)
 
     def event_registered(self):
-        return self.core_registers.get_event_register()
+        return self.registers.get_event_register()
 
     def send_event_local(self):
-        self.core_registers.set_event_register(True)
+        self.registers.set_event_register(True)
 
     def send_event(self):
         # mock
@@ -2713,7 +1778,7 @@ class ARM1176:
         self.is_wait_for_interrupt = True
 
     def integer_zero_divide_trapping_enabled(self):
-        return is_armv7r_profile() and self.core_registers.sctlr.get_dz()
+        return is_armv7r_profile() and self.registers.sctlr.get_dz()
 
     def generate_integer_zero_divide(self):
         raise UndefinedInstructionException("division by zero in the integer division instruction")
@@ -2723,11 +1788,11 @@ class ARM1176:
         raise UndefinedInstructionException("rejected coprocessor instruction")
 
     def call_supervisor(self, immediate):
-        if (self.core_registers.current_mode_is_hyp() or
+        if (self.registers.current_mode_is_hyp() or
                 (HaveVirtExt() and
-                    not self.core_registers.is_secure() and
-                    not self.core_registers.current_mode_is_not_user() and
-                    self.core_registers.hcr.get_tge())):
+                    not self.registers.is_secure() and
+                    not self.registers.current_mode_is_not_user() and
+                    self.registers.hcr.get_tge())):
             hsr_string = bits_ops.zeros(25)
             hsr_string[9:25] == immediate if self.current_cond() == "0b1110" else BitArray(length=16)  # unknown
             self.write_hsr(BitArray(bin="010001"), hsr_string)
@@ -2761,25 +1826,25 @@ class ARM1176:
         assert cp_num not in (10, 11)
         if cp_num not in (14, 15):
             if HaveSecurityExt():
-                if not self.core_registers.is_secure() and not self.core_registers.nsacr.get_cp_n(cp_num):
+                if not self.registers.is_secure() and not self.registers.nsacr.get_cp_n(cp_num):
                     raise UndefinedInstructionException()
-            if not HaveVirtExt() or not self.core_registers.current_mode_is_hyp():
-                if self.core_registers.cpacr.get_cp_n(cp_num) == "0b00":
+            if not HaveVirtExt() or not self.registers.current_mode_is_hyp():
+                if self.registers.cpacr.get_cp_n(cp_num) == "0b00":
                     raise UndefinedInstructionException()
-                elif self.core_registers.cpacr.get_cp_n(cp_num) == "0b01":
-                    if not self.core_registers.current_mode_is_not_user():
+                elif self.registers.cpacr.get_cp_n(cp_num) == "0b01":
+                    if not self.registers.current_mode_is_not_user():
                         raise UndefinedInstructionException()
-                elif self.core_registers.cpacr.get_cp_n(cp_num) == "0b10":
+                elif self.registers.cpacr.get_cp_n(cp_num) == "0b10":
                     print "unpredictable"
-                elif self.core_registers.cpacr.get_cp_n(cp_num) == "0b11":
+                elif self.registers.cpacr.get_cp_n(cp_num) == "0b11":
                     pass
-            if HaveSecurityExt() and HaveVirtExt() and not self.core_registers.is_secure() and \
-                    self.core_registers.hcptr.get_tcp_n(cp_num):
+            if HaveSecurityExt() and HaveVirtExt() and not self.registers.is_secure() and \
+                    self.registers.hcptr.get_tcp_n(cp_num):
                 hsr_string = bits_ops.zeros(25)
                 hsr_string[21:25] = BitArray(uint=(cp_num & 0xF), length=4)
                 self.write_hsr(BitArray(bin="000111"), hsr_string)
-                if not self.core_registers.current_mode_is_hyp():
-                    self.core_registers.take_hyp_trap_exception()
+                if not self.registers.current_mode_is_hyp():
+                    self.registers.take_hyp_trap_exception()
                 else:
                     raise UndefinedInstructionException()
             return self.cpx_instr_decode(instr)
@@ -2813,16 +1878,16 @@ class ARM1176:
                     print "unpredictable"
                 else:
                     if not instr[31]:
-                        if not self.core_registers.current_mode_is_not_user():
+                        if not self.registers.current_mode_is_not_user():
                             raise UndefinedInstructionException()
                     if instr[30]:
-                        if not self.core_registers.current_mode_is_not_user() and self.core_registers.teecr.get_xed():
+                        if not self.registers.current_mode_is_not_user() and self.registers.teecr.get_xed():
                             raise UndefinedInstructionException()
                     if (HaveSecurityExt() and
                             HaveVirtExt() and
-                            not self.core_registers.is_secure() and
-                            not self.core_registers.current_mode_is_hyp() and
-                            self.core_registers.hstr.get_ttee()):
+                            not self.registers.is_secure() and
+                            not self.registers.current_mode_is_hyp() and
+                            self.registers.hstr.get_ttee()):
                         hsr_string = bits_ops.zeros(25)
                         hsr_string[5:8] = instr[24:27]
                         hsr_string[8:11] = instr[8:11]
@@ -2831,7 +1896,7 @@ class ARM1176:
                         hsr_string[20:24] = instr[28:32]
                         hsr_string[24] = instr[11]
                         self.write_hsr(BitArray(bin="000101"), hsr_string)
-                        self.core_registers.take_hyp_trap_exception()
+                        self.registers.take_hyp_trap_exception()
                 return True
             elif opc1 == 7:
                 return self.cp14_jazelle_instr_decode(instr)
@@ -2854,11 +1919,11 @@ class ARM1176:
                 print "unpredictable"
             if (HaveSecurityExt() and
                     HaveVirtExt() and
-                    not self.core_registers.is_secure() and
-                    not self.core_registers.current_mode_is_hyp() and
+                    not self.registers.is_secure() and
+                    not self.registers.current_mode_is_hyp() and
                     cr_nnum != 14 and
-                    self.core_registers.hstr.get_t_n(cr_nnum)):
-                if not self.core_registers.current_mode_is_not_user() and self.instr_is_pl0_undefined(instr):
+                    self.registers.hstr.get_t_n(cr_nnum)):
+                if not self.registers.current_mode_is_not_user() and self.instr_is_pl0_undefined(instr):
                     if implementation_defined.coproc_accepted_pl0_undefined:
                         raise UndefinedInstructionException()
                 hsr_string = bits_ops.zeros(25)
@@ -2877,18 +1942,18 @@ class ARM1176:
                     hsr_string[20:24] = instr[28:32]
                     hsr_string[24] = instr[11]
                     self.write_hsr(BitArray(bin="000011"), hsr_string)
-                self.core_registers.take_hyp_trap_exception()
+                self.registers.take_hyp_trap_exception()
             if (HaveSecurityExt() and
                     HaveVirtExt() and
-                    not self.core_registers.is_secure() and
-                    not self.core_registers.current_mode_is_hyp() and
-                    self.core_registers.hcr.get_tidcp() and
+                    not self.registers.is_secure() and
+                    not self.registers.current_mode_is_hyp() and
+                    self.registers.hcr.get_tidcp() and
                     not two_reg):
                 cr_mnum = instr[28:32].uint
                 if (cr_nnum == 9 and cr_mnum in (0, 1, 2, 5, 6, 7, 8)) or (
                         cr_nnum == 10 and cr_mnum in (0, 1, 4, 8)) or (
                         cr_nnum == 11 and cr_mnum in (0, 1, 2, 3, 4, 5, 6, 7, 8, 15)):
-                    if not self.core_registers.current_mode_is_not_user() and self.instr_is_pl0_undefined(instr):
+                    if not self.registers.current_mode_is_not_user() and self.instr_is_pl0_undefined(instr):
                         if implementation_defined.coproc_accepted_pl0_undefined:
                             raise UndefinedInstructionException()
                         hsr_string = bits_ops.zeros(25)
@@ -2899,7 +1964,7 @@ class ARM1176:
                         hsr_string[20:24] = instr[28:32]
                         hsr_string[24] = instr[11]
                         self.write_hsr(BitArray(bin="000011"), hsr_string)
-                        self.core_registers.take_hyp_trap_exception()
+                        self.registers.take_hyp_trap_exception()
             return self.cp15_instr_decode(instr)
 
     def coproc_get_word_to_store(self, cp_num, instr):
@@ -2945,9 +2010,9 @@ class ARM1176:
         # opc2 = instr[24:27]
         # CRn = instr[12:16]
         # opc1 = instr[8:11]
-        # registers_attr = self.core_registers.coproc_register_name(cp_num, CRn, opc1, CRm, opc2)
-        # if registers_attr and hasattr(self.core_registers, registers_attr):
-        #     return getattr(self.core_registers, registers_attr)
+        # registers_attr = self.registers.coproc_register_name(cp_num, CRn, opc1, CRm, opc2)
+        # if registers_attr and hasattr(self.registers, registers_attr):
+        #     return getattr(self.registers, registers_attr)
         # return BitArray(length=32)
         raise NotImplementedError()
 
@@ -2972,22 +2037,22 @@ class ARM1176:
         pass
 
     def it_advance(self):
-        if self.core_registers.cpsr.get_it()[5:8] == "0b000":
-            self.core_registers.cpsr.set_it(BitArray(bin="00000000"))
+        if self.registers.cpsr.get_it()[5:8] == "0b000":
+            self.registers.cpsr.set_it(BitArray(bin="00000000"))
         else:
-            it_state = self.core_registers.cpsr.get_it()[0:4]
-            it_state += shift.lsl(self.core_registers.cpsr.get_it()[4:8], 1)
-            self.core_registers.cpsr.set_it(it_state)
+            it_state = self.registers.cpsr.get_it()[0:4]
+            it_state += shift.lsl(self.registers.cpsr.get_it()[4:8], 1)
+            self.registers.cpsr.set_it(it_state)
 
     def in_it_block(self):
-        return self.core_registers.cpsr.get_it()[4:8] != "0b0000"
+        return self.registers.cpsr.get_it()[4:8] != "0b0000"
 
     def last_in_it_block(self):
-        return self.core_registers.cpsr.get_it()[4:8] == "0b1000"
+        return self.registers.cpsr.get_it()[4:8] == "0b1000"
 
     def increment_pc_if_needed(self):
-        if not self.core_registers.changed_registers[15]:
-            self.core_registers.increment_pc(self.this_instr_length() / 8)
+        if not self.registers.changed_registers[15]:
+            self.registers.increment_pc(self.this_instr_length() / 8)
 
     def emulate_cycle(self):
         instr = self.fetch_instruction()
@@ -3012,18 +2077,18 @@ class ARM1176:
             self.take_undef_instr_exception()
 
     def fetch_instruction(self):
-        if self.core_registers.current_instr_set() == InstrSet.InstrSet_ARM:
-            self.opcode = self.mem_a_get(self.core_registers.pc_store_value(), 4)
-        elif self.core_registers.current_instr_set() == InstrSet.InstrSet_Thumb:
-            self.opcode = self.mem_a_get(self.core_registers.pc_store_value(), 2)
+        if self.registers.current_instr_set() == InstrSet.InstrSet_ARM:
+            self.opcode = self.mem_a_get(self.registers.pc_store_value(), 4)
+        elif self.registers.current_instr_set() == InstrSet.InstrSet_Thumb:
+            self.opcode = self.mem_a_get(self.registers.pc_store_value(), 2)
             if self.opcode[0:5] == "0b11101" or self.opcode[0:5] == "0b11110" or self.opcode[0:5] == "0b11111":
                 self.opcode += self.mem_a_get(
-                    bits_ops.add(self.core_registers.pc_store_value(), BitArray(bin="10"), 32), 2)
+                    bits_ops.add(self.registers.pc_store_value(), BitArray(bin="10"), 32), 2)
         return self.opcode
 
     def decode_instruction(self, instr):
         return opcodes.decode_instruction(instr, self)
 
     def execute_instruction(self, opcode):
-        self.core_registers.changed_registers = [False] * 16
+        self.registers.changed_registers = [False] * 16
         opcode.execute(self)

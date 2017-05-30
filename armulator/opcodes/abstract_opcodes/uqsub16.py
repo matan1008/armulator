@@ -11,6 +11,6 @@ class Uqsub16(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            diff1 = processor.core_registers.get(self.n)[16:32].uint - processor.core_registers.get(self.m)[16:32].uint
-            diff2 = processor.core_registers.get(self.n)[0:16].uint - processor.core_registers.get(self.m)[0:16].uint
-            processor.core_registers.set(self.d, unsigned_sat(diff2, 16) + unsigned_sat(diff1, 16))
+            diff1 = processor.registers.get(self.n)[16:32].uint - processor.registers.get(self.m)[16:32].uint
+            diff2 = processor.registers.get(self.n)[0:16].uint - processor.registers.get(self.m)[0:16].uint
+            processor.registers.set(self.d, unsigned_sat(diff2, 16) + unsigned_sat(diff1, 16))

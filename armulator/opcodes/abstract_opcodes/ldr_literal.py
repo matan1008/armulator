@@ -20,7 +20,7 @@ class LdrLiteral(AbstractOpcode):
             except EndOfInstruction:
                 pass
             else:
-                base = align(processor.core_registers.get_pc(), 4)
+                base = align(processor.registers.get_pc(), 4)
                 address = bits_add(base, self.imm32, 32) if self.add else bits_sub(base, self.imm32, 32)
                 data = processor.mem_u_get(address, 4)
                 if self.t == 15:
@@ -29,9 +29,9 @@ class LdrLiteral(AbstractOpcode):
                     else:
                         print "unpredictable"
                 elif processor.unaligned_support() or address[30:32] == "0b00":
-                    processor.core_registers.set(self.t, data)
+                    processor.registers.set(self.t, data)
                 else:
-                    if processor.core_registers.current_instr_set() == InstrSet.InstrSet_ARM:
-                        processor.core_registers.set(self.t, ror(data, 8 * address[30:32].uint))
+                    if processor.registers.current_instr_set() == InstrSet.InstrSet_ARM:
+                        processor.registers.set(self.t, ror(data, 8 * address[30:32].uint))
                     else:
-                        processor.core_registers.set(self.t, BitArray(length=32))  # unknown
+                        processor.registers.set(self.t, BitArray(length=32))  # unknown

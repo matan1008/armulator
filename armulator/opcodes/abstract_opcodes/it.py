@@ -8,4 +8,4 @@ class It(AbstractOpcode):
         self.mask = mask
 
     def execute(self, processor):
-        processor.core_registers.cpsr.set_it(self.firstcond + self.mask)
+        processor.registers.cpsr.set_it(self.firstcond + self.mask)
