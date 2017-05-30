@@ -14,5 +14,4 @@ class Uxtah(AbstractOpcode):
     def execute(self, processor):
         if processor.condition_passed():
             rotated = ror(processor.registers.get(self.m), self.rotation)
-            processor.registers.set(self.d,
-                                         add(processor.registers.get(self.n), zero_extend(rotated[16:32], 32), 32))
+            processor.registers.set(self.d, add(processor.registers.get(self.n), zero_extend(rotated[16:32], 32), 32))

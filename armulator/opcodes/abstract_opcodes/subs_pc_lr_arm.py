@@ -52,8 +52,7 @@ class SubsPcLrArm(AbstractOpcode):
                     result = processor.registers.get(self.n) ^ ~operand2
                 elif self.opcode == "1111":
                     result = ~operand2
-                processor.registers.cpsr_write_by_instr(processor.registers.get_spsr(), BitArray(bin="1111"),
-                                                             True)
+                processor.registers.cpsr_write_by_instr(processor.registers.get_spsr(), BitArray(bin="1111"), True)
                 if (processor.registers.cpsr.get_m() == "0b11010" and
                         processor.registers.cpsr.get_j() and
                         processor.registers.cpsr.get_t()):

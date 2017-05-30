@@ -1,4 +1,3 @@
-import bitstring
 from bitstring import BitArray
 from enum import Enum
 from configurations import *
@@ -7,9 +6,8 @@ import bits_ops
 import implementation_defined
 from arm_exceptions import *
 from memory_attributes import MemoryAttributes, MemType
-from full_address import FullAddress
 from address_descriptor import AddressDescriptor
-from tlb_record import TLBRecord, TLBRecType
+from tlb_record import TLBRecord
 from memory import Memory
 from permissions import Permissions
 from enums import *

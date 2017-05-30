@@ -40,8 +40,7 @@ class LdmExceptionReturn(AbstractOpcode):
                             processor.registers.get(self.n), BitArray(uint=length, length=32), 32))
                 if self.wback and self.registers[15 - self.n]:
                     processor.registers.set(self.n, BitArray(length=32))  # unknown
-                processor.registers.cpsr_write_by_instr(processor.registers.get_spsr(), BitArray(bin="1111"),
-                                                             True)
+                processor.registers.cpsr_write_by_instr(processor.registers.get_spsr(), BitArray(bin="1111"), True)
                 if (processor.registers.cpsr.get_m() == "0b11010" and
                         processor.registers.cpsr.get_j() and
                         processor.registers.cpsr.get_t()):

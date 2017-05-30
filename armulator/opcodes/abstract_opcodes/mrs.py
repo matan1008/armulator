@@ -1,5 +1,4 @@
 from armulator.opcodes.abstract_opcode import AbstractOpcode
-from bitstring import BitArray
 
 
 class Mrs(AbstractOpcode):
