@@ -62,14 +62,14 @@ class CoreRegisters:
         for register in self.RName:
             self._R[register] = BitArray(length=32)
         self.cpsr = CPSR()
-        self.SPSR_hyp = BitArray(length=32)
-        self.SPSR_svc = BitArray(length=32)
-        self.SPSR_abt = BitArray(length=32)
-        self.SPSR_und = BitArray(length=32)
-        self.SPSR_mon = BitArray(length=32)
-        self.SPSR_irq = BitArray(length=32)
-        self.SPSR_fiq = BitArray(length=32)
-        self.ELR_hyp = BitArray(length=32)
+        self.spsr_hyp = BitArray(length=32)
+        self.spsr_svc = BitArray(length=32)
+        self.spsr_abt = BitArray(length=32)
+        self.spsr_und = BitArray(length=32)
+        self.spsr_mon = BitArray(length=32)
+        self.spsr_irq = BitArray(length=32)
+        self.spsr_fiq = BitArray(length=32)
+        self.elr_hyp = BitArray(length=32)
         self.scr = SCR()
         self.nsacr = NSACR()
         self.sctlr = SCTLR()
@@ -84,7 +84,6 @@ class CoreRegisters:
         self.hdcr = HDCR()
         self.vbar = VBAR()
         self.dbgdidr = DBGDIDR()
-        self.DFSR = BitArray(length=32)
         self.dfsr = DFSR()
         self.dfar = BitArray(length=32)
         self.hdfar = BitArray(length=32)
@@ -92,14 +91,15 @@ class CoreRegisters:
         self.ttbcr = TTBCR()
         self.fcseidr = FCSEIDR()
         self.htcr = HTCR()
-        self.HTTBR = BitArray(length=64)
-        self.TTBR0_64 = BitArray(length=64)
+        self.httbr = BitArray(length=64)
+        self.ttbr0_64 = BitArray(length=64)
+        self.ttbr1_64 = BitArray(length=64)
         self.vtcr = VTCR()
-        self.VTTBR = BitArray(length=64)
-        self.MAIR0 = BitArray(length=32)
-        self.MAIR1 = BitArray(length=32)
-        self.HMAIR0 = BitArray(length=32)
-        self.HMAIR1 = BitArray(length=32)
+        self.vttbr = BitArray(length=64)
+        self.mair0 = BitArray(length=32)
+        self.mair1 = BitArray(length=32)
+        self.hmair0 = BitArray(length=32)
+        self.hmair1 = BitArray(length=32)
         self.prrr = PRRR()
         self.nmrr = NMRR()
         self.dacr = DACR()
@@ -108,79 +108,78 @@ class CoreRegisters:
         self.rgnr = RGNR(number_of_mpu_regions)
         self.hcptr = HCPTR()
         self.drsrs = [DRSR()] * number_of_mpu_regions
-        self.DRBARs = [BitArray(length=32) for region in xrange(number_of_mpu_regions)]
+        self.drbars = [BitArray(length=32)] * number_of_mpu_regions
         self.dracrs = [DRACR()] * number_of_mpu_regions
-        self.IRBARs = [BitArray(length=32) for region in xrange(number_of_mpu_regions)]
+        self.irbars = [BitArray(length=32)] * number_of_mpu_regions
         self.irsrs = [IRSR()] * number_of_mpu_regions
         self.iracrs = [IRACR()] * number_of_mpu_regions
         self.teecr = TEECR()
         self.event_register = False
-        self.ELR_hyp = BitArray(length=32)
         self.midr = MIDR()
-        self.CTR = BitArray(length=32)
-        self.TCMTR = BitArray(length=32)
-        self.TLBTR = BitArray(length=32)
-        self.ID_PFR0 = BitArray(length=32)
-        self.ID_PFR1 = BitArray(length=32)
-        self.ID_DFR0 = BitArray(length=32)
-        self.ID_AFR0 = BitArray(length=32)
-        self.ID_MMFR0 = BitArray(length=32)
-        self.ID_MMFR1 = BitArray(length=32)
-        self.ID_MMFR2 = BitArray(length=32)
-        self.ID_MMFR3 = BitArray(length=32)
-        self.ID_ISAR0 = BitArray(length=32)
-        self.ID_ISAR1 = BitArray(length=32)
-        self.ID_ISAR2 = BitArray(length=32)
-        self.ID_ISAR3 = BitArray(length=32)
-        self.ID_ISAR4 = BitArray(length=32)
-        self.ID_ISAR5 = BitArray(length=32)
-        self.ACTLR = BitArray(length=32)
+        self.ctr = BitArray(length=32)
+        self.tcmtr = BitArray(length=32)
+        self.tlbtr = BitArray(length=32)
+        self.id_pfr0 = BitArray(length=32)
+        self.id_pfr1 = BitArray(length=32)
+        self.id_dfr0 = BitArray(length=32)
+        self.id_afr0 = BitArray(length=32)
+        self.id_mmfr0 = BitArray(length=32)
+        self.id_mmfr1 = BitArray(length=32)
+        self.id_mmfr2 = BitArray(length=32)
+        self.id_mmfr3 = BitArray(length=32)
+        self.id_isar0 = BitArray(length=32)
+        self.id_isar1 = BitArray(length=32)
+        self.id_isar2 = BitArray(length=32)
+        self.id_isar3 = BitArray(length=32)
+        self.id_isar4 = BitArray(length=32)
+        self.id_isar5 = BitArray(length=32)
+        self.actlr = BitArray(length=32)
         self.sder = SDER()
-        self.TTBR0 = BitArray(length=32)
-        self.TTBR1 = BitArray(length=32)
-        self.IFSR = BitArray(length=32)
-        self.IFAR = BitArray(length=32)
-        self.PAR = BitArray(length=32)
-        self.CDSR = BitArray(length=32)
-        self.DCLR = BitArray(length=32)
-        self.ICLR = BitArray(length=32)
-        self.DTCMRR = BitArray(length=32)
-        self.DTCM_NSACR = BitArray(length=32)
-        self.ITCM_NSACR = BitArray(length=32)
-        self.TCMSR = BitArray(length=32)
-        self.CBOR = BitArray(length=32)
-        self.TLBLR = BitArray(length=32)
-        self.DMAISPR = BitArray(length=32)
-        self.DMAISQR = BitArray(length=32)
-        self.DMAISRR = BitArray(length=32)
-        self.DMAISIR = BitArray(length=32)
-        self.DMAUAR = BitArray(length=32)
-        self.DMACNR = BitArray(length=32)
-        self.STOP_DMAER = BitArray(length=32)
-        self.START_DMAER = BitArray(length=32)
-        self.CLEAR_DMAER = BitArray(length=32)
-        self.DMACR = BitArray(length=32)
-        self.DMAISAR = BitArray(length=32)
-        self.DMAESAR = BitArray(length=32)
-        self.DMAIEAR = BitArray(length=32)
-        self.DMACSR = BitArray(length=32)
-        self.DMACIDR = BitArray(length=32)
-        self.ISR = BitArray(length=32)
-        self.CONTEXTIDR = BitArray(length=32)
-        self.TPIDRURW = BitArray(length=32)
-        self.TPIDRURO = BitArray(length=32)
-        self.TPIDRPRW = BitArray(length=32)
-        self.PPMRR = BitArray(length=32)
+        self.ttbr0 = BitArray(length=32)
+        self.ttbr1 = BitArray(length=32)
+        self.ifsr = BitArray(length=32)
+        self.ifar = BitArray(length=32)
+        self.par = BitArray(length=32)
+        self.cdsr = BitArray(length=32)
+        self.dclr = BitArray(length=32)
+        self.iclr = BitArray(length=32)
+        self.dtcmrr = BitArray(length=32)
+        self.dtcm_nsacr = BitArray(length=32)
+        self.itcm_nsacr = BitArray(length=32)
+        self.tcmsr = BitArray(length=32)
+        self.cbor = BitArray(length=32)
+        self.tlblr = BitArray(length=32)
+        self.dmaispr = BitArray(length=32)
+        self.dmaisqr = BitArray(length=32)
+        self.dmaisrr = BitArray(length=32)
+        self.dmaisir = BitArray(length=32)
+        self.dmauar = BitArray(length=32)
+        self.dmacnr = BitArray(length=32)
+        self.stop_dmaer = BitArray(length=32)
+        self.start_dmaer = BitArray(length=32)
+        self.clear_dmaer = BitArray(length=32)
+        self.dmacr = BitArray(length=32)
+        self.dmaisar = BitArray(length=32)
+        self.dmaesar = BitArray(length=32)
+        self.dmaiear = BitArray(length=32)
+        self.dmacsr = BitArray(length=32)
+        self.dmacidr = BitArray(length=32)
+        self.isr = BitArray(length=32)
+        self.contextidr = BitArray(length=32)
+        self.tpidrurw = BitArray(length=32)
+        self.tpidruro = BitArray(length=32)
+        self.tpidrprw = BitArray(length=32)
+        self.ppmrr = BitArray(length=32)
         self.sunavcr = SUNAVCR()
         self.pmcr = PMCR()
-        self.CCR = BitArray(length=32)
-        self.CR0 = BitArray(length=32)
-        self.CR1 = BitArray(length=32)
-        self.SVCR_RC = BitArray(length=32)
-        self.SVCR_IC = BitArray(length=32)
-        self.SVCR_FIC = BitArray(length=32)
-        self.SVCR_EDRC = BitArray(length=32)
-        self.SVCSMR = BitArray(length=32)
+        self.ccr = BitArray(length=32)
+        self.cr0 = BitArray(length=32)
+        self.cr1 = BitArray(length=32)
+        self.svcr_rc = BitArray(length=32)
+        self.svcr_ic = BitArray(length=32)
+        self.svcr_fic = BitArray(length=32)
+        self.svcr_edrc = BitArray(length=32)
+        self.svcsmr = BitArray(length=32)
         self.fpexc = FPEXC()
 
     def coproc_register_name(self, coproc, crn, opc1, crm, opc2):
@@ -191,48 +190,48 @@ class CoreRegisters:
                         if opc2 == 0:
                             return "MIDR"
                         elif opc2 == 1:
-                            return "CTR"
+                            return "ctr"
                         elif opc2 == 2:
-                            return "TCMTR"
+                            return "tcmtr"
                         elif opc2 == 3:
-                            return "TLBTR"
+                            return "tlbtr"
                     elif crm == 1:
                         if opc2 == 0:
-                            return "ID_PFR0"
+                            return "id_pfr0"
                         elif opc2 == 1:
-                            return "ID_PFR1"
+                            return "id_pfr1"
                         elif opc2 == 2:
-                            return "ID_DFR0"
+                            return "id_dfr0"
                         elif opc2 == 3:
-                            return "ID_AFR0"
+                            return "id_afr0"
                         elif opc2 == 4:
-                            return "ID_MMFR0"
+                            return "id_mmfr0"
                         elif opc2 == 5:
-                            return "ID_MMFR1"
+                            return "id_mmfr1"
                         elif opc2 == 6:
-                            return "ID_MMFR2"
+                            return "id_mmfr2"
                         elif opc2 == 7:
-                            return "ID_MMFR3"
+                            return "id_mmfr3"
                     elif crm == 2:
                         if opc2 == 0:
-                            return "ID_ISAR0"
+                            return "id_isar0"
                         elif opc2 == 1:
-                            return "ID_ISAR1"
+                            return "id_isar1"
                         elif opc2 == 2:
-                            return "ID_ISAR2"
+                            return "id_isar2"
                         elif opc2 == 3:
-                            return "ID_ISAR3"
+                            return "id_isar3"
                         elif opc2 == 4:
-                            return "ID_ISAR4"
+                            return "id_isar4"
                         elif opc2 == 5:
-                            return "ID_ISAR5"
+                            return "id_isar5"
             elif crn == 1:
                 if opc1 == 0:
                     if crm == 0:
                         if opc2 == 0:
                             return "SCTLR"
                         elif opc2 == 1:
-                            return "ACTLR"
+                            return "actlr"
                         elif opc2 == 2:
                             return "CPACR"
                     elif crm == 1:
@@ -246,9 +245,9 @@ class CoreRegisters:
                 if opc1 == 0:
                     if crm == 0:
                         if opc2 == 0:
-                            return "TTBR0"
+                            return "ttbr0"
                         elif opc2 == 1:
-                            return "TTBR1"
+                            return "ttbr1"
                         elif opc2 == 2:
                             return "TTBCR"
             elif crn == 3:
@@ -262,14 +261,14 @@ class CoreRegisters:
                         if opc2 == 0:
                             return "DFSR"
                         elif opc2 == 1:
-                            return "IFSR"
+                            return "ifsr"
             elif crn == 6:
                 if opc1 == 0:
                     if crm == 0:
                         if opc2 == 0:
                             return "dfar"
                         elif opc2 == 2:
-                            return "IFAR"
+                            return "ifar"
             elif crn == 7:
                 if opc1 == 0:
                     if crm == 0:
@@ -277,7 +276,7 @@ class CoreRegisters:
                             return "CP15WFI"
                     elif crm == 4:
                         if opc2 == 0:
-                            return "PAR"
+                            return "par"
                     elif crm == 5:
                         if opc2 == 0:
                             return "ICIALLU"
@@ -330,7 +329,7 @@ class CoreRegisters:
                         elif opc2 == 5:
                             return "CP15DMB"
                         elif opc2 == 6:
-                            return "CDSR"
+                            return "cdsr"
                     elif crm == 13:
                         if opc2 == 1:
                             return "Prefetch Instruction Cache Line"
@@ -368,29 +367,29 @@ class CoreRegisters:
                 if opc1 == 0:
                     if crm == 0:
                         if opc2 == 0:
-                            return "DCLR"
+                            return "dclr"
                         elif opc2 == 0:
-                            return "ICLR"
+                            return "iclr"
                     elif crm == 1:
                         if opc2 == 0:
-                            return "DTCMRR"
+                            return "dtcmrr"
                         elif opc2 == 1:
                             return "ITCMRR"
                         elif opc2 == 2:
-                            return "DTCM_NSACR"
+                            return "dtcm_nsacr"
                         elif opc2 == 3:
-                            return "ITCM_NSACR"
+                            return "itcm_nsacr"
                     elif crm == 2:
                         if opc2 == 0:
-                            return "TCMSR"
+                            return "tcmsr"
                     elif crm == 8:
                         if opc2 == 0:
-                            return "CBOR"
+                            return "cbor"
             elif crn == 10:
                 if opc1 == 0:
                     if crm == 0:
                         if opc2 == 0:
-                            return "TLBLR"
+                            return "tlblr"
                     elif crm == 2:
                         if opc2 == 0:
                             return "PRRR"
@@ -400,44 +399,44 @@ class CoreRegisters:
                 if opc1 == 0:
                     if crm == 0:
                         if opc2 == 0:
-                            return "DMAISPR"
+                            return "dmaispr"
                         elif opc2 == 1:
-                            return "DMAISQR"
+                            return "dmaisqr"
                         elif opc2 == 2:
-                            return "DMAISRR"
+                            return "dmaisrr"
                         elif opc2 == 3:
-                            return "DMAISIR"
+                            return "dmaisir"
                     elif crm == 1:
                         if opc2 == 0:
-                            return "DMAUAR"
+                            return "dmauar"
                     elif crm == 2:
                         if opc2 == 0:
-                            return "DMACNR"
+                            return "dmacnr"
                     elif crm == 3:
                         if opc2 == 0:
-                            return "STOP_DMAER"
+                            return "stop_dmaer"
                         elif opc2 == 1:
-                            return "START_DMAER"
+                            return "start_dmaer"
                         elif opc2 == 2:
-                            return "CLEAR_DMAER"
+                            return "clear_dmaer"
                     elif crm == 4:
                         if opc2 == 0:
-                            return "DMACR"
+                            return "dmacr"
                     elif crm == 5:
                         if opc2 == 0:
-                            return "DMAISAR"
+                            return "dmaisar"
                     elif crm == 6:
                         if opc2 == 0:
-                            return "DMAESAR"
+                            return "dmaesar"
                     elif crm == 7:
                         if opc2 == 0:
-                            return "DMAIEAR"
+                            return "dmaiear"
                     elif crm == 8:
                         if opc2 == 0:
-                            return "DMACSR"
+                            return "dmacsr"
                     elif crm == 8:
                         if opc2 == 0:
-                            return "DMACIDR"
+                            return "dmacidr"
             elif crn == 12:
                 if opc1 == 0:
                     if crm == 0:
@@ -447,25 +446,25 @@ class CoreRegisters:
                             return "mvbar"
                     elif crm == 1:
                         if opc2 == 0:
-                            return "ISR"
+                            return "isr"
             elif crn == 13:
                 if opc1 == 0:
                     if crm == 0:
                         if opc2 == 0:
                             return "FCSEIDR"
                         elif opc2 == 1:
-                            return "CONTEXTIDR"
+                            return "contextidr"
                         elif opc2 == 2:
-                            return "TPIDRURW"
+                            return "tpidrurw"
                         elif opc2 == 3:
-                            return "TPIDRURO"
+                            return "tpidruro"
                         elif opc2 == 4:
-                            return "TPIDRPRW"
+                            return "tpidrprw"
             elif crn == 15:
                 if opc1 == 0:
                     if crm == 2:
                         if opc2 == 4:
-                            return "PPMRR"
+                            return "ppmrr"
                     elif crm == 9:
                         if opc2 == 0:
                             return "SUNAVCR"
@@ -473,19 +472,19 @@ class CoreRegisters:
                         if opc2 == 0:
                             return "PMCR"
                         elif opc2 == 1:
-                            return "CCR"
+                            return "ccr"
                         elif opc2 == 2:
-                            return "CR0"
+                            return "cr0"
                         elif opc2 == 3:
-                            return "CR1"
+                            return "cr1"
                         elif opc2 == 4:
-                            return "SVCR_RC"
+                            return "svcr_rc"
                         elif opc2 == 5:
-                            return "SVCR_IC"
+                            return "svcr_ic"
                         elif opc2 == 6:
-                            return "SVCR_FIC"
+                            return "svcr_fic"
                         elif opc2 == 7:
-                            return "SVCR_EDRC"
+                            return "svcr_edrc"
                     elif crm == 13:
                         if opc2 == 1:
                             return "Start reset counter"
@@ -503,7 +502,7 @@ class CoreRegisters:
                             return "Start reset, interrupt and fast interrupt counters"
                     elif crm == 14:
                         if opc2 == 0:
-                            return "SVCSMR"
+                            return "svcsmr"
                 elif opc1 == 1:
                     if crm == 13:
                         # unknown
@@ -717,19 +716,19 @@ class CoreRegisters:
         else:
             result = BitArray(length=32)
             if self.cpsr.get_m() == "0b10001":
-                result = self.SPSR_fiq
+                result = self.spsr_fiq
             elif self.cpsr.get_m() == "0b10010":
-                result = self.SPSR_irq
+                result = self.spsr_irq
             elif self.cpsr.get_m() == "0b10011":
-                result = self.SPSR_svc
+                result = self.spsr_svc
             elif self.cpsr.get_m() == "0b10110":
-                result = self.SPSR_mon
+                result = self.spsr_mon
             elif self.cpsr.get_m() == "0b10111":
-                result = self.SPSR_abt
+                result = self.spsr_abt
             elif self.cpsr.get_m() == "0b11010":
-                result = self.SPSR_hyp
+                result = self.spsr_hyp
             elif self.cpsr.get_m() == "0b11011":
-                result = self.SPSR_und
+                result = self.spsr_und
             else:
                 print "unpredictable"
         return result
@@ -739,19 +738,19 @@ class CoreRegisters:
             print "unpredictable"
         else:
             if self.cpsr.get_m() == "0b10001":
-                self.SPSR_fiq = value
+                self.spsr_fiq = value
             elif self.cpsr.get_m() == "0b10010":
-                self.SPSR_irq = value
+                self.spsr_irq = value
             elif self.cpsr.get_m() == "0b10011":
-                self.SPSR_svc = value
+                self.spsr_svc = value
             elif self.cpsr.get_m() == "0b10110":
-                self.SPSR_mon = value
+                self.spsr_mon = value
             elif self.cpsr.get_m() == "0b10111":
-                self.SPSR_abt = value
+                self.spsr_abt = value
             elif self.cpsr.get_m() == "0b11010":
-                self.SPSR_hyp = value
+                self.spsr_hyp = value
             elif self.cpsr.get_m() == "0b11011":
-                self.SPSR_und = value
+                self.spsr_und = value
             else:
                 print "unpredictable"
 
@@ -850,7 +849,7 @@ class CoreRegisters:
     def enter_hyp_mode(self, new_spsr_value, preferred_exceptn_return, vect_offset):
         self.cpsr.set_m("0b11010")
         self.set_spsr(new_spsr_value)
-        self.ELR_hyp = preferred_exceptn_return
+        self.elr_hyp = preferred_exceptn_return
         self.cpsr.set_j(False)
         self.cpsr.set_t(self.hsctlr.get_te())
         self.cpsr.set_e(self.hsctlr.get_ee())
@@ -949,7 +948,7 @@ class CoreRegisters:
     def reset_control_registers(self):
         self.midr.value = BitArray(bin="01000001000011111010011101100000")
         self.sctlr.value = BitArray(bin="01000000000001010000000001111001")
-        self.ACTLR = BitArray(bin="00000000000000000000000000000111")
+        self.actlr = BitArray(bin="00000000000000000000000000000111")
         self.vbar.value = BitArray(bin=implementation_defined.vbar_bin)
 
 
@@ -1771,9 +1770,9 @@ class ARM1176:
     def mair_decode(self, attr):
         memattrs = MemoryAttributes()
         if self.core_registers.current_mode_is_hyp():
-            mair = self.core_registers.HMAIR1 + self.core_registers.HMAIR0
+            mair = self.core_registers.hmair1 + self.core_registers.hmair0
         else:
-            mair = self.core_registers.MAIR1 + self.core_registers.MAIR0
+            mair = self.core_registers.mair1 + self.core_registers.mair0
         index = attr.uint
         attrfield = mair[56 - (8 * index):64 - (8 * index)]
         if attrfield[0:4] == "0b0000":
@@ -2033,8 +2032,8 @@ class ARM1176:
                 if t0_size == 0 or ia[8:t0_size + 8].uint == 0:
                     current_level = 1 if self.core_registers.htcr.get_t0sz()[0:2] == "0b00" else 2
                     ba_lower_bound = 9 * current_level - t0_size - 4
-                    base_address = self.core_registers.HTTBR[24:64 - ba_lower_bound] + BitArray(length=ba_lower_bound)
-                    if self.core_registers.HTTBR[64 - ba_lower_bound:61].uint != 0:
+                    base_address = self.core_registers.httbr[24:64 - ba_lower_bound] + BitArray(length=ba_lower_bound)
+                    if self.core_registers.httbr[64 - ba_lower_bound:61].uint != 0:
                         print "unpredictable"
                     base_found = True
                     start_bit = 31 - t0_size
@@ -2054,9 +2053,9 @@ class ARM1176:
                 if t0_size == 0 or ia[8:t0_size + 8].uint == 0:
                     current_level = 1 if self.core_registers.ttbcr.get_t0sz().bin[0:2] == "00" else 2
                     ba_lower_bound = 9 * current_level - t0_size - 4
-                    base_address = self.core_registers.TTBR0_64[24:64 - ba_lower_bound] + BitArray(
+                    base_address = self.core_registers.ttbr0_64[24:64 - ba_lower_bound] + BitArray(
                         length=ba_lower_bound)
-                    if self.core_registers.TTBR0_64[64 - ba_lower_bound:61].uint != 0:
+                    if self.core_registers.ttbr0_64[64 - ba_lower_bound:61].uint != 0:
                         print "unpredictable"
                     base_found = True
                     disabled = self.core_registers.ttbcr.get_epd0()
@@ -2074,9 +2073,9 @@ class ARM1176:
                 if (t1_size == 0 and not base_found) or ia[8:t1_size + 8].all(True):
                     current_level = 1 if self.core_registers.ttbcr.get_t1sz().bin[0:2] == "00" else 2
                     ba_lower_bound = 9 * current_level - t1_size - 4
-                    base_address = self.core_registers.TTBR1_64[24:64 - ba_lower_bound] + BitArray(
+                    base_address = self.core_registers.ttbr1_64[24:64 - ba_lower_bound] + BitArray(
                         length=ba_lower_bound)
-                    if self.core_registers.TTBR1_64[64 - ba_lower_bound:61].uint != 0:
+                    if self.core_registers.ttbr1_64[64 - ba_lower_bound:61].uint != 0:
                         print "unpredictable"
                     base_found = True
                     disabled = self.core_registers.ttbcr.get_epd1()
@@ -2100,11 +2099,11 @@ class ARM1176:
                 print "unpredictable"
             if self.core_registers.vtcr.get_sl0()[0]:
                 print "unpredictable"
-            if self.core_registers.VTTBR[64 - ba_lower_bound:61].uint != 0:
+            if self.core_registers.vttbr[64 - ba_lower_bound:61].uint != 0:
                 print "unpredictable"
             if t0_size == -8 or ia[0:t0_size + 8].uint == 0:
                 current_level = 2 - s_level
-                base_address = self.core_registers.VTTBR[24:64 - ba_lower_bound] + BitArray(length=ba_lower_bound)
+                base_address = self.core_registers.vttbr[24:64 - ba_lower_bound] + BitArray(length=ba_lower_bound)
                 base_found = True
                 start_bit = 31 - t0_size
             lookup_secure = False
@@ -2261,10 +2260,10 @@ class ARM1176:
         ttbr = BitArray(length=64)
         n = self.core_registers.ttbcr.get_n().uint
         if n == 0 or mva[0:n + 1].uint == 0:
-            ttbr = self.core_registers.TTBR0_64
+            ttbr = self.core_registers.ttbr0_64
             disabled = self.core_registers.ttbcr.get_pd1()
         else:
-            ttbr = self.core_registers.TTBR1_64
+            ttbr = self.core_registers.ttbr1_64
             disabled = self.core_registers.ttbcr.get_pd1()
             n = 0
         if HaveSecurityExt() and disabled:
@@ -2500,7 +2499,7 @@ class ARM1176:
             s = False  # unknown
             for r in xrange(self.core_registers.mpuir.get_dregion().uint):
                 size_enable = self.core_registers.drsrs[r]
-                base_address = self.core_registers.DRBARs[r]
+                base_address = self.core_registers.drbars[r]
                 access_control = self.core_registers.dracrs[r]
                 if size_enable.get_en():
                     ls_bit = size_enable.get_rsize().uint + 1

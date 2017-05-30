@@ -13,7 +13,7 @@ class Eret(AbstractOpcode):
                     processor.core_registers.current_instr_set() == InstrSet.InstrSet_ThumbEE):
                 print "unpredictable"
             else:
-                new_pc_value = (processor.core_registers.ELR_hyp
+                new_pc_value = (processor.core_registers.elr_hyp
                                 if processor.core_registers.current_mode_is_hyp()
                                 else processor.core_registers.get(14))
                 processor.core_registers.cpsr_write_by_instr(processor.core_registers.get_spsr(), BitArray(bin="1111"),

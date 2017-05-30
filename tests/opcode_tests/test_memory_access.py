@@ -11,7 +11,7 @@ def test_ldr_register_thumb():
     # setting Data Region registers
     arm.core_registers.drsrs[0].set_en(True) # enabling memory region
     arm.core_registers.drsrs[0].set_rsize("0b00010") # setting region size
-    arm.core_registers.DRBARs[0] = BitArray(hex="0x0F000000") # setting region base address
+    arm.core_registers.drbars[0] = BitArray(hex="0x0F000000") # setting region base address
     arm.core_registers.dracrs[0].set_ap("0b011") # setting access permissions
     arm.core_registers.mpuir.set_iregion("0x01") # declaring the region
     arm.core_registers.mpuir.set_dregion("0x01") # declaring the region
