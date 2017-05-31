@@ -55,8 +55,6 @@ class ARM1176:
         print "{0}:{1}".format("LR", self.registers.get_lr())
         print "{0}:{1}".format("PC", self.registers.pc_store_value())
         print "{0}:{1}".format("CPSR", self.registers.cpsr.value)
-        # print "{0}:{1}".format(, self.registers.)
-        # print "{0}:{1}".format(, self.registers.)
 
     def take_reset(self):
         self.registers.cpsr.set_m("0b10011")
@@ -92,8 +90,9 @@ class ARM1176:
 
     def take_smc_exception(self):
         self.registers.it_advance()
-        new_lr_value = self.registers.get_pc() if self.registers.cpsr.get_t() else BitArray(
-            uint=(self.registers.get_pc().uint - 4), length=32)
+        new_lr_value = (self.registers.get_pc()
+                        if self.registers.cpsr.get_t()
+                        else BitArray(uint=(self.registers.get_pc().uint - 4), length=32))
         new_spsr_value = self.registers.cpsr.value
         vect_offset = 8
         if self.registers.cpsr.get_m() == "0b10110":
@@ -101,14 +100,13 @@ class ARM1176:
         self.registers.enter_monitor_mode(new_spsr_value, new_lr_value, vect_offset)
 
     def take_data_abort_exception(self):
-        new_lr_value = BitArray(uint=self.registers.get_pc().uint + 4,
-                                length=32) if self.registers.cpsr.get_t() else self.registers.get_pc()
+        new_lr_value = (BitArray(uint=self.registers.get_pc().uint + 4, length=32)
+                        if self.registers.cpsr.get_t()
+                        else self.registers.get_pc())
         new_spsr_value = self.registers.cpsr.value
         vect_offset = 16
         preferred_exceptn_return = BitArray(uint=(new_lr_value.uint - 8), length=32)
-        route_to_monitor = (HaveSecurityExt() and
-                            self.registers.scr.get_ea() and
-                            self.registers.is_external_abort())
+        route_to_monitor = HaveSecurityExt() and self.registers.scr.get_ea() and self.registers.is_external_abort()
         take_to_hyp = (HaveVirtExt() and
                        HaveSecurityExt() and
                        self.registers.scr.get_ns() and
@@ -159,23 +157,19 @@ class ARM1176:
             self.registers.set_spsr(new_spsr_value)
             self.registers.set(14, new_lr_value)
             self.registers.cpsr.set_i(True)
-            if (not HaveSecurityExt() or
-                    HaveVirtExt() or
-                    not self.registers.scr.get_ns() or
-                    self.registers.scr.get_aw()):
+            if not HaveSecurityExt() or HaveVirtExt() or not self.registers.scr.get_ns() or self.registers.scr.get_aw():
                 self.registers.cpsr.set_a(True)
             self.registers.cpsr.set_it(BitArray(length=8))
             self.registers.cpsr.set_j(False)
             self.registers.cpsr.set_t(self.registers.sctlr.get_te())
             self.registers.cpsr.set_e(self.registers.sctlr.get_ee())
-            self.registers.branch_to(
-                BitArray(uint=(self.registers.exc_vector_base().uint + vect_offset), length=32))
+            self.registers.branch_to(BitArray(uint=(self.registers.exc_vector_base().uint + vect_offset), length=32))
 
     def take_svc_exception(self):
         self.registers.it_advance()
-        new_lr_value = bits_ops.sub(self.registers.get_pc(), BitArray(bin="10"),
-                                    32) if self.registers.cpsr.get_t() else bits_ops.sub(
-            self.registers.get_pc(), BitArray(bin="100"), 32)
+        new_lr_value = (bits_ops.sub(self.registers.get_pc(), BitArray(bin="10"), 32)
+                        if self.registers.cpsr.get_t()
+                        else bits_ops.sub(self.registers.get_pc(), BitArray(bin="100"), 32))
         new_spsr_value = self.registers.cpsr.value
         vect_offset = 8
         take_to_hyp = (HaveVirtExt() and
@@ -207,9 +201,9 @@ class ARM1176:
                 bits_ops.add(self.registers.exc_vector_base(), BitArray(uint=vect_offset, length=32), 32))
 
     def take_undef_instr_exception(self):
-        new_lr_value = BitArray(uint=(self.registers.get_pc().uint - 2),
-                                length=32) if self.registers.cpsr.get_t() else BitArray(
-            uint=(self.registers.get_pc().uint - 4), length=32)
+        new_lr_value = (BitArray(uint=(self.registers.get_pc().uint - 2),length=32)
+                        if self.registers.cpsr.get_t()
+                        else BitArray(uint=(self.registers.get_pc().uint - 4), length=32))
         new_spsr_value = self.registers.cpsr.value
         vect_offset = 4
         take_to_hyp = (HaveVirtExt() and
@@ -238,8 +232,7 @@ class ARM1176:
             self.registers.cpsr.set_j(False)
             self.registers.cpsr.set_t(self.registers.sctlr.get_te())
             self.registers.cpsr.set_e(self.registers.sctlr.get_ee())
-            self.registers.branch_to(
-                BitArray(uint=(self.registers.exc_vector_base().uint + vect_offset), length=32))
+            self.registers.branch_to(BitArray(uint=(self.registers.exc_vector_base().uint + vect_offset), length=32))
 
     def big_endian_reverse(self, value, n):
         assert n == 1 or n == 2 or n == 4 or n == 8
