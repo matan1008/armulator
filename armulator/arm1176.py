@@ -333,7 +333,7 @@ class ARM1176:
             pass  # unknown
         return result
 
-    def encode_pmsafsr(self, dtype, level):
+    def encode_pmsafsr(self, dtype):
         result = BitArray(length=5)
         if dtype == DAbort.DAbort_Alignment:
             result[0:5] = "0b00001"
@@ -734,7 +734,7 @@ class ARM1176:
                 dfsr_string[2] = False  # unknown
             else:
                 dfsr_string[2] = iswrite
-            temp_pmsafsr = self.encode_pmsafsr(dtype, level)
+            temp_pmsafsr = self.encode_pmsafsr(dtype)
             dfsr_string[3] = temp_pmsafsr[0]
             dfsr_string[10:14] = temp_pmsafsr[1:5]
             self.registers.dfsr.value[18:32] = dfsr_string

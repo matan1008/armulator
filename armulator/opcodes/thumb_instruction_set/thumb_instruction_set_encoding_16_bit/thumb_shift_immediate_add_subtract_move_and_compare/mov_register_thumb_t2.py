@@ -12,7 +12,6 @@ class MovRegisterThumbT2(MovRegisterThumb, Opcode):
 
     @staticmethod
     def from_bitarray(instr, processor):
-        imm5 = instr[5:10]
         rd = instr[13:16]
         rm = instr[10:13]
         if processor.in_it_block():

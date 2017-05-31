@@ -16,7 +16,6 @@ class MlsT1(Mls, Opcode):
         rd = instr[20:24]
         ra = instr[16:20]
         rn = instr[12:16]
-        setflags = False
         if rd.uint in (13, 15) or rn.uint in (13, 15) or rm.uint in (13, 15) or ra.uint in (13, 15):
             print "unpredictable"
         else:

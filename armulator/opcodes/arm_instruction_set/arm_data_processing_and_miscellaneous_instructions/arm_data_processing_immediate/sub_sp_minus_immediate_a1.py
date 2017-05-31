@@ -15,7 +15,6 @@ class SubSpMinusImmediateA1(SubSpMinusImmediate, Opcode):
     def from_bitarray(instr, processor):
         imm12 = instr[20:32]
         rd = instr[16:20]
-        rn = instr[12:16]
         setflags = instr[11]
         imm32, carry = arm_expand_imm_c(imm12, processor.registers.cpsr.get_c())
         return SubSpMinusImmediateA1(instr, **{"setflags": setflags, "d": rd.uint, "imm32": imm32})

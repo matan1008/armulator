@@ -17,7 +17,6 @@ class StrhtA2(Strht, Opcode):
         rn = instr[12:16]
         add = instr[8]
         post_index = True
-        register_form = True
         if rt.uint == 15 or rn.uint == 15 or rt.uint == rn.uint or rm.uint == 15:
             print "unpredictable"
         else:
