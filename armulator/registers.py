@@ -174,331 +174,37 @@ class Registers:
         self.svcsmr = BitArray(length=32)
         self.fpexc = FPEXC()
 
-    def coproc_register_name(self, coproc, crn, opc1, crm, opc2):
-        if coproc == 15:
-            if crn == 0:
-                if opc1 == 0:
-                    if crm == 0:
-                        if opc2 == 0:
-                            return "MIDR"
-                        elif opc2 == 1:
-                            return "ctr"
-                        elif opc2 == 2:
-                            return "tcmtr"
-                        elif opc2 == 3:
-                            return "tlbtr"
-                    elif crm == 1:
-                        if opc2 == 0:
-                            return "id_pfr0"
-                        elif opc2 == 1:
-                            return "id_pfr1"
-                        elif opc2 == 2:
-                            return "id_dfr0"
-                        elif opc2 == 3:
-                            return "id_afr0"
-                        elif opc2 == 4:
-                            return "id_mmfr0"
-                        elif opc2 == 5:
-                            return "id_mmfr1"
-                        elif opc2 == 6:
-                            return "id_mmfr2"
-                        elif opc2 == 7:
-                            return "id_mmfr3"
-                    elif crm == 2:
-                        if opc2 == 0:
-                            return "id_isar0"
-                        elif opc2 == 1:
-                            return "id_isar1"
-                        elif opc2 == 2:
-                            return "id_isar2"
-                        elif opc2 == 3:
-                            return "id_isar3"
-                        elif opc2 == 4:
-                            return "id_isar4"
-                        elif opc2 == 5:
-                            return "id_isar5"
-            elif crn == 1:
-                if opc1 == 0:
-                    if crm == 0:
-                        if opc2 == 0:
-                            return "SCTLR"
-                        elif opc2 == 1:
-                            return "actlr"
-                        elif opc2 == 2:
-                            return "CPACR"
-                    elif crm == 1:
-                        if opc2 == 0:
-                            return "SCR"
-                        elif opc2 == 1:
-                            return "SDER"
-                        elif opc2 == 2:
-                            return "NSACR"
-            elif crn == 2:
-                if opc1 == 0:
-                    if crm == 0:
-                        if opc2 == 0:
-                            return "ttbr0"
-                        elif opc2 == 1:
-                            return "ttbr1"
-                        elif opc2 == 2:
-                            return "TTBCR"
-            elif crn == 3:
-                if opc1 == 0:
-                    if crm == 0:
-                        if opc2 == 0:
-                            return "DACR"
-            elif crn == 5:
-                if opc1 == 0:
-                    if crm == 0:
-                        if opc2 == 0:
-                            return "DFSR"
-                        elif opc2 == 1:
-                            return "ifsr"
-            elif crn == 6:
-                if opc1 == 0:
-                    if crm == 0:
-                        if opc2 == 0:
-                            return "dfar"
-                        elif opc2 == 2:
-                            return "ifar"
-            elif crn == 7:
-                if opc1 == 0:
-                    if crm == 0:
-                        if opc2 == 4:
-                            return "CP15WFI"
-                    elif crm == 4:
-                        if opc2 == 0:
-                            return "par"
-                    elif crm == 5:
-                        if opc2 == 0:
-                            return "ICIALLU"
-                        elif opc2 == 1:
-                            return "ICIMVAU"
-                        elif opc2 == 2:
-                            return "ICISW"
-                        elif opc2 == 4:
-                            return "CP15ISB"
-                        elif opc2 == 6:
-                            return "BPIALL"
-                        elif opc2 == 7:
-                            return "BPIMVA"
-                    elif crm == 6:
-                        if opc2 == 0:
-                            return "DCIALL"
-                        elif opc2 == 1:
-                            return "DCIMVAC"
-                        elif opc2 == 2:
-                            return "DCISW"
-                    elif crm == 7:
-                        if opc2 == 0:
-                            return "Invalidate Both Caches"
-                    elif crm == 8:
-                        if opc2 == 0:
-                            return "ATS1CPR"
-                        elif opc2 == 1:
-                            return "ATS1CPW"
-                        elif opc2 == 2:
-                            return "ATS1CUR"
-                        elif opc2 == 3:
-                            return "ATS1CUW"
-                        elif opc2 == 4:
-                            return "ATS12NSOPR"
-                        elif opc2 == 5:
-                            return "ATS12NSOPW"
-                        elif opc2 == 6:
-                            return "ATS12NSOUR"
-                        elif opc2 == 7:
-                            return "ATS12NSOUW"
-                    elif crm == 10:
-                        if opc2 == 0:
-                            return "DCCALL"
-                        elif opc2 == 1:
-                            return "DCCMVAC"
-                        elif opc2 == 2:
-                            return "DCCSW"
-                        elif opc2 == 4:
-                            return "CP15DSB"
-                        elif opc2 == 5:
-                            return "CP15DMB"
-                        elif opc2 == 6:
-                            return "cdsr"
-                    elif crm == 13:
-                        if opc2 == 1:
-                            return "Prefetch Instruction Cache Line"
-                    elif crm == 14:
-                        if opc2 == 0:
-                            return "DCCIALL"
-                        elif opc2 == 1:
-                            return "DCCIMVAC"
-                        elif opc2 == 2:
-                            return "DCCISW"
-            elif crn == 8:
-                if opc1 == 0:
-                    if crm == 5:
-                        if opc2 == 0:
-                            return "Invalidate Instruction TLB unlocked entries"
-                        elif opc2 == 1:
-                            return "Invalidate Instruction TLB entry by MVA"
-                        elif opc2 == 2:
-                            return "Invalidate Instruction TLB entry on ASID match"
-                    elif crm == 6:
-                        if opc2 == 0:
-                            return "Invalidate Data TLB unlocked entries"
-                        elif opc2 == 1:
-                            return "Invalidate Data TLB entry by MVA"
-                        elif opc2 == 2:
-                            return "Invalidate Data TLB entry on ASID match"
-                    elif crm == 7:
-                        if opc2 == 0:
-                            return "Invalidate unified TLB unlocked entries"
-                        elif opc2 == 1:
-                            return "Invalidate unified TLB entry by MVA"
-                        elif opc2 == 2:
-                            return "Invalidate unified TLB entry on ASID match"
-            elif crn == 9:
-                if opc1 == 0:
-                    if crm == 0:
-                        if opc2 == 0:
-                            return "dclr"
-                        elif opc2 == 0:
-                            return "iclr"
-                    elif crm == 1:
-                        if opc2 == 0:
-                            return "dtcmrr"
-                        elif opc2 == 1:
-                            return "ITCMRR"
-                        elif opc2 == 2:
-                            return "dtcm_nsacr"
-                        elif opc2 == 3:
-                            return "itcm_nsacr"
-                    elif crm == 2:
-                        if opc2 == 0:
-                            return "tcmsr"
-                    elif crm == 8:
-                        if opc2 == 0:
-                            return "cbor"
-            elif crn == 10:
-                if opc1 == 0:
-                    if crm == 0:
-                        if opc2 == 0:
-                            return "tlblr"
-                    elif crm == 2:
-                        if opc2 == 0:
-                            return "PRRR"
-                        elif opc2 == 1:
-                            return "NMRR"
-            elif crn == 11:
-                if opc1 == 0:
-                    if crm == 0:
-                        if opc2 == 0:
-                            return "dmaispr"
-                        elif opc2 == 1:
-                            return "dmaisqr"
-                        elif opc2 == 2:
-                            return "dmaisrr"
-                        elif opc2 == 3:
-                            return "dmaisir"
-                    elif crm == 1:
-                        if opc2 == 0:
-                            return "dmauar"
-                    elif crm == 2:
-                        if opc2 == 0:
-                            return "dmacnr"
-                    elif crm == 3:
-                        if opc2 == 0:
-                            return "stop_dmaer"
-                        elif opc2 == 1:
-                            return "start_dmaer"
-                        elif opc2 == 2:
-                            return "clear_dmaer"
-                    elif crm == 4:
-                        if opc2 == 0:
-                            return "dmacr"
-                    elif crm == 5:
-                        if opc2 == 0:
-                            return "dmaisar"
-                    elif crm == 6:
-                        if opc2 == 0:
-                            return "dmaesar"
-                    elif crm == 7:
-                        if opc2 == 0:
-                            return "dmaiear"
-                    elif crm == 8:
-                        if opc2 == 0:
-                            return "dmacsr"
-                    elif crm == 8:
-                        if opc2 == 0:
-                            return "dmacidr"
-            elif crn == 12:
-                if opc1 == 0:
-                    if crm == 0:
-                        if opc2 == 0:
-                            return "VBAR"
-                        elif opc2 == 1:
-                            return "mvbar"
-                    elif crm == 1:
-                        if opc2 == 0:
-                            return "isr"
-            elif crn == 13:
-                if opc1 == 0:
-                    if crm == 0:
-                        if opc2 == 0:
-                            return "FCSEIDR"
-                        elif opc2 == 1:
-                            return "contextidr"
-                        elif opc2 == 2:
-                            return "tpidrurw"
-                        elif opc2 == 3:
-                            return "tpidruro"
-                        elif opc2 == 4:
-                            return "tpidrprw"
-            elif crn == 15:
-                if opc1 == 0:
-                    if crm == 2:
-                        if opc2 == 4:
-                            return "ppmrr"
-                    elif crm == 9:
-                        if opc2 == 0:
-                            return "SUNAVCR"
-                    elif crm == 12:
-                        if opc2 == 0:
-                            return "PMCR"
-                        elif opc2 == 1:
-                            return "ccr"
-                        elif opc2 == 2:
-                            return "cr0"
-                        elif opc2 == 3:
-                            return "cr1"
-                        elif opc2 == 4:
-                            return "svcr_rc"
-                        elif opc2 == 5:
-                            return "svcr_ic"
-                        elif opc2 == 6:
-                            return "svcr_fic"
-                        elif opc2 == 7:
-                            return "svcr_edrc"
-                    elif crm == 13:
-                        if opc2 == 1:
-                            return "Start reset counter"
-                        elif opc2 == 2:
-                            return "Start interrupt counter"
-                        elif opc2 == 3:
-                            return " Start reset and interrupt counters"
-                        elif opc2 == 4:
-                            return "Start fast interrupt counter"
-                        elif opc2 == 5:
-                            return "Start reset and fast interrupt counters"
-                        elif opc2 == 6:
-                            return " Start interrupt and fast interrupt counters"
-                        elif opc2 == 7:
-                            return "Start reset, interrupt and fast interrupt counters"
-                    elif crm == 14:
-                        if opc2 == 0:
-                            return "svcsmr"
-                elif opc1 == 1:
-                    if crm == 13:
-                        # unknown
-                        pass
+    def coproc_to_register(self, coproc, crn, opc1, crm, opc2):
+        parameters_tuple = (coproc, crn, opc1, crm, opc2)
+        coproc_to_register_dict = {
+            (15, 0, 0, 0, 0): self.midr,
+            (15, 0, 0, 0, 1): self.ctr,
+            (15, 0, 0, 0, 2): self.tcmtr,
+            #(15, 0, 0, 0, 3): self.ctr,
+            #(15, 0, 0, 0, 4): self.ctr,
+            #(15, 0, 0, 0, 5): self.ctr,
+            #(15, 0, 0, 0, 6): self.ctr,
+            #(15, 0, 0, 0, 7): self.ctr,
+            (15, 0, 0, 1, 0): self.id_pfr0,
+            (15, 0, 0, 1, 1): self.id_pfr1,
+            (15, 0, 0, 1, 2): self.id_dfr0,
+            (15, 0, 0, 1, 3): self.id_afr0,
+            (15, 0, 0, 1, 4): self.id_mmfr0,
+            (15, 0, 0, 1, 5): self.id_mmfr1,
+            (15, 0, 0, 1, 6): self.id_mmfr2,
+            (15, 0, 0, 1, 7): self.id_mmfr3,
+            (15, 0, 0, 2, 0): self.id_isar0,
+            (15, 0, 0, 2, 1): self.id_isar1,
+            (15, 0, 0, 2, 2): self.id_isar2,
+            (15, 0, 0, 2, 3): self.id_isar3,
+            (15, 0, 0, 2, 4): self.id_isar4,
+            (15, 0, 0, 2, 5): self.id_isar5,
+            #some more
+            (15, 1, 0, 0, 0): self.sctlr,
+            (15, 1, 0, 0, 1): self.actlr,
+            (15, 1, 0, 0, 2): self.cpacr,
+        }
+        return coproc_to_register_dict[parameters_tuple]
 
     def pc_store_value(self):
         # not sure
