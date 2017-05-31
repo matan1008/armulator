@@ -1,11 +1,17 @@
 from armulator.arm1176 import ARM1176
 from bitstring import BitArray
 from armulator.shift import SRType
-from armulator.opcodes.thumb_instruction_set.thumb_instruction_set_encoding_16_bit.thumb_shift_immediate_add_subtract_move_and_compare.add_immediate_thumb_t1 import AddImmediateThumbT1
-from armulator.opcodes.thumb_instruction_set.thumb_instruction_set_encoding_16_bit.thumb_shift_immediate_add_subtract_move_and_compare.lsl_immediate_t1 import LslImmediateT1
-from armulator.opcodes.thumb_instruction_set.thumb_instruction_set_encoding_16_bit.thumb_shift_immediate_add_subtract_move_and_compare.add_register_thumb_t1 import AddRegisterThumbT1
-from armulator.opcodes.thumb_instruction_set.thumb_instruction_set_encoding_16_bit.thumb_shift_immediate_add_subtract_move_and_compare.cmp_immediate_t1 import CmpImmediateT1
-from armulator.opcodes.thumb_instruction_set.thumb_instruction_set_encoding_32_bit.thumb_multiply_multiply_accumulate_and_absolute_difference.mul_t2 import MulT2
+from armulator.opcodes.thumb_instruction_set.thumb_instruction_set_encoding_16_bit.\
+    thumb_shift_immediate_add_subtract_move_and_compare.add_immediate_thumb_t1 import AddImmediateThumbT1
+from armulator.opcodes.thumb_instruction_set.thumb_instruction_set_encoding_16_bit.\
+    thumb_shift_immediate_add_subtract_move_and_compare.lsl_immediate_t1 import LslImmediateT1
+from armulator.opcodes.thumb_instruction_set.thumb_instruction_set_encoding_16_bit.\
+    thumb_shift_immediate_add_subtract_move_and_compare.add_register_thumb_t1 import AddRegisterThumbT1
+from armulator.opcodes.thumb_instruction_set.thumb_instruction_set_encoding_16_bit.\
+    thumb_shift_immediate_add_subtract_move_and_compare.cmp_immediate_t1 import CmpImmediateT1
+from armulator.opcodes.thumb_instruction_set.thumb_instruction_set_encoding_32_bit.\
+    thumb_multiply_multiply_accumulate_and_absolute_difference.mul_t2 import MulT2
+
 
 def test_add_immediate_thumb():
     arm = ARM1176()
@@ -14,7 +20,7 @@ def test_add_immediate_thumb():
     opcode = arm.decode_instruction(instr)
     opcode = opcode.from_bitarray(instr, arm)
     assert type(opcode) == AddImmediateThumbT1
-    assert opcode.setflags == True
+    assert opcode.setflags is True
     assert opcode.d == 1
     assert opcode.n == 0
     assert opcode.imm32 == BitArray(hex="0x00000001")
@@ -26,6 +32,7 @@ def test_add_immediate_thumb():
     assert not arm.registers.cpsr.get_c()
     assert not arm.registers.cpsr.get_v()
 
+
 def test_lsl_immediate_thumb():
     arm = ARM1176()
     arm.take_reset()
@@ -33,7 +40,7 @@ def test_lsl_immediate_thumb():
     opcode = arm.decode_instruction(instr)
     opcode = opcode.from_bitarray(instr, arm)
     assert type(opcode) == LslImmediateT1
-    assert opcode.setflags == True
+    assert opcode.setflags is True
     assert opcode.d == 0
     assert opcode.m == 7
     assert opcode.shift_n == 2
@@ -44,6 +51,7 @@ def test_lsl_immediate_thumb():
     assert not arm.registers.cpsr.get_z()
     assert not arm.registers.cpsr.get_c()
 
+
 def test_add_register_thumb():
     arm = ARM1176()
     arm.take_reset()
@@ -51,7 +59,7 @@ def test_add_register_thumb():
     opcode = arm.decode_instruction(instr)
     opcode = opcode.from_bitarray(instr, arm)
     assert type(opcode) == AddRegisterThumbT1
-    assert opcode.setflags == True
+    assert opcode.setflags is True
     assert opcode.m == 1
     assert opcode.d == 3
     assert opcode.n == 2
@@ -65,6 +73,7 @@ def test_add_register_thumb():
     assert not arm.registers.cpsr.get_z()
     assert not arm.registers.cpsr.get_c()
     assert arm.registers.cpsr.get_v()
+
 
 def test_cmp_immediate_thumb():
     arm = ARM1176()
@@ -82,6 +91,7 @@ def test_cmp_immediate_thumb():
     assert not arm.registers.cpsr.get_c()
     assert not arm.registers.cpsr.get_v()
 
+
 def test_mul_thumb():
     arm = ARM1176()
     arm.take_reset()
@@ -89,7 +99,7 @@ def test_mul_thumb():
     opcode = arm.decode_instruction(instr)
     opcode = opcode.from_bitarray(instr, arm)
     assert type(opcode) == MulT2
-    assert opcode.setflags == False
+    assert opcode.setflags is False
     assert opcode.n == 0
     assert opcode.m == 1
     assert opcode.d == 2
@@ -101,4 +111,3 @@ def test_mul_thumb():
     assert not arm.registers.cpsr.get_z()
     assert not arm.registers.cpsr.get_c()
     assert not arm.registers.cpsr.get_v()
-
