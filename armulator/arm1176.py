@@ -1,5 +1,4 @@
 from bitstring import BitArray
-from enum import Enum
 from configurations import *
 import shift
 import bits_ops
@@ -196,7 +195,7 @@ class ARM1176:
                 bits_ops.add(self.registers.exc_vector_base(), BitArray(uint=vect_offset, length=32), 32))
 
     def take_undef_instr_exception(self):
-        new_lr_value = (BitArray(uint=(self.registers.get_pc().uint - 2),length=32)
+        new_lr_value = (BitArray(uint=(self.registers.get_pc().uint - 2), length=32)
                         if self.registers.cpsr.get_t()
                         else BitArray(uint=(self.registers.get_pc().uint - 4), length=32))
         new_spsr_value = self.registers.cpsr.value
@@ -1515,17 +1514,17 @@ class ARM1176:
         if HaveVirtExt() and not self.registers.is_secure() and not ishyp:
             if self.registers.hcr.get_vm():
                 s1outputaddr = tlbrecord_s1.addrdesc.paddress.physicaladdress
-                tlbrecordS2 = self.translation_table_walk_ld(s1outputaddr, mva, iswrite, False, s2fs1walk, size)
+                tlbrecord_s2 = self.translation_table_walk_ld(s1outputaddr, mva, iswrite, False, s2fs1walk, size)
                 if (not wasaligned and
-                        tlbrecordS2.addrdesc.memattrs.type in (
+                        tlbrecord_s2.addrdesc.memattrs.type in (
                                 MemType.MemType_Device,
                                 MemType.MemType_StronglyOrdered
                         )):
                     taketohypmode = True
                     secondstageabort = True
                     self.alignment_fault_v(mva, iswrite, taketohypmode, secondstageabort)
-                self.check_permission_s2(tlbrecordS2.perms, mva, s1outputaddr, tlbrecordS2.level, iswrite, s2fs1walk)
-                result = self.combine_s1s2_desc(tlbrecord_s1.addrdesc, tlbrecordS2.addrdesc)
+                self.check_permission_s2(tlbrecord_s2.perms, mva, s1outputaddr, tlbrecord_s2.level, iswrite, s2fs1walk)
+                result = self.combine_s1s2_desc(tlbrecord_s1.addrdesc, tlbrecord_s2.addrdesc)
             else:
                 result = tlbrecord_s1.addrdesc
         else:
