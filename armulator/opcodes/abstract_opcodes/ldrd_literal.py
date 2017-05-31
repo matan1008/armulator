@@ -33,5 +33,6 @@ class LdrdLiteral(AbstractOpcode):
                         processor.registers.set(self.t2, data[0:32])
                 else:
                     processor.registers.set(self.t, processor.mem_a_get(address, 4))
-                    processor.registers.set(self.t2,
-                                                 processor.mem_a_get(bits_add(address, BitArray(bin="0b100"), 32), 4))
+                    processor.registers.set(
+                        self.t2, processor.mem_a_get(bits_add(address, BitArray(bin="0b100"), 32), 4)
+                    )

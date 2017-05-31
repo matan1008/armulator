@@ -25,5 +25,7 @@ class Stmda(AbstractOpcode):
             if self.registers[0]:
                 processor.mem_a_set(address, 4, processor.registers.pc_store_value())
             if self.wback:
-                processor.registers.set(self.n, sub(processor.registers.get(self.n),
-                                                         BitArray(uint=(4 * self.registers.count(1)), length=32), 32))
+                processor.registers.set(
+                    self.n,
+                    sub(processor.registers.get(self.n), BitArray(uint=(4 * self.registers.count(1)), length=32), 32)
+                )

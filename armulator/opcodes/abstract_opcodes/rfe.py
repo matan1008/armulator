@@ -21,18 +21,20 @@ class Rfe(AbstractOpcode):
                   processor.registers.current_instr_set() == InstrSet.InstrSet_ThumbEE):
                 print "unpredictable"
             else:
-                address = processor.registers.get(self.n) if self.increment else sub(
-                        processor.registers.get(self.n),
-                        BitArray(bin="1000"), 32)
+                address = (processor.registers.get(self.n)
+                           if self.increment
+                           else sub(processor.registers.get(self.n), BitArray(bin="1000"), 32))
                 if self.word_higher:
                     address = add(address, BitArray(bin="100"), 32)
                 new_pc_value = processor.mem_a_get(address, 4)
                 spsr_value = processor.mem_a_get(add(address, BitArray(bin="100"), 32), 4)
                 if self.wback:
-                    processor.registers.set(self.n, add(processor.registers.get(self.n), BitArray(bin="1000"),
-                                                             32) if self.increment else sub(
-                            processor.registers.get(self.n),
-                            BitArray(bin="1000"), 32))
+                    processor.registers.set(
+                        self.n,
+                        (add(processor.registers.get(self.n), BitArray(bin="1000"), 32)
+                         if self.increment
+                         else sub(processor.registers.get(self.n), BitArray(bin="1000"), 32))
+                    )
                 processor.registers.cpsr_write_by_instr(spsr_value, BitArray(bin="1111"), True)
                 if (processor.registers.cpsr.get_m() == "0b11010" and
                         processor.registers.cpsr.get_j() and

@@ -16,8 +16,7 @@ class Eret(AbstractOpcode):
                 new_pc_value = (processor.registers.elr_hyp
                                 if processor.registers.current_mode_is_hyp()
                                 else processor.registers.get(14))
-                processor.registers.cpsr_write_by_instr(processor.registers.get_spsr(), BitArray(bin="1111"),
-                                                             True)
+                processor.registers.cpsr_write_by_instr(processor.registers.get_spsr(), BitArray(bin="1111"), True)
                 if (processor.registers.cpsr.get_m() == "0b11010" and
                         processor.registers.cpsr.get_j() and
                         processor.registers.cpsr.get_t()):

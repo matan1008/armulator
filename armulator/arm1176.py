@@ -656,9 +656,11 @@ class ARM1176:
         if MemorySystemArchitecture() == MemArch.MemArch_VMSA:
             if not taketohypmode:
                 dfsr_string = BitArray(length=14)
-                if dtype in (self.DAbort.DAbort_AsyncParity, self.DAbort.DAbort_AsyncExternal,
-                             self.DAbort.DAbort_AsyncWatchpoint) or (dtype == self.DAbort.DAbort_SyncWatchpoint and
-                        self.registers.dbgdidr.get_version().uint <= 4):
+                if (dtype in (self.DAbort.DAbort_AsyncParity,
+                              self.DAbort.DAbort_AsyncExternal,
+                              self.DAbort.DAbort_AsyncWatchpoint) or
+                    (dtype == self.DAbort.DAbort_SyncWatchpoint and
+                        self.registers.dbgdidr.get_version().uint <= 4)):
                     self.registers.dfar = BitArray(length=32)  # unknown
                 else:
                     self.registers.dfar = vaddress
@@ -1208,10 +1210,7 @@ class ARM1176:
                 walkaddr.paddress.ns = False
             else:
                 walkaddr.paddress.ns = True
-            if (not HaveVirtExt() or
-                    not stage1 or
-                    self.registers.is_secure() or
-                    self.registers.current_mode_is_hyp()):
+            if not HaveVirtExt() or not stage1 or self.registers.is_secure() or self.registers.current_mode_is_hyp():
                 if HaveVirtExt() and (self.registers.current_mode_is_hyp() or not stage1):
                     big_endian = self.registers.hsctlr.get_ee()
                 else:
@@ -1507,31 +1506,32 @@ class ARM1176:
             uses_ld = ishyp or self.registers.ttbcr.get_eae()
             if uses_ld:
                 ia_in = BitArray(bin="00000000") + mva
-                tlbrecordS1 = self.translation_table_walk_ld(ia_in, mva, iswrite, True, s2fs1walk, size)
+                tlbrecord_s1 = self.translation_table_walk_ld(ia_in, mva, iswrite, True, s2fs1walk, size)
                 check_domain = False
                 check_permission = True
             else:
-                tlbrecordS1 = self.translation_table_walk_sd(mva, iswrite, size)
+                tlbrecord_s1 = self.translation_table_walk_sd(mva, iswrite, size)
                 check_domain = True
                 check_permission = True
         else:
-            tlbrecordS1 = self.translate_address_v_s1_off(mva)
+            tlbrecord_s1 = self.translate_address_v_s1_off(mva)
             check_domain = False
             check_permission = False
         if (not wasaligned and
-                tlbrecordS1.addrdesc.memattrs.type in (MemType.MemType_StronglyOrdered, MemType.MemType_Device)):
+                tlbrecord_s1.addrdesc.memattrs.type in (MemType.MemType_StronglyOrdered, MemType.MemType_Device)):
             if not HaveVirtExt():
                 print "unpredictable"
             secondstageabort = False
             self.alignment_fault_v(mva, iswrite, ishyp, secondstageabort)
         if check_domain:
-            check_permission = self.check_domain(tlbrecordS1.domain, mva, tlbrecordS1.level, iswrite)
+            check_permission = self.check_domain(tlbrecord_s1.domain, mva, tlbrecord_s1.level, iswrite)
         if check_permission:
-            self.check_permission(tlbrecordS1.perms, mva, tlbrecordS1.level, tlbrecordS1.domain, iswrite, ispriv, ishyp,
-                                  uses_ld)
+            self.check_permission(
+                tlbrecord_s1.perms, mva, tlbrecord_s1.level, tlbrecord_s1.domain, iswrite, ispriv, ishyp, uses_ld
+            )
         if HaveVirtExt() and not self.registers.is_secure() and not ishyp:
             if self.registers.hcr.get_vm():
-                s1outputaddr = tlbrecordS1.addrdesc.paddress.physicaladdress
+                s1outputaddr = tlbrecord_s1.addrdesc.paddress.physicaladdress
                 tlbrecordS2 = self.translation_table_walk_ld(s1outputaddr, mva, iswrite, False, s2fs1walk, size)
                 if (not wasaligned and
                         tlbrecordS2.addrdesc.memattrs.type in (
@@ -1542,11 +1542,11 @@ class ARM1176:
                     secondstageabort = True
                     self.alignment_fault_v(mva, iswrite, taketohypmode, secondstageabort)
                 self.check_permission_s2(tlbrecordS2.perms, mva, s1outputaddr, tlbrecordS2.level, iswrite, s2fs1walk)
-                result = self.combine_s1s2_desc(tlbrecordS1.addrdesc, tlbrecordS2.addrdesc)
+                result = self.combine_s1s2_desc(tlbrecord_s1.addrdesc, tlbrecordS2.addrdesc)
             else:
-                result = tlbrecordS1.addrdesc
+                result = tlbrecord_s1.addrdesc
         else:
-            result = tlbrecordS1.addrdesc
+            result = tlbrecord_s1.addrdesc
         return result
 
     def translate_address_p(self, va, ispriv, iswrite, wasaligned):
@@ -2080,8 +2080,7 @@ class ARM1176:
         elif self.registers.current_instr_set() == InstrSet.InstrSet_Thumb:
             self.opcode = self.mem_a_get(self.registers.pc_store_value(), 2)
             if self.opcode[0:5] == "0b11101" or self.opcode[0:5] == "0b11110" or self.opcode[0:5] == "0b11111":
-                self.opcode += self.mem_a_get(
-                    bits_ops.add(self.registers.pc_store_value(), BitArray(bin="10"), 32), 2)
+                self.opcode += self.mem_a_get(bits_ops.add(self.registers.pc_store_value(), BitArray(bin="10"), 32), 2)
         return self.opcode
 
     def decode_instruction(self, instr):

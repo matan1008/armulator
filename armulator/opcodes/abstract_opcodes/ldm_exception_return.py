@@ -34,10 +34,12 @@ class LdmExceptionReturn(AbstractOpcode):
                         address = add(address, BitArray(bin="100"), 32)
                 new_pc_value = processor.mem_a_get(address, 4)
                 if self.wback and not self.registers[15 - self.n]:
-                    processor.registers.set(self.n, add(processor.registers.get(self.n),
-                                                             BitArray(uint=length, length=32),
-                                                             32) if self.increment else sub(
-                            processor.registers.get(self.n), BitArray(uint=length, length=32), 32))
+                    processor.registers.set(
+                        self.n,
+                        (add(processor.registers.get(self.n), BitArray(uint=length, length=32), 32)
+                         if self.increment
+                         else sub(processor.registers.get(self.n), BitArray(uint=length, length=32), 32))
+                    )
                 if self.wback and self.registers[15 - self.n]:
                     processor.registers.set(self.n, BitArray(length=32))  # unknown
                 processor.registers.cpsr_write_by_instr(processor.registers.get_spsr(), BitArray(bin="1111"), True)

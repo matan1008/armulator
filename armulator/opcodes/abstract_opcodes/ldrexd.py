@@ -22,5 +22,4 @@ class Ldrexd(AbstractOpcode):
                     processor.alignment_fault(address, False)
                 processor.set_exclusive_monitors(address, 8)
                 processor.registers.set(self.t, processor.mem_a_get(address, 4))
-                processor.registers.set(self.t2,
-                                             processor.mem_a_get(BitArray(uint=address.uint + 4, length=32), 4))
+                processor.registers.set(self.t2, processor.mem_a_get(BitArray(uint=address.uint + 4, length=32), 4))

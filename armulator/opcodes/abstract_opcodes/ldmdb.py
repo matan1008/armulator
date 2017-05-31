@@ -27,8 +27,11 @@ class Ldmdb(AbstractOpcode):
                 if self.registers[0]:
                     processor.load_write_pc(processor.mem_a_get(address, 4))
                 if self.wback and not self.registers[15 - self.n]:
-                    processor.registers.set(self.n, sub(processor.registers.get(self.n),
-                                                             BitArray(uint=(4 * self.registers.count(1)), length=32),
-                                                             32))
+                    processor.registers.set(
+                        self.n,
+                        sub(
+                            processor.registers.get(self.n), BitArray(uint=(4 * self.registers.count(1)), length=32), 32
+                        )
+                    )
                 if self.wback and self.registers[15 - self.n]:
                     processor.registers.set(self.n, BitArray(length=32))  # unknown
