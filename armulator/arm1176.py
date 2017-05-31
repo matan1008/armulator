@@ -20,11 +20,6 @@ class ARM1176:
         self.registers = Registers()
         self.run = True
         self.opcode = BitArray(length=32)
-        dabort = ("DAbort_AccessFlag DAbort_Alignment DAbort_Background DAbort_Domain DAbort_Permission "
-                  "DAbort_Translation DAbort_SyncExternal DAbort_SyncExternalonWalk DAbort_SyncParity "
-                  "DAbort_SyncParityonWalk DAbort_AsyncParity DAbort_AsyncExternal DAbort_SyncWatchpoint "
-                  "DAbort_AsyncWatchpoint DAbort_TLBConflict DAbort_Lockdown DAbort_Coproc DAbort_ICacheMaint ")
-        self.DAbort = Enum("DAbort", dabort)
         self.mem = Memory()
         self.is_wait_for_event = False
         self.is_wait_for_interrupt = False
@@ -255,38 +250,38 @@ class ARM1176:
 
     def encode_ldfsr(self, dtype, level):
         result = BitArray(length=6)
-        if dtype == self.DAbort.DAbort_AccessFlag:
+        if dtype == DAbort.DAbort_AccessFlag:
             result[0:4] = "0b0010"
             result[4:] = bin(level & 3)
-        elif dtype == self.DAbort.DAbort_Alignment:
+        elif dtype == DAbort.DAbort_Alignment:
             result[0:6] = "0b100001"
-        elif dtype == self.DAbort.DAbort_Permission:
+        elif dtype == DAbort.DAbort_Permission:
             result[0:4] = "0b0011"
             result[4:] = bin(level & 3)
-        elif dtype == self.DAbort.DAbort_Translation:
+        elif dtype == DAbort.DAbort_Translation:
             result[0:4] = "0b0001"
             result[4:] = bin(level & 3)
-        elif dtype == self.DAbort.DAbort_SyncExternal:
+        elif dtype == DAbort.DAbort_SyncExternal:
             result[0:6] = "0b100000"
-        elif dtype == self.DAbort.DAbort_SyncExternalonWalk:
+        elif dtype == DAbort.DAbort_SyncExternalonWalk:
             result[0:4] = "0b0101"
             result[4:] = bin(level & 3)
-        elif dtype == self.DAbort.DAbort_SyncParity:
+        elif dtype == DAbort.DAbort_SyncParity:
             result[0:6] = "0b011000"
-        elif dtype == self.DAbort.DAbort_SyncParityonWalk:
+        elif dtype == DAbort.DAbort_SyncParityonWalk:
             result[0:4] = "0b0111"
             result[4:] = bin(level & 3)
-        elif dtype == self.DAbort.DAbort_AsyncParity:
+        elif dtype == DAbort.DAbort_AsyncParity:
             result[0:6] = "0b011001"
-        elif dtype == self.DAbort.DAbort_AsyncExternal:
+        elif dtype == DAbort.DAbort_AsyncExternal:
             result[0:6] = "0b010001"
-        elif dtype == self.DAbort.DAbort_SyncWatchpoint or dtype == self.DAbort.DAbort_AsyncWatchpoint:
+        elif dtype == DAbort.DAbort_SyncWatchpoint or dtype == DAbort.DAbort_AsyncWatchpoint:
             result[0:6] = "0b100010"
-        elif dtype == self.DAbort.DAbort_TLBConflict:
+        elif dtype == DAbort.DAbort_TLBConflict:
             result[0:6] = "0b110000"
-        elif dtype == self.DAbort.DAbort_Lockdown:
+        elif dtype == DAbort.DAbort_Lockdown:
             result[0:6] = "0b110100"
-        elif dtype == self.DAbort.DAbort_Coproc:
+        elif dtype == DAbort.DAbort_Coproc:
             result[0:6] = "0b111010"
         else:
             pass  # unknown
@@ -294,46 +289,46 @@ class ARM1176:
 
     def encode_sdfsr(self, dtype, level):
         result = BitArray(length=5)
-        if dtype == self.DAbort.DAbort_AccessFlag:
+        if dtype == DAbort.DAbort_AccessFlag:
             if level == 1:
                 result[0:5] = "0b00011"
             else:
                 result[0:5] = "0b00110"
-        elif dtype == self.DAbort.DAbort_Alignment:
+        elif dtype == DAbort.DAbort_Alignment:
             result[0:5] = "0b00001"
-        elif dtype == self.DAbort.DAbort_Permission:
+        elif dtype == DAbort.DAbort_Permission:
             result[0:3] = "0b010"
             result[4] = True
             result[3] = (level >> 1) & 1
-        elif dtype == self.DAbort.DAbort_Translation:
+        elif dtype == DAbort.DAbort_Translation:
             result[0:3] = "0b001"
             result[4] = True
             result[3] = (level >> 1) & 1
-        elif dtype == self.DAbort.DAbort_SyncExternal:
+        elif dtype == DAbort.DAbort_SyncExternal:
             result[0:5] = "0b01000"
-        elif dtype == self.DAbort.DAbort_SyncExternalonWalk:
+        elif dtype == DAbort.DAbort_SyncExternalonWalk:
             result[0:3] = "0b011"
             result[4] = False
             result[3] = (level >> 1) & 1
-        elif dtype == self.DAbort.DAbort_SyncParity:
+        elif dtype == DAbort.DAbort_SyncParity:
             result[0:5] = "0b11001"
-        elif dtype == self.DAbort.DAbort_SyncParityonWalk:
+        elif dtype == DAbort.DAbort_SyncParityonWalk:
             result[0:3] = "0b111"
             result[4] = False
             result[3] = (level >> 1) & 1
-        elif dtype == self.DAbort.DAbort_AsyncParity:
+        elif dtype == DAbort.DAbort_AsyncParity:
             result[0:5] = "0b11000"
-        elif dtype == self.DAbort.DAbort_AsyncExternal:
+        elif dtype == DAbort.DAbort_AsyncExternal:
             result[0:5] = "0b10110"
-        elif dtype == self.DAbort.DAbort_SyncWatchpoint or dtype == self.DAbort.DAbort_AsyncWatchpoint:
+        elif dtype == DAbort.DAbort_SyncWatchpoint or dtype == DAbort.DAbort_AsyncWatchpoint:
             result[0:5] = "0b00010"
-        elif dtype == self.DAbort.DAbort_TLBConflict:
+        elif dtype == DAbort.DAbort_TLBConflict:
             result[0:5] = "0b10000"
-        elif dtype == self.DAbort.DAbort_Lockdown:
+        elif dtype == DAbort.DAbort_Lockdown:
             result[0:5] = "0b10100"
-        elif dtype == self.DAbort.DAbort_Coproc:
+        elif dtype == DAbort.DAbort_Coproc:
             result[0:5] = "0b11010"
-        elif dtype == self.DAbort.DAbort_ICacheMaint:
+        elif dtype == DAbort.DAbort_ICacheMaint:
             result[0:5] = "0b00100"
         else:
             pass  # unknown
@@ -341,25 +336,25 @@ class ARM1176:
 
     def encode_pmsafsr(self, dtype, level):
         result = BitArray(length=5)
-        if dtype == self.DAbort.DAbort_Alignment:
+        if dtype == DAbort.DAbort_Alignment:
             result[0:5] = "0b00001"
-        elif dtype == self.DAbort.DAbort_Permission:
+        elif dtype == DAbort.DAbort_Permission:
             result[0:5] = "0b01101"
-        elif dtype == self.DAbort.DAbort_SyncExternal:
+        elif dtype == DAbort.DAbort_SyncExternal:
             result[0:5] = "0b01000"
-        elif dtype == self.DAbort.DAbort_SyncParity:
+        elif dtype == DAbort.DAbort_SyncParity:
             result[0:5] = "0b11001"
-        elif dtype == self.DAbort.DAbort_AsyncParity:
+        elif dtype == DAbort.DAbort_AsyncParity:
             result[0:5] = "0b11000"
-        elif dtype == self.DAbort.DAbort_AsyncExternal:
+        elif dtype == DAbort.DAbort_AsyncExternal:
             result[0:5] = "0b10110"
-        elif dtype == self.DAbort.DAbort_SyncWatchpoint or dtype == self.DAbort.DAbort_AsyncWatchpoint:
+        elif dtype == DAbort.DAbort_SyncWatchpoint or dtype == DAbort.DAbort_AsyncWatchpoint:
             result[0:5] = "0b00010"
-        elif dtype == self.DAbort.DAbort_Background:
+        elif dtype == DAbort.DAbort_Background:
             result[0:5] = "0b00000"
-        elif dtype == self.DAbort.DAbort_Lockdown:
+        elif dtype == DAbort.DAbort_Lockdown:
             result[0:5] = "0b10100"
-        elif dtype == self.DAbort.DAbort_Coproc:
+        elif dtype == DAbort.DAbort_Coproc:
             result[0:5] = "0b11010"
         else:
             pass  # unknown
@@ -586,7 +581,7 @@ class ARM1176:
             else:
                 print "unpredictable"
         if abort:
-            self.data_abort(mva, ipa, domain, level, iswrite, self.DAbort.DAbort_Permission, taketohypmode,
+            self.data_abort(mva, ipa, domain, level, iswrite, DAbort.DAbort_Permission, taketohypmode,
                             secondstageabort, ipavalid, ldfsr_format, s2fs1walk)
 
     def check_permission_s2(self, perms, mva, ipa, level, iswrite, s2fs1walk):
@@ -597,7 +592,7 @@ class ARM1176:
             secondstageabort = True
             ipavalid = s2fs1walk
             ldfsr_format = True
-            self.data_abort(mva, ipa, domain, level, iswrite, self.DAbort.DAbort_Permission, taketohypmode,
+            self.data_abort(mva, ipa, domain, level, iswrite, DAbort.DAbort_Permission, taketohypmode,
                             secondstageabort, ipavalid, ldfsr_format, s2fs1walk)
 
     def check_domain(self, domain, mva, level, iswrite):
@@ -609,7 +604,7 @@ class ARM1176:
         s2fs1walk = False
         permission_check = False
         if self.registers.dacr.get_d_n(domain.uint) == "0b00":
-            self.data_abort(mva, ipaddress, domain, level, iswrite, self.DAbort.DAbort_Domain, taketohypmode,
+            self.data_abort(mva, ipaddress, domain, level, iswrite, DAbort.DAbort_Domain, taketohypmode,
                             secondstageabort, ipavalid, ldfsr_format, s2fs1walk)
         elif self.registers.dacr.get_d_n(domain.uint) == "0b01":
             permission_check = True
@@ -637,7 +632,7 @@ class ARM1176:
                         ipavalid = True
                         ldfsr_format = True
                         s2fs1walk = True
-                        self.data_abort(mva, s2ia, domain, tlbrecord_s2.level, is_write, self.DAbort.DAbort_Permission,
+                        self.data_abort(mva, s2ia, domain, tlbrecord_s2.level, is_write, DAbort.DAbort_Permission,
                                         taketohypmode, secondstageabort, ipavalid, ldfsr_format, s2fs1walk)
                 result = self.combine_s1s2_desc(s1_out_addr_desc, tlbrecord_s2.addrdesc)
             else:
@@ -649,21 +644,21 @@ class ARM1176:
         if MemorySystemArchitecture() == MemArch.MemArch_VMSA:
             if not taketohypmode:
                 dfsr_string = BitArray(length=14)
-                if (dtype in (self.DAbort.DAbort_AsyncParity,
-                              self.DAbort.DAbort_AsyncExternal,
-                              self.DAbort.DAbort_AsyncWatchpoint) or
-                    (dtype == self.DAbort.DAbort_SyncWatchpoint and
+                if (dtype in (DAbort.DAbort_AsyncParity,
+                              DAbort.DAbort_AsyncExternal,
+                              DAbort.DAbort_AsyncWatchpoint) or
+                    (dtype == DAbort.DAbort_SyncWatchpoint and
                         self.registers.dbgdidr.get_version().uint <= 4)):
                     self.registers.dfar = BitArray(length=32)  # unknown
                 else:
                     self.registers.dfar = vaddress
                 if ldfsr_format:
                     dfsr_string[0] = self.tlb_lookup_came_from_cache_maintenance()
-                    if dtype in (self.DAbort.DAbort_AsyncExternal, self.DAbort.DAbort_SyncExternal):
+                    if dtype in (DAbort.DAbort_AsyncExternal, DAbort.DAbort_SyncExternal):
                         dfsr_string[1] = implementation_defined.dfsr_string_12
                     else:
                         dfsr_string[1] = False
-                    if dtype in (self.DAbort.DAbort_SyncWatchpoint, self.DAbort.DAbort_AsyncWatchpoint):
+                    if dtype in (DAbort.DAbort_SyncWatchpoint, DAbort.DAbort_AsyncWatchpoint):
                         dfsr_string[2] = False  # unknown
                     else:
                         dfsr_string[2] = iswrite
@@ -674,27 +669,27 @@ class ARM1176:
                 else:
                     if HaveLPAE():
                         dfsr_string[0] = self.tlb_lookup_came_from_cache_maintenance()
-                    if dtype in (self.DAbort.DAbort_AsyncExternal, self.DAbort.DAbort_SyncExternal):
+                    if dtype in (DAbort.DAbort_AsyncExternal, DAbort.DAbort_SyncExternal):
                         dfsr_string[1] = implementation_defined.dfsr_string_12
                     else:
                         dfsr_string[1] = False
-                    if dtype in (self.DAbort.DAbort_SyncWatchpoint, self.DAbort.DAbort_AsyncWatchpoint):
+                    if dtype in (DAbort.DAbort_SyncWatchpoint, DAbort.DAbort_AsyncWatchpoint):
                         dfsr_string[2] = False  # unknown
                     else:
                         dfsr_string[2] = iswrite
                     dfsr_string[4] = False
                     dfsr_string[5] = False  # unknown
                     domain_valid = (
-                        dtype == self.DAbort.DAbort_Domain or
+                        dtype == DAbort.DAbort_Domain or
                         (
                             level == 2 and
                             dtype in (
-                                self.DAbort.DAbort_Translation,
-                                self.DAbort.DAbort_AccessFlag,
-                                self.DAbort.DAbort_SyncExternalonWalk,
-                                self.DAbort.DAbort_SyncParityonWalk
+                                DAbort.DAbort_Translation,
+                                DAbort.DAbort_AccessFlag,
+                                DAbort.DAbort_SyncExternalonWalk,
+                                DAbort.DAbort_SyncParityonWalk
                             )
-                        ) or (not HaveLPAE() and dtype == self.DAbort.DAbort_Permission))
+                        ) or (not HaveLPAE() and dtype == DAbort.DAbort_Permission))
                     if domain_valid:
                         dfsr_string[6:10] = domain
                     else:
@@ -715,7 +710,7 @@ class ARM1176:
                 else:
                     ec[0:6] = "0b100101"
                     hsr_string[0] = False
-                if dtype in (self.DAbort.DAbort_AsyncExternal, self.DAbort.DAbort_SyncExternal):
+                if dtype in (DAbort.DAbort_AsyncExternal, DAbort.DAbort_SyncExternal):
                     hsr_string[15] = implementation_defined.data_abort_hsr_9
                 hsr_string[16] = self.tlb_lookup_came_from_cache_maintenance()
                 hsr_string[17] = s2fs1walk
@@ -724,24 +719,19 @@ class ARM1176:
                 self.write_hsr(ec, hsr_string)
         else:
             dfsr_string = BitArray(length=14)
-            if (dtype in (
-                    self.DAbort.DAbort_AsyncParity,
-                    self.DAbort.DAbort_AsyncExternal,
-                    self.DAbort.DAbort_AsyncWatchpoint
-                ) or
-                    (dtype == self.DAbort.DAbort_SyncWatchpoint and
-                        self.registers.dbgdidr.get_version().uint <= 4)):
+            if (dtype in (DAbort.DAbort_AsyncParity, DAbort.DAbort_AsyncExternal, DAbort.DAbort_AsyncWatchpoint) or
+                    (dtype == DAbort.DAbort_SyncWatchpoint and self.registers.dbgdidr.get_version().uint <= 4)):
                 self.registers.dfar = BitArray(length=32)  # unknown
-            elif dtype == self.DAbort.DAbort_SyncParity:
+            elif dtype == DAbort.DAbort_SyncParity:
                 if implementation_defined.data_abort_pmsa_change_dfar:
                     self.registers.dfar = vaddress
             else:
                 self.registers.dfar = vaddress
-            if dtype in (self.DAbort.DAbort_AsyncExternal, self.DAbort.DAbort_SyncExternal):
+            if dtype in (DAbort.DAbort_AsyncExternal, DAbort.DAbort_SyncExternal):
                 dfsr_string[1] = implementation_defined.dfsr_string_12
             else:
                 dfsr_string[1] = False
-            if dtype in (self.DAbort.DAbort_SyncWatchpoint, self.DAbort.DAbort_AsyncWatchpoint):
+            if dtype in (DAbort.DAbort_SyncWatchpoint, DAbort.DAbort_AsyncWatchpoint):
                 dfsr_string[2] = False  # unknown
             else:
                 dfsr_string[2] = iswrite
@@ -759,7 +749,7 @@ class ARM1176:
         ldfsr_fromat = taketohyp or self.registers.ttbcr.get_eae()
         s2fs1walk = False
         mva = self.fcse_translate(address)
-        self.data_abort(mva, ipaddress, domain, level, iswrite, self.DAbort.DAbort_Alignment, taketohyp,
+        self.data_abort(mva, ipaddress, domain, level, iswrite, DAbort.DAbort_Alignment, taketohyp,
                         secondstageabort, ipavalid, ldfsr_fromat, s2fs1walk)
 
     def alignment_fault_p(self, address, iswrite):
@@ -771,7 +761,7 @@ class ARM1176:
         ipavalid = False
         ldfsr_fromat = False
         s2fs1walk = False
-        self.data_abort(address, ipaddress, domain, level, iswrite, self.DAbort.DAbort_Alignment, taketohypmode,
+        self.data_abort(address, ipaddress, domain, level, iswrite, DAbort.DAbort_Alignment, taketohypmode,
                         secondstageabort, ipavalid, ldfsr_fromat, s2fs1walk)
 
     def alignment_fault(self, address, iswrite):
@@ -1178,7 +1168,7 @@ class ARM1176:
             taketohypmode = self.registers.current_mode_is_hyp() or not stage1
             level = 1
             ipavalid = not stage1
-            self.data_abort(va, ia, domain, level, is_write, self.DAbort.DAbort_Translation, taketohypmode, not stage1,
+            self.data_abort(va, ia, domain, level, is_write, DAbort.DAbort_Translation, taketohypmode, not stage1,
                             ipavalid, ldfsr_format, s2fs1walk)
         first_iteration = True
         table_rw = True
@@ -1219,14 +1209,14 @@ class ARM1176:
             if not descriptor[-1]:
                 taketohypmode = self.registers.current_mode_is_hyp() or not stage1
                 ipavalid = not stage1
-                self.data_abort(va, ia, domain, current_level, is_write, self.DAbort.DAbort_Translation, taketohypmode,
+                self.data_abort(va, ia, domain, current_level, is_write, DAbort.DAbort_Translation, taketohypmode,
                                 not stage1, ipavalid, ldfsr_format, s2fs1walk)
             else:
                 if not descriptor[-2]:
                     if current_level == 3:
                         taketohypmode = self.registers.current_mode_is_hyp() or not stage1
                         ipavalid = not stage1
-                        self.data_abort(va, ia, domain, current_level, is_write, self.DAbort.DAbort_Translation,
+                        self.data_abort(va, ia, domain, current_level, is_write, DAbort.DAbort_Translation,
                                         taketohypmode, not stage1, ipavalid, ldfsr_format, s2fs1walk)
                     else:
                         block_translate = True
@@ -1262,7 +1252,7 @@ class ARM1176:
         if not attrs[4]:
             taketohypmode = self.registers.current_mode_is_hyp() or not stage1
             ipavalid = not stage1
-            self.data_abort(va, ia, domain, current_level, is_write, self.DAbort.DAbort_AccessFlag, taketohypmode,
+            self.data_abort(va, ia, domain, current_level, is_write, DAbort.DAbort_AccessFlag, taketohypmode,
                             not stage1, ipavalid, ldfsr_format, s2fs1walk)
         result.perms.xn = attrs[0]
         result.perms.pxn = attrs[1]
@@ -1323,7 +1313,7 @@ class ARM1176:
             n = 0
         if HaveSecurityExt() and disabled:
             level = 1
-            self.data_abort(mva, ia, domain, level, is_write, self.DAbort.DAbort_Translation, taketohypmode, stage2,
+            self.data_abort(mva, ia, domain, level, is_write, DAbort.DAbort_Translation, taketohypmode, stage2,
                             ipavalid, ldfsr_format, s2fs1walk)
         l1descaddr.paddress.physicaladdress = "0b00000000" + ttbr[32:n + 50] + mva[n:12] + "0b00"
         l1descaddr.paddress.ns = not self.registers.is_secure()
@@ -1358,7 +1348,7 @@ class ARM1176:
             l1desc = self.big_endian_reverse(l1desc, 4)
         if l1desc[30:32] == "0b00":
             level = 1
-            self.data_abort(mva, ia, domain, level, is_write, self.DAbort.DAbort_Translation, taketohypmode, stage2,
+            self.data_abort(mva, ia, domain, level, is_write, DAbort.DAbort_Translation, taketohypmode, stage2,
                             ipavalid, ldfsr_format, s2fs1walk)
         elif l1desc[30:32] == "0b01":
             domain = l1desc[23:27]
@@ -1376,14 +1366,14 @@ class ARM1176:
             if self.registers.sctlr.get_ee():
                 l2desc = self.big_endian_reverse(l2desc, 4)
             if l2desc[30:32] == "0b00":
-                self.data_abort(mva, ia, domain, level, is_write, self.DAbort.DAbort_Translation, taketohypmode, stage2,
+                self.data_abort(mva, ia, domain, level, is_write, DAbort.DAbort_Translation, taketohypmode, stage2,
                                 ipavalid, ldfsr_format, s2fs1walk)
             s = l2desc[21]
             ap = l2desc[22:23] + l2desc[26:28]
             ng = l2desc[20]
             if self.registers.sctlr.get_afe() and not l2desc[27]:
                 if not self.registers.sctlr.get_ha():
-                    self.data_abort(mva, ia, domain, level, is_write, self.DAbort.DAbort_AccessFlag, taketohypmode,
+                    self.data_abort(mva, ia, domain, level, is_write, DAbort.DAbort_AccessFlag, taketohypmode,
                                     stage2, ipavalid, ldfsr_format, s2fs1walk)
                 else:
                     if self.registers.sctlr.get_ee():
@@ -1413,7 +1403,7 @@ class ARM1176:
             ns = l1desc[12]
             if self.registers.sctlr.get_afe() and not l1desc[21]:
                 if not self.registers.sctlr.get_ha():
-                    self.data_abort(mva, ia, domain, level, is_write, self.DAbort.DAbort_AccessFlag, taketohypmode,
+                    self.data_abort(mva, ia, domain, level, is_write, DAbort.DAbort_AccessFlag, taketohypmode,
                                     stage2, ipavalid, ldfsr_format, s2fs1walk)
                 else:
                     if self.registers.sctlr.get_ee():
@@ -1589,7 +1579,7 @@ class ARM1176:
                     ipavalid = False
                     ldfsr_format = False
                     s2fs1walk = False
-                    self.data_abort(va, ipaddress, domain, level, iswrite, self.DAbort.DAbort_Background, taketohypmode,
+                    self.data_abort(va, ipaddress, domain, level, iswrite, DAbort.DAbort_Background, taketohypmode,
                                     secondstageabort, ipavalid, ldfsr_format, s2fs1walk)
                 else:
                     result.memattrs = self.default_memory_attributes(va)
