@@ -39,6 +39,7 @@ from armulator.all_registers.dbgdidr import DBGDIDR
 from armulator.all_registers.hpfar import HPFAR
 from armulator.all_registers.dfsr import DFSR
 from armulator.all_registers.cpsr import CPSR
+from armulator.all_registers.id_pfr1 import IdPfr1
 
 
 class Registers:
@@ -112,7 +113,7 @@ class Registers:
         self.tcmtr = BitArray(length=32)
         self.tlbtr = BitArray(length=32)
         self.id_pfr0 = BitArray(length=32)
-        self.id_pfr1 = BitArray(length=32)
+        self.id_pfr1 = IdPfr1()
         self.id_dfr0 = BitArray(length=32)
         self.id_afr0 = BitArray(length=32)
         self.id_mmfr0 = BitArray(length=32)
