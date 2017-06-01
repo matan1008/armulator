@@ -35,6 +35,7 @@ class Memory(object):
         assert size == 1 or size == 2 or size == 4 or size == 8
         memory = self.get_memory_by_address(memaddrdesc.paddress.physicaladdress.uint)
         if memory:
+            value.byteswap()
             memory[0][memaddrdesc.paddress.physicaladdress.uint - memory[1][0], size] = value.hex.decode("hex")
 
     def set_bits(self, memaddrdesc, size, ind, amount, bits):
