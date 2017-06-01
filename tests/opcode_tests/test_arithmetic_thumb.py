@@ -1,4 +1,4 @@
-from armulator.arm1176 import ARM1176
+from armulator.arm_v6 import ArmV6
 from bitstring import BitArray
 from armulator.shift import SRType
 from armulator.opcodes.thumb_instruction_set.thumb_instruction_set_encoding_16_bit.\
@@ -14,7 +14,7 @@ from armulator.opcodes.thumb_instruction_set.thumb_instruction_set_encoding_32_b
 
 
 def test_add_immediate_thumb():
-    arm = ARM1176()
+    arm = ArmV6()
     arm.take_reset()
     instr = BitArray(bin="0001110001000001")
     opcode = arm.decode_instruction(instr)
@@ -34,7 +34,7 @@ def test_add_immediate_thumb():
 
 
 def test_lsl_immediate_thumb():
-    arm = ARM1176()
+    arm = ArmV6()
     arm.take_reset()
     instr = BitArray(bin="0000000010111000")
     opcode = arm.decode_instruction(instr)
@@ -53,7 +53,7 @@ def test_lsl_immediate_thumb():
 
 
 def test_add_register_thumb():
-    arm = ARM1176()
+    arm = ArmV6()
     arm.take_reset()
     instr = BitArray(bin="0001100001010011")
     opcode = arm.decode_instruction(instr)
@@ -76,7 +76,7 @@ def test_add_register_thumb():
 
 
 def test_cmp_immediate_thumb():
-    arm = ARM1176()
+    arm = ArmV6()
     arm.take_reset()
     instr = BitArray(bin="0010100000000101")
     opcode = arm.decode_instruction(instr)
@@ -93,7 +93,7 @@ def test_cmp_immediate_thumb():
 
 
 def test_mul_thumb():
-    arm = ARM1176()
+    arm = ArmV6()
     arm.take_reset()
     instr = BitArray(hex="0xFB00F201")
     opcode = arm.decode_instruction(instr)

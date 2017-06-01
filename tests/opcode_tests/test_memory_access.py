@@ -1,4 +1,4 @@
-from armulator.arm1176 import ARM1176
+from armulator.arm_v6 import ArmV6
 from bitstring import BitArray
 from armulator.shift import SRType
 from armulator.memory_types import RAM
@@ -7,7 +7,7 @@ from armulator.opcodes.thumb_instruction_set.thumb_instruction_set_encoding_16_b
 
 
 def test_ldr_register_thumb():
-    arm = ARM1176()
+    arm = ArmV6()
     arm.take_reset()
     instr = BitArray(bin="0101100001010011")
     # setting Data Region registers

@@ -14,7 +14,7 @@ import opcodes
 from armulator.registers import Registers
 
 
-class ARM1176:
+class ArmV6:
     def __init__(self):
         self.registers = Registers()
         self.run = True
