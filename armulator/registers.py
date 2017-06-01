@@ -245,23 +245,23 @@ class Registers:
         return (not HaveSecurityExt()) or (not self.scr.get_ns()) or (self.cpsr.get_m() == "0b10110")
 
     def bad_mode(self, mode):
-        if mode.bin == "10000":
+        if mode == "0b10000":
             result = False
-        elif mode.bin == "10001":
+        elif mode == "0b10001":
             result = False
-        elif mode.bin == "10010":
+        elif mode == "0b10010":
             result = False
-        elif mode.bin == "10011":
+        elif mode == "0b10011":
             result = False
-        elif mode.bin == "10110":
+        elif mode == "0b10110":
             result = not HaveSecurityExt()
-        elif mode.bin == "10111":
+        elif mode == "0b10111":
             result = False
-        elif mode.bin == "11010":
+        elif mode == "0b11010":
             result = not HaveVirtExt()
-        elif mode.bin == "11011":
+        elif mode == "0b11011":
             result = False
-        elif mode.bin == "11111":
+        elif mode == "0b11111":
             result = False
         else:
             result = True
@@ -295,23 +295,23 @@ class Registers:
             print "unpredictable"
             result = usr
         else:
-            if mode.bin == "10000":
+            if mode == "0b10000":
                 result = usr
-            elif mode.bin == "10001":
+            elif mode == "0b10001":
                 result = fiq
-            elif mode.bin == "10010":
+            elif mode == "0b10010":
                 result = irq
-            elif mode.bin == "10011":
+            elif mode == "0b10011":
                 result = svc
-            elif mode.bin == "10110":
+            elif mode == "0b10110":
                 result = mon
-            elif mode.bin == "10111":
+            elif mode == "0b10111":
                 result = abt
-            elif mode.bin == "11010":
+            elif mode == "0b11010":
                 result = hyp
-            elif mode.bin == "11011":
+            elif mode == "0b11011":
                 result = und
-            elif mode.bin == "11111":
+            elif mode == "0b11111":
                 result = usr
         return result
 
@@ -358,19 +358,19 @@ class Registers:
 
     def get_rmode(self, n, mode):
         assert 0 <= n <= 14
-        if not self.is_secure() and mode.bin == "10110":
+        if not self.is_secure() and mode == "0b10110":
             print "unpredictable"
-        if not self.is_secure() and mode.bin == "10001" and self.nsacr.get_rfr():
+        if not self.is_secure() and mode == "0b10001" and self.nsacr.get_rfr():
             print "unpredictable"
         return self._R[self.look_up_rname(n, mode)]
 
     def set_rmode(self, n, mode, value):
         assert 0 <= n <= 14
-        if not self.is_secure() and mode.bin == "10110":
+        if not self.is_secure() and mode == "0b10110":
             print "unpredictable"
-        if not self.is_secure() and mode.bin == "10001" and self.nsacr.get_rfr():
+        if not self.is_secure() and mode == "0b10001" and self.nsacr.get_rfr():
             print "unpredictable"
-        if n == 13 and value.bin[30:32] != "00" and self.current_instr_set() != InstrSet.InstrSet_ARM:
+        if n == 13 and value[30:32] != "0b00" and self.current_instr_set() != InstrSet.InstrSet_ARM:
             print "unpredictable"
         self._R[self.look_up_rname(n, mode)] = value
 
@@ -485,15 +485,15 @@ class Registers:
                 if self.bad_mode(value[27:]):
                     print "unpredictable"
                 else:
-                    if not self.is_secure() and value.bin[27:] == "10110":
+                    if not self.is_secure() and value[27:] == "0b10110":
                         print "unpredictable"
-                    elif not self.is_secure() and value.bin[27:] == "10001" and self.nsacr.get_rfr():
+                    elif not self.is_secure() and value[27:] == "0b10001" and self.nsacr.get_rfr():
                         print "unpredictable"
-                    elif not self.scr.get_ns() and value.bin[27:] == "11010":
+                    elif not self.scr.get_ns() and value[27:] == "0b11010":
                         print "unpredictable"
-                    elif not self.is_secure() and self.cpsr.get_m() != "0b11010" and value.bin[27:] == "11010":
+                    elif not self.is_secure() and self.cpsr.get_m() != "0b11010" and value[27:] == "0b11010":
                         print "unpredictable"
-                    elif self.cpsr.get_m() == "0b11010" and value.bin[27:] != "11010" and not is_excp_return:
+                    elif self.cpsr.get_m() == "0b11010" and value[27:] != "0b11010" and not is_excp_return:
                         print "unpredictable"
                     else:
                         self.cpsr.set_m(value[27:32])
