@@ -24,6 +24,7 @@ def test_add_immediate_thumb():
     assert opcode.d == 1
     assert opcode.n == 0
     assert opcode.imm32 == BitArray(hex="0x00000001")
+    assert opcode.instruction == instr
     arm.registers.set(opcode.n, BitArray(hex="0x00000000"))
     arm.execute_instruction(opcode)
     assert arm.registers.get(opcode.d) == BitArray(hex="0x00000001")
