@@ -1,16 +1,13 @@
 from abc import ABCMeta, abstractmethod
-from bitstring import BitArray
-from armulator.opcodes.abstract_opcode import AbstractOpcode
 
 
-class Opcode(AbstractOpcode):
+class Opcode(object):
     """
      Abstract Opcode class
     """
     __metaclass__ = ABCMeta
 
-    def __init__(self, instruction=BitArray()):
-        super(Opcode, self).__init__()
+    def __init__(self, instruction):
         self.instruction = instruction
 
     @abstractmethod
