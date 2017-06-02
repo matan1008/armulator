@@ -234,13 +234,13 @@ class Registers:
             if self.current_instr_set() == InstrSet.InstrSet_ThumbEE:
                 print "unpredictable"
             else:
-                self.cpsr.set_isetstate("0b00")
+                self.cpsr.set_isetstate(BitArray(bin="0b00"))
         if iset == InstrSet.InstrSet_Thumb:
-            self.cpsr.set_isetstate("0b01")
+            self.cpsr.set_isetstate(BitArray(bin="0b01"))
         if iset == InstrSet.InstrSet_Jazelle:
-            self.cpsr.set_isetstate("0b10")
+            self.cpsr.set_isetstate(BitArray(bin="0b10"))
         if iset == InstrSet.InstrSet_ThumbEE:
-            self.cpsr.set_isetstate("0b11")
+            self.cpsr.set_isetstate(BitArray(bin="0b11"))
 
     def is_secure(self):
         return (not HaveSecurityExt()) or (not self.scr.get_ns()) or (self.cpsr.get_m() == "0b10110")
@@ -455,7 +455,7 @@ class Registers:
 
     def it_advance(self):
         if self.cpsr.get_it()[-3:] == "0b000":
-            self.cpsr.set_it("0b00000000")
+            self.cpsr.set_it(BitArray(bin="0b00000000"))
         else:
             itstate = self.cpsr.get_it()
             itstate.overwrite(shift.lsl(itstate[4:], 1), 4)
