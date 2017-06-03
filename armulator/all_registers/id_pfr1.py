@@ -12,6 +12,7 @@ class IdPfr1(object):
     def set_gt(self, gt):
         """
         Generic Timer Extension
+        :param gt:
         """
         self.value[12:16] = gt
 
@@ -24,6 +25,7 @@ class IdPfr1(object):
     def set_ve(self, ve):
         """
         Virtualization Extensions
+        :param ve:
         """
         self.value[16:20] = ve
 
@@ -36,6 +38,7 @@ class IdPfr1(object):
     def set_m_profile(self, m_profile):
         """
         M profile programmers' model
+        :param m_profile:
         """
         self.value[20:24] = m_profile
 
@@ -48,6 +51,7 @@ class IdPfr1(object):
     def set_se(self, se):
         """
         Security Extensions
+        :param se:
         """
         self.value[24:28] = se
 
@@ -60,6 +64,7 @@ class IdPfr1(object):
     def set_pm(self, pm):
         """
         Programmers' model
+        :param pm:
         """
         self.value[28:32] = pm
 
