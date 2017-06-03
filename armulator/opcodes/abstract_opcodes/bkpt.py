@@ -6,4 +6,4 @@ class Bkpt(AbstractOpcode):
         super(Bkpt, self).__init__()
 
     def execute(self, processor):
-        raise NotImplementedError()
+        processor.bkpt_instr_debug_event()

@@ -6,6 +6,7 @@ from bitstring import BitArray
 class BkptA1(Bkpt, Opcode):
     def __init__(self, instruction):
         Opcode.__init__(self, instruction)
+        Bkpt.__init__(self)
 
     def is_pc_changing_opcode(self):
         return False

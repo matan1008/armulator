@@ -1623,6 +1623,10 @@ class ArmV6:
         raise NotImplementedError()
         pass
 
+    def bkpt_instr_debug_event(self):
+        # mock
+        raise NotImplementedError()
+
     def exclusive_monitors_pass(self, address, size):
         if address != bits_ops.align(address, size):
             self.alignment_fault(address, True)
