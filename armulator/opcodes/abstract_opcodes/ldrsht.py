@@ -1,10 +1,10 @@
-from armulator.opcodes.opcode import Opcode
+from armulator.opcodes.abstract_opcode import AbstractOpcode
 from armulator.bits_ops import add as bits_add, sub as bits_sub, sign_extend
 from bitstring import BitArray
 from armulator.arm_exceptions import EndOfInstruction
 
 
-class Ldrsht(Opcode):
+class Ldrsht(AbstractOpcode):
     def __init__(self, add, register_form, post_index, t, n, m="", imm32=""):
         super(Ldrsht, self).__init__()
         self.add = add
