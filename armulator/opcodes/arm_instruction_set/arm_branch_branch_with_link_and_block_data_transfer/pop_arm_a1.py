@@ -1,6 +1,6 @@
 from armulator.opcodes.abstract_opcodes.pop_arm import PopArm
 from armulator.opcodes.opcode import Opcode
-from armulator.configurations import ArchVersion
+from armulator.configurations import arch_version
 
 
 class PopArmA1(PopArm, Opcode):
@@ -15,7 +15,7 @@ class PopArmA1(PopArm, Opcode):
     def from_bitarray(instr, processor):
         register_list = instr[16:32]
         unaligned_allowed = False
-        if register_list[2] and ArchVersion() >= 7:
+        if register_list[2] and arch_version() >= 7:
             print "unpredictable"
         else:
             return PopArmA1(instr, **{"registers": register_list, "unaligned_allowed": unaligned_allowed})

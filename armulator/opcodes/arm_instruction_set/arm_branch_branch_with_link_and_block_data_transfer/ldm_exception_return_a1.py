@@ -1,6 +1,6 @@
 from armulator.opcodes.abstract_opcodes.ldm_exception_return import LdmExceptionReturn
 from armulator.opcodes.opcode import Opcode
-from armulator.configurations import ArchVersion
+from armulator.configurations import arch_version
 
 
 class LdmExceptionReturnA1(LdmExceptionReturn, Opcode):
@@ -18,7 +18,7 @@ class LdmExceptionReturnA1(LdmExceptionReturn, Opcode):
         increment = instr[8]
         word_higher = increment == instr[7]
         wback = instr[10]
-        if rn.uint == 15 or (wback and register_list[15 - rn.uint] and ArchVersion() >= 7):
+        if rn.uint == 15 or (wback and register_list[15 - rn.uint] and arch_version() >= 7):
             print "unpredictable"
         else:
             return LdmExceptionReturnA1(instr, **{"increment": increment, "word_higher": word_higher, "wback": wback,

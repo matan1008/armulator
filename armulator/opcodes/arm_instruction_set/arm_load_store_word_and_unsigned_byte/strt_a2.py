@@ -1,7 +1,7 @@
 from armulator.opcodes.abstract_opcodes.strt import Strt
 from armulator.opcodes.opcode import Opcode
 from armulator.shift import decode_imm_shift
-from armulator.configurations import ArchVersion
+from armulator.configurations import arch_version
 
 
 class StrtA2(Strt, Opcode):
@@ -22,7 +22,7 @@ class StrtA2(Strt, Opcode):
         add = instr[8]
         shift_t, shift_n = decode_imm_shift(type_o, imm5)
         post_index = True
-        if rn.uint == 15 or rn.uint == rt.uint or rm.uint or (ArchVersion() < 6 and rm.uint == rn.uint):
+        if rn.uint == 15 or rn.uint == rt.uint or rm.uint or (arch_version() < 6 and rm.uint == rn.uint):
             print "unpredictable"
         else:
             return StrtA2(instr, **{"add": add, "post_index": post_index, "t": rt.uint,

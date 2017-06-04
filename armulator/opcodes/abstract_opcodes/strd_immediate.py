@@ -2,7 +2,7 @@ from armulator.opcodes.abstract_opcode import AbstractOpcode
 from armulator.bits_ops import add as bits_add, sub as bits_sub
 from bitstring import BitArray
 from armulator.arm_exceptions import EndOfInstruction
-from armulator.configurations import HaveLPAE
+from armulator.configurations import have_lpae
 
 
 class StrdImmediate(AbstractOpcode):
@@ -26,7 +26,7 @@ class StrdImmediate(AbstractOpcode):
                 offset_addr = bits_add(processor.registers.get(self.n), self.imm32, 32) if self.add else bits_sub(
                         processor.registers.get(self.n), self.imm32, 32)
                 address = offset_addr if self.index else processor.registers.get(self.n)
-                if HaveLPAE() and address[29:32] == "0b000":
+                if have_lpae() and address[29:32] == "0b000":
                     if processor.big_endian():
                         data = processor.registers.get(self.t) + processor.registers.get(self.t2)
                     else:

@@ -243,7 +243,7 @@ class Registers:
             self.cpsr.set_isetstate(BitArray(bin="0b11"))
 
     def is_secure(self):
-        return (not HaveSecurityExt()) or (not self.scr.get_ns()) or (self.cpsr.get_m() == "0b10110")
+        return (not have_security_ext()) or (not self.scr.get_ns()) or (self.cpsr.get_m() == "0b10110")
 
     def bad_mode(self, mode):
         if mode == "0b10000":
@@ -255,11 +255,11 @@ class Registers:
         elif mode == "0b10011":
             result = False
         elif mode == "0b10110":
-            result = not HaveSecurityExt()
+            result = not have_security_ext()
         elif mode == "0b10111":
             result = False
         elif mode == "0b11010":
-            result = not HaveVirtExt()
+            result = not have_virt_ext()
         elif mode == "0b11011":
             result = False
         elif mode == "0b11111":
@@ -473,12 +473,14 @@ class Registers:
             if is_excp_return:
                 self.cpsr.value.overwrite(value[16:22], 16)
             self.cpsr.set_e(value[22])
-            if privileged and (self.is_secure() or self.scr.get_aw() or HaveVirtExt()):
+            if privileged and (self.is_secure() or self.scr.get_aw() or have_virt_ext()):
                 self.cpsr.set_a(value[23])
         if bytemask[3]:
             if privileged:
                 self.cpsr.set_i(value[24])
-            if privileged and (not nmfi or not value[25]) and (self.is_secure() or self.scr.get_fw() or HaveVirtExt()):
+            if (privileged and
+                    (not nmfi or not value[25]) and
+                    (self.is_secure() or self.scr.get_fw() or have_virt_ext())):
                 self.cpsr.set_f(value[25])
             if is_excp_return:
                 self.cpsr.set_t(value[26])
@@ -540,7 +542,7 @@ class Registers:
     def exc_vector_base(self):
         if self.sctlr.get_v():
             return BitArray(bin="11111111111111110000000000000000")
-        elif HaveSecurityExt():
+        elif have_security_ext():
             return self.vbar.value
         else:
             return BitArray(length=32)
@@ -594,11 +596,11 @@ class Registers:
         new_spsr_value = self.cpsr.value
         vect_offset = 16
         preferred_exceptn_return = BitArray(uint=(new_lr_value.uint - 8), length=32)
-        route_to_monitor = HaveSecurityExt() and self.scr.get_ea() and self.is_external_abort()
-        take_to_hyp = HaveVirtExt() and HaveSecurityExt() and self.scr.get_ns() and self.cpsr.get_m() == "0b11010"
+        route_to_monitor = have_security_ext() and self.scr.get_ea() and self.is_external_abort()
+        take_to_hyp = have_virt_ext() and have_security_ext() and self.scr.get_ns() and self.cpsr.get_m() == "0b11010"
         route_to_hyp = (
-            HaveVirtExt() and
-            HaveSecurityExt() and
+            have_virt_ext() and
+            have_security_ext() and
             not self.is_secure() and
             (
                 self.second_stage_abort() or
@@ -623,13 +625,13 @@ class Registers:
         elif route_to_hyp:
             self.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, 20)
         else:
-            if HaveSecurityExt() and self.cpsr.get_m() == "0b10110":
+            if have_security_ext() and self.cpsr.get_m() == "0b10110":
                 self.scr.set_ns(False)
             self.cpsr.set_m("0b10111")
             self.set_spsr(new_spsr_value)
             self.set(14, new_lr_value)
             self.cpsr.set_i(True)
-            if not HaveSecurityExt() or HaveVirtExt() or not self.scr.get_ns() or self.scr.get_aw():
+            if not have_security_ext() or have_virt_ext() or not self.scr.get_ns() or self.scr.get_aw():
                 self.cpsr.set_a(True)
             self.cpsr.set_it(BitArray(length=8))
             self.cpsr.set_j(False)

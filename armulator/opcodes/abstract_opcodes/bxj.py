@@ -1,7 +1,7 @@
 from armulator.opcodes.abstract_opcode import AbstractOpcode
 from bitstring import BitArray
 from armulator.bits_ops import zeros
-from armulator.configurations import HaveVirtExt, JazelleAcceptsExecution
+from armulator.configurations import have_virt_ext, jazelle_accepts_execution
 from armulator.enums import InstrSet
 
 
@@ -12,7 +12,7 @@ class Bxj(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            if (HaveVirtExt() and not processor.registers.is_secure() and
+            if (have_virt_ext() and not processor.registers.is_secure() and
                     not processor.registers.current_mode_is_hyp() and
                     processor.registers.hstr.get_tjdbx()):
                 hsr_string = zeros(25)
@@ -23,7 +23,7 @@ class Bxj(AbstractOpcode):
                   processor.registers.current_instr_set() == InstrSet.InstrSet_ThumbEE):
                 processor.bx_write_pc(processor.registers.get(self.m))
             else:
-                if JazelleAcceptsExecution():
+                if jazelle_accepts_execution():
                     processor.switch_to_jazelle_execution()
                 else:
                     # SUBARCHITECTURE_DEFINED handler call

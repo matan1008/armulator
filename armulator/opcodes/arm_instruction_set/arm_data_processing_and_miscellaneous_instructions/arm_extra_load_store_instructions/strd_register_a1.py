@@ -1,6 +1,6 @@
 from armulator.opcodes.abstract_opcodes.strd_register import StrdRegister
 from armulator.opcodes.opcode import Opcode
-from armulator.configurations import ArchVersion
+from armulator.configurations import arch_version
 
 
 class StrdRegisterA1(StrdRegister, Opcode):
@@ -23,7 +23,7 @@ class StrdRegisterA1(StrdRegister, Opcode):
         wback = (not index) or w
         if rt[3] or (not index and w) or (t2 == 15 or rm.uint == 15) or (
                     wback and (rn.uint == 15 or rn.uint == rt.uint or rn.uint == t2)) or (
-                            ArchVersion() < 6 and wback and rn.uint == rm.uint):
+                            arch_version() < 6 and wback and rn.uint == rm.uint):
             print "unpredictable"
         else:
             return StrdRegisterA1(instr, **{"add": add, "wback": wback, "index": index, "m": rm.uint, "t": rt.uint,

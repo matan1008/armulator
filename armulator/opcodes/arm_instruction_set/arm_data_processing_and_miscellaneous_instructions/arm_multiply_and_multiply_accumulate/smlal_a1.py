@@ -1,6 +1,6 @@
 from armulator.opcodes.abstract_opcodes.smlal import Smlal
 from armulator.opcodes.opcode import Opcode
-from armulator.configurations import ArchVersion
+from armulator.configurations import arch_version
 
 
 class SmlalA1(Smlal, Opcode):
@@ -19,7 +19,7 @@ class SmlalA1(Smlal, Opcode):
         rd_hi = instr[12:16]
         setflags = instr[11]
         if rd_hi.uint == 15 or rm.uint == 15 or rn.uint == 15 or rd_lo.uint == 15 or (rd_lo.uint == rd_hi.uint) or (
-                        ArchVersion() < 6 and (rd_hi.uint == rn.uint or rd_lo.uint == rn.uint)):
+                        arch_version() < 6 and (rd_hi.uint == rn.uint or rd_lo.uint == rn.uint)):
             print "unpredictable"
         else:
             return SmlalA1(instr,

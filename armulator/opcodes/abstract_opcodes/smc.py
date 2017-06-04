@@ -1,7 +1,7 @@
 from armulator.opcodes.abstract_opcode import AbstractOpcode
 from armulator.arm_exceptions import SMCException, UndefinedInstructionException
 from bitstring import BitArray
-from armulator.configurations import HaveSecurityExt, HaveVirtExt
+from armulator.configurations import have_security_ext, have_virt_ext
 
 
 class Smc(AbstractOpcode):
@@ -10,8 +10,8 @@ class Smc(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            if HaveSecurityExt() and processor.registers.current_mode_is_not_user():
-                if (HaveVirtExt() and not processor.registers.is_secure() and
+            if have_security_ext() and processor.registers.current_mode_is_not_user():
+                if (have_virt_ext() and not processor.registers.is_secure() and
                         not processor.registers.current_mode_is_hyp() and
                         processor.registers.hcr.get_tsc()):
                     hsr_string = BitArray(25)

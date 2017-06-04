@@ -1,5 +1,5 @@
 from armulator.opcodes.abstract_opcode import AbstractOpcode
-from armulator.configurations import ProcessorID
+from armulator.configurations import processor_id
 
 
 class Clrex(AbstractOpcode):
@@ -8,4 +8,4 @@ class Clrex(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            processor.clear_exclusive_local(ProcessorID())
+            processor.clear_exclusive_local(processor_id())

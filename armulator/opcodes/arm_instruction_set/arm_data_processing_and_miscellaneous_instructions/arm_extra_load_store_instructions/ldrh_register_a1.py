@@ -1,7 +1,7 @@
 from armulator.opcodes.abstract_opcodes.ldrh_register import LdrhRegister
 from armulator.opcodes.opcode import Opcode
 from armulator.shift import SRType
-from armulator.configurations import ArchVersion
+from armulator.configurations import arch_version
 
 
 class LdrhRegisterA1(LdrhRegister, Opcode):
@@ -24,7 +24,7 @@ class LdrhRegisterA1(LdrhRegister, Opcode):
         shift_t = SRType.SRType_LSL
         shift_n = 0
         if rt.uint == 15 or rm.uint == 15 or (wback and (rn.uint == 15 or rn.uint == rt.uint)) or (
-                            ArchVersion() < 6 and wback and rm.uint == rn.uint):
+                            arch_version() < 6 and wback and rm.uint == rn.uint):
             print "unpredictable"
         else:
             return LdrhRegisterA1(instr, **{"add": add, "wback": wback, "index": p, "m": rm.uint, "t": rt.uint,

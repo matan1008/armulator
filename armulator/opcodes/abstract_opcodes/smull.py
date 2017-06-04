@@ -1,6 +1,6 @@
 from armulator.opcodes.abstract_opcode import AbstractOpcode
 from bitstring import BitArray
-from armulator.configurations import ArchVersion
+from armulator.configurations import arch_version
 
 
 class Smull(AbstractOpcode):
@@ -21,6 +21,6 @@ class Smull(AbstractOpcode):
             if self.setflags:
                 processor.registers.cpsr.set_n(f_result[0])
                 processor.registers.cpsr.set_z(not f_result.any(True))
-                if ArchVersion() == 4:
+                if arch_version() == 4:
                     processor.registers.cpsr.set_c(False)  # uknown
                     processor.registers.cpsr.set_v(False)  # uknown

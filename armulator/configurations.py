@@ -3,51 +3,51 @@ from enums import *
 number_of_mpu_regions = 12
 
 
-def HaveSecurityExt():
+def have_security_ext():
     return True
 
 
-def HaveVirtExt():
+def have_virt_ext():
     return False
 
 
-def ArchVersion():
+def arch_version():
     return 6
 
 
-def JazelleAcceptsExecution():
+def jazelle_accepts_execution():
     return False
 
 
-def MemorySystemArchitecture():
+def memory_system_architecture():
     return MemArch.MemArch_PMSA
 
 
-def HaveLPAE():
+def have_lpae():
     return False
 
 
-def HaveMPExt():
+def have_mp_ext():
     return False
 
 
-def HaveAdvSIMDorVFP():
+def have_adv_simd_or_vfp():
     return False
 
 
-def HaveThumbEE():
+def have_thumbee():
     return False
 
 
-def HaveJazelle():
+def have_jazelle():
     return False
 
 
-def ImplementationSupportsTransient():
+def implementation_supports_transient():
     return False
 
 
-def ProcessorID():
+def processor_id():
     return 0
 
 
@@ -55,7 +55,7 @@ def is_armv7r_profile():
     return False
 
 
-def HasIMPDEFResetVactor():
+def has_imp_def_reset_vector():
     return False
 
 

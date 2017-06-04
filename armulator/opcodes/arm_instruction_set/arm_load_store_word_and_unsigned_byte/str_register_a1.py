@@ -1,7 +1,7 @@
 from armulator.opcodes.abstract_opcodes.str_register import StrRegister
 from armulator.opcodes.opcode import Opcode
 from armulator.shift import decode_imm_shift
-from armulator.configurations import ArchVersion
+from armulator.configurations import arch_version
 
 
 class StrRegisterA1(StrRegister, Opcode):
@@ -25,7 +25,7 @@ class StrRegisterA1(StrRegister, Opcode):
         wback = (not index) and w
         shift_t, shift_n = decode_imm_shift(type_o, imm5)
         if rm.uint == 15 or (wback and (rn.uint == 15 or rn.uint == rt.uint)) or (
-                            ArchVersion() < 6 and wback and rm.uint == rn.uint):
+                            arch_version() < 6 and wback and rm.uint == rn.uint):
             print "unpredictable"
         else:
             return StrRegisterA1(instr, **{"add": add, "wback": wback, "index": index, "m": rm.uint, "t": rt.uint,

@@ -1,6 +1,6 @@
 from armulator.opcodes.abstract_opcodes.mul import Mul
 from armulator.opcodes.opcode import Opcode
-from armulator.configurations import ArchVersion
+from armulator.configurations import arch_version
 
 
 class MulA1(Mul, Opcode):
@@ -17,7 +17,7 @@ class MulA1(Mul, Opcode):
         rm = instr[20:24]
         rd = instr[12:16]
         setflags = instr[11]
-        if rd.uint == 15 or rm.uint == 15 or rn.uint == 15 or (rn.uint == rd.uint and ArchVersion() < 6):
+        if rd.uint == 15 or rm.uint == 15 or rn.uint == 15 or (rn.uint == rd.uint and arch_version() < 6):
             print "unpredictable"
         else:
             return MulA1(instr, **{"setflags": setflags, "m": rm.uint, "d": rd.uint, "n": rn.uint})

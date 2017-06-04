@@ -1,7 +1,7 @@
 from armulator.opcodes.abstract_opcode import AbstractOpcode
 from armulator.bits_ops import add as bits_add, sub as bits_sub
 from bitstring import BitArray
-from armulator.configurations import HaveLPAE
+from armulator.configurations import have_lpae
 
 
 class LdrdRegister(AbstractOpcode):
@@ -21,7 +21,7 @@ class LdrdRegister(AbstractOpcode):
                                    32) if self.add else bits_sub(processor.registers.get(self.n),
                                                                  processor.registers.get(self.m), 32)
             address = offset_addr if self.index else processor.registers.get(self.n)
-            if HaveLPAE() and address[29:32] == "0b000":
+            if have_lpae() and address[29:32] == "0b000":
                 data = processor.mem_a_get(address, 8)
                 if processor.big_endian():
                     processor.registers.set(self.t, data[0:32])

@@ -52,14 +52,14 @@ class ArmV6:
 
     def take_reset(self):
         self.registers.cpsr.set_m("0b10011")
-        if HaveSecurityExt():
+        if have_security_ext():
             self.registers.scr.set_ns(False)
         self.registers.reset_control_registers()
-        if HaveAdvSIMDorVFP():
+        if have_adv_simd_or_vfp():
             self.registers.fpexc.set_en(False)
-        if HaveThumbEE():
+        if have_thumbee():
             self.registers.teecr.set_xed(False)
-        if HaveJazelle():
+        if have_jazelle():
             self.registers.jmcr.set_je(False)
         self.registers.cpsr.set_i(True)
         self.registers.cpsr.set_f(True)
@@ -69,7 +69,7 @@ class ArmV6:
         self.registers.cpsr.set_t(self.registers.sctlr.get_te())
         self.registers.cpsr.set_e(self.registers.sctlr.get_ee())
         reset_vector = (implementation_defined.impdef_reset_vector
-                        if HasIMPDEFResetVactor()
+                        if has_imp_def_reset_vector()
                         else self.registers.exc_vector_base())
         reset_vector[31] = False
         self.registers.branch_to(reset_vector)
@@ -100,14 +100,14 @@ class ArmV6:
         new_spsr_value = self.registers.cpsr.value
         vect_offset = 16
         preferred_exceptn_return = BitArray(uint=(new_lr_value.uint - 8), length=32)
-        route_to_monitor = HaveSecurityExt() and self.registers.scr.get_ea() and self.registers.is_external_abort()
-        take_to_hyp = (HaveVirtExt() and
-                       HaveSecurityExt() and
+        route_to_monitor = have_security_ext() and self.registers.scr.get_ea() and self.registers.is_external_abort()
+        take_to_hyp = (have_virt_ext() and
+                       have_security_ext() and
                        self.registers.scr.get_ns() and
                        self.registers.cpsr.get_m() == "0b11010")
         route_to_hyp = (
-            HaveVirtExt() and
-            HaveSecurityExt() and
+            have_virt_ext() and
+            have_security_ext() and
             not self.registers.is_secure() and
             (
                 self.registers.second_stage_abort() or
@@ -145,13 +145,16 @@ class ArmV6:
         elif route_to_hyp:
             self.registers.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, 20)
         else:
-            if HaveSecurityExt() and self.registers.cpsr.get_m() == "0b10110":
+            if have_security_ext() and self.registers.cpsr.get_m() == "0b10110":
                 self.registers.scr.set_ns(False)
             self.registers.cpsr.set_m("0b10111")
             self.registers.set_spsr(new_spsr_value)
             self.registers.set(14, new_lr_value)
             self.registers.cpsr.set_i(True)
-            if not HaveSecurityExt() or HaveVirtExt() or not self.registers.scr.get_ns() or self.registers.scr.get_aw():
+            if (not have_security_ext() or
+                    have_virt_ext() or
+                    not self.registers.scr.get_ns() or
+                    self.registers.scr.get_aw()):
                 self.registers.cpsr.set_a(True)
             self.registers.cpsr.set_it(BitArray(length=8))
             self.registers.cpsr.set_j(False)
@@ -166,12 +169,12 @@ class ArmV6:
                         else bits_ops.sub(self.registers.get_pc(), BitArray(bin="100"), 32))
         new_spsr_value = self.registers.cpsr.value
         vect_offset = 8
-        take_to_hyp = (HaveVirtExt() and
-                       HaveSecurityExt() and
+        take_to_hyp = (have_virt_ext() and
+                       have_security_ext() and
                        self.registers.scr.get_ns() and
                        self.registers.cpsr.get_m() == "0b11010")
-        route_to_hyp = (HaveVirtExt() and
-                        HaveSecurityExt() and
+        route_to_hyp = (have_virt_ext() and
+                        have_security_ext() and
                         not self.registers.is_secure() and
                         self.registers.hcr.get_tge() and
                         self.registers.cpsr.get_m() == "0b10000")
@@ -200,12 +203,12 @@ class ArmV6:
                         else BitArray(uint=(self.registers.get_pc().uint - 4), length=32))
         new_spsr_value = self.registers.cpsr.value
         vect_offset = 4
-        take_to_hyp = (HaveVirtExt() and
-                       HaveSecurityExt() and
+        take_to_hyp = (have_virt_ext() and
+                       have_security_ext() and
                        self.registers.scr.get_ns() and
                        self.registers.cpsr.get_m() == "0b11010")
-        route_to_hyp = (HaveVirtExt() and
-                        HaveSecurityExt() and
+        route_to_hyp = (have_virt_ext() and
+                        have_security_ext() and
                         not self.registers.is_secure() and
                         self.registers.hcr.get_tge() and
                         self.registers.cpsr.get_m() == "0b10000")
@@ -433,11 +436,11 @@ class ArmV6:
 
     def branch_write_pc(self, address):
         if self.registers.current_instr_set() == InstrSet.InstrSet_ARM:
-            if ArchVersion() < 6 and address.bin[29:] != "00":
+            if arch_version() < 6 and address.bin[29:] != "00":
                 print "unpredictable"
             self.registers.branch_to(address[:-2] + BitArray(bin="00"))
         elif self.registers.current_instr_set() == InstrSet.InstrSet_Jazelle:
-            if JazelleAcceptsExecution():
+            if jazelle_accepts_execution():
                 self.registers.branch_to(address)
             else:
                 self.registers.branch_to(address[:-2] + BitArray(bin="00"))
@@ -464,13 +467,13 @@ class ArmV6:
                 print "unpredictable"
 
     def alu_write_pc(self, address):
-        if ArchVersion() >= 7 and self.registers.current_instr_set() == InstrSet.InstrSet_ARM:
+        if arch_version() >= 7 and self.registers.current_instr_set() == InstrSet.InstrSet_ARM:
             self.bx_write_pc(address)
         else:
             self.branch_write_pc(address)
 
     def load_write_pc(self, address):
-        if ArchVersion() >= 5:
+        if arch_version() >= 5:
             self.bx_write_pc(address)
         else:
             self.branch_write_pc(address)
@@ -575,7 +578,7 @@ class ArmV6:
         elif perms.ap == "0b110":
             abort = iswrite
         elif perms.ap == "0b111":
-            if MemorySystemArchitecture() == MemArch.MemArch_VMSA:
+            if memory_system_architecture() == MemArch.MemArch_VMSA:
                 abort = iswrite
             else:
                 print "unpredictable"
@@ -616,7 +619,7 @@ class ArmV6:
     def second_stage_translate(self, s1_out_addr_desc, mva, size, is_write):
         result = AddressDescriptor()
         tlbrecord_s2 = TLBRecord()
-        if HaveVirtExt() and not self.registers.is_secure() and not self.registers.current_mode_is_hyp():
+        if have_virt_ext() and not self.registers.is_secure() and not self.registers.current_mode_is_hyp():
             if self.registers.hcr.get_vm():
                 s2ia = s1_out_addr_desc.paddress.physicaladdress
                 stage1 = False
@@ -640,7 +643,7 @@ class ArmV6:
 
     def data_abort(self, vaddress, ipaddress, domain, level, iswrite, dtype, taketohypmode, secondstageabort, ipavalid,
                    ldfsr_format, s2fs1walk):
-        if MemorySystemArchitecture() == MemArch.MemArch_VMSA:
+        if memory_system_architecture() == MemArch.MemArch_VMSA:
             if not taketohypmode:
                 dfsr_string = BitArray(length=14)
                 if (dtype in (DAbort.DAbort_AsyncParity,
@@ -666,7 +669,7 @@ class ArmV6:
                     dfsr_string[5:8] = "0b000"  # unknown
                     dfsr_string[8:] = self.encode_ldfsr(dtype, level)
                 else:
-                    if HaveLPAE():
+                    if have_lpae():
                         dfsr_string[0] = self.tlb_lookup_came_from_cache_maintenance()
                     if dtype in (DAbort.DAbort_AsyncExternal, DAbort.DAbort_SyncExternal):
                         dfsr_string[1] = implementation_defined.dfsr_string_12
@@ -688,7 +691,7 @@ class ArmV6:
                                 DAbort.DAbort_SyncExternalonWalk,
                                 DAbort.DAbort_SyncParityonWalk
                             )
-                        ) or (not HaveLPAE() and dtype == DAbort.DAbort_Permission))
+                        ) or (not have_lpae() and dtype == DAbort.DAbort_Permission))
                     if domain_valid:
                         dfsr_string[6:10] = domain
                     else:
@@ -764,11 +767,11 @@ class ArmV6:
                         secondstageabort, ipavalid, ldfsr_fromat, s2fs1walk)
 
     def alignment_fault(self, address, iswrite):
-        if MemorySystemArchitecture() == MemArch.MemArch_VMSA:
+        if memory_system_architecture() == MemArch.MemArch_VMSA:
             taketohypmode = self.registers.current_mode_is_hyp() or self.registers.hcr.get_tge()
             secondstageabort = False
             self.alignment_fault_v(address, iswrite, taketohypmode, secondstageabort)
-        elif MemorySystemArchitecture() == MemArch.MemArch_PMSA:
+        elif memory_system_architecture() == MemArch.MemArch_PMSA:
             self.alignment_fault_p(address, iswrite)
 
     def combine_s1s2_desc(self, s1desc, s2desc):
@@ -845,7 +848,7 @@ class ArmV6:
                 memattrs.outertransient = False  # unknown
         elif attrfield[0:2] == "0b00":
             unpackinner = True
-            if ImplementationSupportsTransient():
+            if implementation_supports_transient():
                 memattrs.type = MemType.MemType_Normal
                 memattrs.outerhints = attrfield[2:4]
                 memattrs.outerattrs[0:2] = "0b10"
@@ -864,7 +867,7 @@ class ArmV6:
                 memattrs.outerattrs[0:2] = "0b00"
                 memattrs.outertransient = False
             else:
-                if ImplementationSupportsTransient():
+                if implementation_supports_transient():
                     memattrs.type = MemType.MemType_Normal
                     memattrs.outerhints = attrfield[2:4]
                     memattrs.outerattrs[0:2] = "0b11"
@@ -891,7 +894,7 @@ class ArmV6:
                 memattrs.innerattrs[0:2] = "0b00"
                 memattrs.innertransient = True
             else:
-                if ImplementationSupportsTransient():
+                if implementation_supports_transient():
                     if not attrfield[5]:
                         memattrs.innerhints = attrfield[6:8]
                         memattrs.innerattrs[0:2] = "0b10"
@@ -1192,8 +1195,8 @@ class ArmV6:
                 walkaddr.paddress.ns = False
             else:
                 walkaddr.paddress.ns = True
-            if not HaveVirtExt() or not stage1 or self.registers.is_secure() or self.registers.current_mode_is_hyp():
-                if HaveVirtExt() and (self.registers.current_mode_is_hyp() or not stage1):
+            if not have_virt_ext() or not stage1 or self.registers.is_secure() or self.registers.current_mode_is_hyp():
+                if have_virt_ext() and (self.registers.current_mode_is_hyp() or not stage1):
                     big_endian = self.registers.hsctlr.get_ee()
                 else:
                     big_endian = self.registers.sctlr.get_ee()
@@ -1310,7 +1313,7 @@ class ArmV6:
             ttbr = self.registers.ttbr1_64
             disabled = self.registers.ttbcr.get_pd1()
             n = 0
-        if HaveSecurityExt() and disabled:
+        if have_security_ext() and disabled:
             level = 1
             self.data_abort(mva, ia, domain, level, is_write, DAbort.DAbort_Translation, taketohypmode, stage2,
                             ipavalid, ldfsr_format, s2fs1walk)
@@ -1322,7 +1325,7 @@ class ArmV6:
         hintsattrs = self.convert_attrs_hints(ttbr[59:61])
         l1descaddr.memattrs.outerattrs = hintsattrs[2:4]
         l1descaddr.memattrs.outerhints = hintsattrs[0:2]
-        if HaveMPExt():
+        if have_mp_ext():
             hintsattrs = self.convert_attrs_hints(ttbr[63:64] + ttbr[57:58])
             l1descaddr.memattrs.innerattrs = hintsattrs[2:4]
             l1descaddr.memattrs.innerhints = hintsattrs[0:2]
@@ -1338,7 +1341,7 @@ class ArmV6:
                 l1descaddr.memattrs.innerhints[0:2] = ("0b01"
                                                        if implementation_defined.translation_walk_sd_l1descaddr_hints_01
                                                        else "0b11")
-        if not HaveVirtExt() or self.registers.is_secure():
+        if not have_virt_ext() or self.registers.is_secure():
             l1descaddr2 = l1descaddr
         else:
             l1descaddr2 = self.second_stage_translate(l1descaddr, mva, 4, is_write)
@@ -1357,7 +1360,7 @@ class ArmV6:
             l2descaddr.paddress.physicaladdress = "0b00000000" + l1desc[0:22] + mva[12:20] + "0b00"
             l2descaddr.paddress.ns = not self.registers.is_secure()
             l2descaddr.memattrs = l1descaddr.memattrs
-            if not HaveVirtExt() or self.registers.is_secure():
+            if not have_virt_ext() or self.registers.is_secure():
                 l2descaddr2 = l2descaddr
             else:
                 l2descaddr2 = self.second_stage_translate(l2descaddr, mva, 4, is_write)
@@ -1442,7 +1445,7 @@ class ArmV6:
 
     def translate_address_v_s1_off(self, va):
         result = TLBRecord()
-        if (not HaveVirtExt() or
+        if (not have_virt_ext() or
                 not self.registers.hcr.get_dc() or
                 self.registers.is_secure() or
                 self.registers.current_mode_is_hyp()):
@@ -1480,7 +1483,7 @@ class ArmV6:
         mva = self.fcse_translate(va)
         ishyp = self.registers.current_mode_is_hyp()
         if (ishyp and self.registers.hsctlr.get_m()) or (not ishyp and self.registers.sctlr.get_m()):
-            if (HaveVirtExt() and
+            if (have_virt_ext() and
                     not self.registers.is_secure() and
                     not ishyp and
                     self.registers.hcr.get_tge()):
@@ -1501,7 +1504,7 @@ class ArmV6:
             check_permission = False
         if (not wasaligned and
                 tlbrecord_s1.addrdesc.memattrs.type in (MemType.MemType_StronglyOrdered, MemType.MemType_Device)):
-            if not HaveVirtExt():
+            if not have_virt_ext():
                 print "unpredictable"
             secondstageabort = False
             self.alignment_fault_v(mva, iswrite, ishyp, secondstageabort)
@@ -1511,7 +1514,7 @@ class ArmV6:
             self.check_permission(
                 tlbrecord_s1.perms, mva, tlbrecord_s1.level, tlbrecord_s1.domain, iswrite, ispriv, ishyp, uses_ld
             )
-        if HaveVirtExt() and not self.registers.is_secure() and not ishyp:
+        if have_virt_ext() and not self.registers.is_secure() and not ishyp:
             if self.registers.hcr.get_vm():
                 s1outputaddr = tlbrecord_s1.addrdesc.paddress.physicaladdress
                 tlbrecord_s2 = self.translation_table_walk_ld(s1outputaddr, mva, iswrite, False, s2fs1walk, size)
@@ -1591,34 +1594,34 @@ class ArmV6:
         return result
 
     def translate_address(self, va, ispriv, iswrite, size, wasaligned):
-        if MemorySystemArchitecture() == MemArch.MemArch_VMSA:
+        if memory_system_architecture() == MemArch.MemArch_VMSA:
             return self.translate_address_v(va, ispriv, iswrite, size, wasaligned)
-        elif MemorySystemArchitecture() == MemArch.MemArch_PMSA:
+        elif memory_system_architecture() == MemArch.MemArch_PMSA:
             return self.translate_address_p(va, ispriv, iswrite, wasaligned)
 
-    def is_exclusive_local(self, paddress, processor_id, size):
+    def is_exclusive_local(self, paddress, processorid, size):
         # mock
         raise NotImplementedError()
 
-    def is_exclusive_global(self, paddress, processor_id, size):
+    def is_exclusive_global(self, paddress, processorid, size):
         # mock
         raise NotImplementedError()
 
-    def clear_exclusive_local(self, processor_id):
-        # mock
-        raise NotImplementedError()
-        pass
-
-    def clear_exclusive_by_address(self, paddress, processor_id, size):
-        # mock
-        raise NotImplementedError()
-
-    def mark_exclusive_global(self, paddress, processor_id, size):
+    def clear_exclusive_local(self, processorid):
         # mock
         raise NotImplementedError()
         pass
 
-    def mark_exclusive_local(self, paddress, processor_id, size):
+    def clear_exclusive_by_address(self, paddress, processorid, size):
+        # mock
+        raise NotImplementedError()
+
+    def mark_exclusive_global(self, paddress, processorid, size):
+        # mock
+        raise NotImplementedError()
+        pass
+
+    def mark_exclusive_local(self, paddress, processorid, size):
         # mock
         raise NotImplementedError()
         pass
@@ -1633,29 +1636,29 @@ class ArmV6:
         else:
             memaddrdesc = self.translate_address(address, self.registers.current_mode_is_not_user(), True, size,
                                                  True)
-        passed = self.is_exclusive_local(memaddrdesc.paddress, ProcessorID(), size)
+        passed = self.is_exclusive_local(memaddrdesc.paddress, processor_id(), size)
         if passed:
-            self.clear_exclusive_local(ProcessorID())
+            self.clear_exclusive_local(processor_id())
         if memaddrdesc.memattrs.shareable:
-            passed = passed and self.is_exclusive_global(memaddrdesc.paddress, ProcessorID(), size)
+            passed = passed and self.is_exclusive_global(memaddrdesc.paddress, processor_id(), size)
         return passed
 
     def set_exclusive_monitors(self, address, size):
         memaddrdesc = self.translate_address(address, self.registers.current_mode_is_not_user(), False, size, True)
         if memaddrdesc.memattrs.shareable:
-            self.mark_exclusive_global(memaddrdesc.paddress, ProcessorID(), size)
-        self.mark_exclusive_local(memaddrdesc.paddress, ProcessorID(), size)
+            self.mark_exclusive_global(memaddrdesc.paddress, processor_id(), size)
+        self.mark_exclusive_local(memaddrdesc.paddress, processor_id(), size)
 
     def mem_a_with_priv_set(self, address, size, privileged, was_aligned, value):
         if address == bits_ops.align(address, size):
             va = address
-        elif ArchVersion() >= 7 or self.registers.sctlr.get_a() or self.registers.sctlr.get_u():
+        elif arch_version() >= 7 or self.registers.sctlr.get_a() or self.registers.sctlr.get_u():
             self.alignment_fault(address, True)
         else:
             va = bits_ops.align(address, size)
         memaddrdesc = self.translate_address(va, privileged, True, size, was_aligned)
         if memaddrdesc.memattrs.shareable:
-            self.clear_exclusive_by_address(memaddrdesc.paddress, ProcessorID(), size)
+            self.clear_exclusive_by_address(memaddrdesc.paddress, processor_id(), size)
         if self.registers.cpsr.get_e():
             value = self.big_endian_reverse(value, size)
         self.mem[memaddrdesc, size] = value
@@ -1663,7 +1666,7 @@ class ArmV6:
     def mem_a_with_priv_get(self, address, size, privileged, was_aligned):
         if address == bits_ops.align(address, size):
             va = address
-        elif ArchVersion() >= 7 or self.registers.sctlr.get_a() or self.registers.sctlr.get_u():
+        elif arch_version() >= 7 or self.registers.sctlr.get_a() or self.registers.sctlr.get_u():
             self.alignment_fault(address, False)
         else:
             va = bits_ops.align(address, size)
@@ -1680,11 +1683,11 @@ class ArmV6:
         return self.mem_a_with_priv_get(address, size, self.registers.current_mode_is_not_user(), True)
 
     def mem_u_with_priv_set(self, address, size, privileged, value):
-        if ArchVersion() < 7 and not self.registers.sctlr.get_a() and not self.registers.sctlr.get_u():
+        if arch_version() < 7 and not self.registers.sctlr.get_a() and not self.registers.sctlr.get_u():
             address = bits_ops.align(address, size)
         if address == bits_ops.align(address, size):
             self.mem_a_with_priv_set(address, size, privileged, True, value)
-        elif (HaveVirtExt() and
+        elif (have_virt_ext() and
                 not self.registers.is_secure() and
                 self.registers.current_mode_is_hyp() and
                 self.registers.hsctlr.get_a()):
@@ -1700,11 +1703,11 @@ class ArmV6:
 
     def mem_u_with_priv_get(self, address, size, privileged):
         value = BitArray(length=8 * size)
-        if ArchVersion() < 7 and not self.registers.sctlr.get_a() and not self.registers.sctlr.get_u():
+        if arch_version() < 7 and not self.registers.sctlr.get_a() and not self.registers.sctlr.get_u():
             address = bits_ops.align(address, size)
         if address == bits_ops.align(address, size):
             value = self.mem_a_with_priv_get(address, size, privileged, True)
-        elif (HaveVirtExt() and
+        elif (have_virt_ext() and
               not self.registers.is_secure() and
               self.registers.current_mode_is_hyp() and
               self.registers.hsctlr.get_a()):
@@ -1773,7 +1776,7 @@ class ArmV6:
 
     def call_supervisor(self, immediate):
         if (self.registers.current_mode_is_hyp() or
-                (HaveVirtExt() and
+                (have_virt_ext() and
                     not self.registers.is_secure() and
                     not self.registers.current_mode_is_not_user() and
                     self.registers.hcr.get_tge())):
@@ -1809,10 +1812,10 @@ class ArmV6:
     def coproc_accepted(self, cp_num, instr):
         assert cp_num not in (10, 11)
         if cp_num not in (14, 15):
-            if HaveSecurityExt():
+            if have_security_ext():
                 if not self.registers.is_secure() and not self.registers.nsacr.get_cp_n(cp_num):
                     raise UndefinedInstructionException()
-            if not HaveVirtExt() or not self.registers.current_mode_is_hyp():
+            if not have_virt_ext() or not self.registers.current_mode_is_hyp():
                 if self.registers.cpacr.get_cp_n(cp_num) == "0b00":
                     raise UndefinedInstructionException()
                 elif self.registers.cpacr.get_cp_n(cp_num) == "0b01":
@@ -1822,7 +1825,7 @@ class ArmV6:
                     print "unpredictable"
                 elif self.registers.cpacr.get_cp_n(cp_num) == "0b11":
                     pass
-            if HaveSecurityExt() and HaveVirtExt() and not self.registers.is_secure() and \
+            if have_security_ext() and have_virt_ext() and not self.registers.is_secure() and \
                     self.registers.hcptr.get_tcp_n(cp_num):
                 hsr_string = bits_ops.zeros(25)
                 hsr_string[21:25] = BitArray(uint=(cp_num & 0xF), length=4)
@@ -1867,8 +1870,8 @@ class ArmV6:
                     if instr[30]:
                         if not self.registers.current_mode_is_not_user() and self.registers.teecr.get_xed():
                             raise UndefinedInstructionException()
-                    if (HaveSecurityExt() and
-                            HaveVirtExt() and
+                    if (have_security_ext() and
+                            have_virt_ext() and
                             not self.registers.is_secure() and
                             not self.registers.current_mode_is_hyp() and
                             self.registers.hstr.get_ttee()):
@@ -1901,8 +1904,8 @@ class ArmV6:
                 raise UndefinedInstructionException()
             if cr_nnum == 4:
                 print "unpredictable"
-            if (HaveSecurityExt() and
-                    HaveVirtExt() and
+            if (have_security_ext() and
+                    have_virt_ext() and
                     not self.registers.is_secure() and
                     not self.registers.current_mode_is_hyp() and
                     cr_nnum != 14 and
@@ -1927,8 +1930,8 @@ class ArmV6:
                     hsr_string[24] = instr[11]
                     self.write_hsr(BitArray(bin="000011"), hsr_string)
                 self.registers.take_hyp_trap_exception()
-            if (HaveSecurityExt() and
-                    HaveVirtExt() and
+            if (have_security_ext() and
+                    have_virt_ext() and
                     not self.registers.is_secure() and
                     not self.registers.current_mode_is_hyp() and
                     self.registers.hcr.get_tidcp() and

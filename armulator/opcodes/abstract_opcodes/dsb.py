@@ -1,6 +1,6 @@
 from armulator.opcodes.abstract_opcode import AbstractOpcode
 from armulator.enums import MBReqDomain, MBReqTypes
-from armulator.configurations import HaveVirtExt
+from armulator.configurations import have_virt_ext
 
 
 class Dsb(AbstractOpcode):
@@ -34,7 +34,7 @@ class Dsb(AbstractOpcode):
             else:
                 domain = MBReqDomain.MBReqDomain_FullSystem
                 types = MBReqTypes.MBReqTypes_All
-            if (HaveVirtExt() and
+            if (have_virt_ext() and
                     not processor.registers.is_secure() and
                     not processor.registers.current_mode_is_hyp()):
                 if processor.registers.hcr.get_bsu() == "0b11":

@@ -1,6 +1,6 @@
 from armulator.opcodes.abstract_opcode import AbstractOpcode
 from bitstring import BitArray
-from armulator.configurations import HaveVirtExt
+from armulator.configurations import have_virt_ext
 
 
 class Wfe(AbstractOpcode):
@@ -12,7 +12,7 @@ class Wfe(AbstractOpcode):
             if processor.event_registered():
                 processor.clear_event_register()
             else:
-                if (HaveVirtExt() and not processor.registers.is_secure() and
+                if (have_virt_ext() and not processor.registers.is_secure() and
                         not processor.registers.current_mode_is_hyp() and
                         processor.registers.hcr.get_twe()):
                     hsr_string = BitArray(length=25)

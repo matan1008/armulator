@@ -1,7 +1,7 @@
 from armulator.opcodes.abstract_opcodes.strbt import Strbt
 from armulator.opcodes.opcode import Opcode
 from armulator.shift import decode_imm_shift
-from armulator.configurations import ArchVersion
+from armulator.configurations import arch_version
 
 
 class StrbtA2(Strbt, Opcode):
@@ -23,7 +23,7 @@ class StrbtA2(Strbt, Opcode):
         shift_t, shift_n = decode_imm_shift(type_o, imm5)
         post_index = True
         if rt.uint == 15 or rn.uint == 15 or rn.uint == rt.uint or rm.uint or (
-                ArchVersion() < 6 and rm.uint == rn.uint):
+                arch_version() < 6 and rm.uint == rn.uint):
             print "unpredictable"
         else:
             return StrbtA2(instr, **{"add": add, "post_index": post_index, "t": rt.uint,

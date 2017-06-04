@@ -1,6 +1,6 @@
 from armulator.opcodes.abstract_opcodes.mla import Mla
 from armulator.opcodes.opcode import Opcode
-from armulator.configurations import ArchVersion
+from armulator.configurations import arch_version
 
 
 class MlaA1(Mla, Opcode):
@@ -19,7 +19,7 @@ class MlaA1(Mla, Opcode):
         rd = instr[12:16]
         setflags = instr[11]
         if rd.uint == 15 or rm.uint == 15 or rn.uint == 15 or ra.uint == 15 or (
-                rn.uint == rd.uint and ArchVersion() < 6):
+                rn.uint == rd.uint and arch_version() < 6):
             print "unpredictable"
         else:
             return MlaA1(instr, **{"setflags": setflags, "m": rm.uint, "a": ra.uint, "d": rd.uint, "n": rn.uint})

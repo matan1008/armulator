@@ -2,7 +2,7 @@ from armulator.opcodes.abstract_opcode import AbstractOpcode
 from armulator.bits_ops import add as bits_add, sub as bits_sub, align
 from bitstring import BitArray
 from armulator.arm_exceptions import EndOfInstruction
-from armulator.configurations import HaveLPAE
+from armulator.configurations import have_lpae
 
 
 class LdrdLiteral(AbstractOpcode):
@@ -23,7 +23,7 @@ class LdrdLiteral(AbstractOpcode):
                 address = bits_add(align(processor.registers.get_pc(), 4), self.imm32,
                                    32) if self.add else bits_sub(align(processor.registers.get_pc(), 4),
                                                                  self.imm32, 32)
-                if HaveLPAE() and address[29:32] == "0b000":
+                if have_lpae() and address[29:32] == "0b000":
                     data = processor.mem_a_get(address, 8)
                     if processor.big_endian():
                         processor.registers.set(self.t, data[0:32])
