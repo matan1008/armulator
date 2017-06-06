@@ -4,7 +4,6 @@ from configurations import *
 import shift
 import bits_ops
 import implementation_defined
-from arm_exceptions import *
 from enums import *
 from armulator.all_registers.sunavcr import SUNAVCR
 from armulator.all_registers.pmcr import PMCR
@@ -643,7 +642,4 @@ class Registers:
         self._R[self.RName.RName_PC] = bits_ops.add(self._R[self.RName.RName_PC], BitArray(bin=bin(opcode_length)), 32)
 
     def reset_control_registers(self):
-        self.midr.value = BitArray(bin="01000001000011111010011101100000")
-        self.sctlr.value = BitArray(bin="01000000000001010000000001111001")
-        self.actlr = BitArray(bin="00000000000000000000000000000111")
         self.vbar.value = BitArray(bin=implementation_defined.vbar_bin)

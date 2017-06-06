@@ -1,13 +1,13 @@
-from bitstring import BitArray
+from armulator.all_registers.abstract_register import AbstractRegister
 
 
-class HTCR(object):
+class HTCR(AbstractRegister):
     """
     Hyp Translation Control Register
     """
 
     def __init__(self):
-        self.value = BitArray(length=32)
+        super(HTCR, self).__init__()
 
     def set_sh0(self, sh0):
         self.value[18:20] = sh0

@@ -1,62 +1,66 @@
-from enums import *
+import json
+from armulator.enums import *
 
-number_of_mpu_regions = 12
+with open("armulator/arm_configurations.json") as f:
+    configurations = json.load(f)
+
+number_of_mpu_regions = configurations["number_of_mpu_regions"]
 
 
 def have_security_ext():
-    return True
+    return configurations["have_security_ext"]
 
 
 def have_virt_ext():
-    return False
+    return configurations["have_virt_ext"]
 
 
 def arch_version():
-    return 6
+    return configurations["arch_version"]
 
 
 def jazelle_accepts_execution():
-    return False
+    return configurations["jazelle_accepts_execution"]
 
 
 def memory_system_architecture():
-    return MemArch.MemArch_PMSA
+    return {"PMSA": MemArch.MemArch_PMSA, "VMSA": MemArch.MemArch_VMSA}[configurations["memory_system_architecture"]]
 
 
 def have_lpae():
-    return False
+    return configurations["have_lpae"]
 
 
 def have_mp_ext():
-    return False
+    return configurations["have_mp_ext"]
 
 
 def have_adv_simd_or_vfp():
-    return False
+    return configurations["have_adv_simd_or_vfp"]
 
 
 def have_thumbee():
-    return False
+    return configurations["have_thumbee"]
 
 
 def have_jazelle():
-    return False
+    return configurations["have_jazelle"]
 
 
 def implementation_supports_transient():
-    return False
+    return configurations["implementation_supports_transient"]
 
 
 def processor_id():
-    return 0
+    return configurations["processor_id"]
 
 
 def is_armv7r_profile():
-    return False
+    return configurations["is_armv7r_profile"]
 
 
 def has_imp_def_reset_vector():
-    return False
+    return configurations["has_imp_def_reset_vector"]
 
 
 memory_list = [

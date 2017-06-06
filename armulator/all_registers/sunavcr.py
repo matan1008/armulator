@@ -1,13 +1,13 @@
-from bitstring import BitArray
+from armulator.all_registers.abstract_register import AbstractRegister
 
 
-class SUNAVCR(object):
+class SUNAVCR(AbstractRegister):
     """
     Secure User and non-secure Access Validation Control Register
     """
 
     def __init__(self):
-        self.value = BitArray(length=32)
+        super(SUNAVCR, self).__init__()
 
     def set_v(self, flag):
         self.value[31] = flag

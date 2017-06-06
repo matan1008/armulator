@@ -1,13 +1,13 @@
-from bitstring import BitArray
+from armulator.all_registers.abstract_register import AbstractRegister
 
 
-class MIDR(object):
+class MIDR(AbstractRegister):
     """
     Main ID Register
     """
 
     def __init__(self):
-        self.value = BitArray(length=32)
+        super(MIDR, self).__init__()
 
     def set_implementer(self, implementer):
         self.value[0:8] = implementer

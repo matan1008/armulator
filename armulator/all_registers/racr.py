@@ -1,13 +1,13 @@
-from bitstring import BitArray
+from armulator.all_registers.abstract_register import AbstractRegister
 
 
-class RACR(object):
+class RACR(AbstractRegister):
     """
     Region Access Control Register
     """
 
     def __init__(self):
-        self.value = BitArray(length=32)
+        super(RACR, self).__init__()
 
     def set_xn(self, flag):
         self.value[19] = flag

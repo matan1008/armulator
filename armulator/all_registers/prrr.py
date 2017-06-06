@@ -1,13 +1,13 @@
-from bitstring import BitArray
+from armulator.all_registers.abstract_register import AbstractRegister
 
 
-class PRRR(object):
+class PRRR(AbstractRegister):
     """
     Primary Region Remap Register
     """
 
     def __init__(self):
-        self.value = BitArray(length=32)
+        super(PRRR, self).__init__()
 
     def set_tr_n(self, n, tr):
         self.value[30 - (2 * n):32 - (2 * n)] = tr

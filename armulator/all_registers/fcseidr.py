@@ -1,13 +1,13 @@
-from bitstring import BitArray
+from armulator.all_registers.abstract_register import AbstractRegister
 
 
-class FCSEIDR(object):
+class FCSEIDR(AbstractRegister):
     """
     FCSE Process ID Register
     """
 
     def __init__(self):
-        self.value = BitArray(length=32)
+        super(FCSEIDR, self).__init__()
 
     def set_pid(self, pid):
         self.value[0:7] = pid

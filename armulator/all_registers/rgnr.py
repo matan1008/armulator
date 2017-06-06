@@ -1,13 +1,13 @@
-from bitstring import BitArray
+from armulator.all_registers.abstract_register import AbstractRegister
 
 
-class RGNR(object):
+class RGNR(AbstractRegister):
     """
     MPU Region Number Register
     """
 
     def __init__(self, number_of_regions):
-        self.value = BitArray(length=32)
+        super(RGNR, self).__init__()
         self.n = number_of_regions.bit_length()
 
     def set_region(self, region):

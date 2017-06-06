@@ -1,13 +1,13 @@
-from bitstring import BitArray
+from armulator.all_registers.abstract_register import AbstractRegister
 
 
-class SCR(object):
+class SCR(AbstractRegister):
     """
     Secure Configuration Register
     """
 
     def __init__(self):
-        self.value = BitArray(length=32)
+        super(SCR, self).__init__()
 
     def set_ns(self, flag):
         self.value[31] = flag

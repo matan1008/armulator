@@ -1,13 +1,13 @@
-from bitstring import BitArray
+from armulator.all_registers.abstract_register import AbstractRegister
 
 
-class HSR(object):
+class HSR(AbstractRegister):
     """
     Hyp Syndrome Register
     """
 
     def __init__(self):
-        self.value = BitArray(length=32)
+        super(HSR, self).__init__()
 
     def set_ec(self, ec):
         self.value[0:6] = ec

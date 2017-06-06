@@ -1,13 +1,13 @@
-from bitstring import BitArray
+from armulator.all_registers.abstract_register import AbstractRegister
 
 
-class DBGDIDR(object):
+class DBGDIDR(AbstractRegister):
     """
     Debug ID Register
     """
 
     def __init__(self):
-        self.value = BitArray(length=32)
+        super(DBGDIDR, self).__init__()
 
     def set_wrps(self, wrps):
         self.value[0:4] = wrps

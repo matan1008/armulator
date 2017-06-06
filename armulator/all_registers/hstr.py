@@ -1,13 +1,13 @@
-from bitstring import BitArray
+from armulator.all_registers.abstract_register import AbstractRegister
 
 
-class HSTR(object):
+class HSTR(AbstractRegister):
     """
     Hyp System Trap Register
     """
 
     def __init__(self):
-        self.value = BitArray(length=32)
+        super(HSTR, self).__init__()
 
     def set_tjdbx(self, flag):
         self.value[14] = flag

@@ -1,0 +1,22 @@
+{
+  "reset_values": {
+    "SCTLR": "0b01000000000001010000000001111001",
+    "MIDR": "0b01000001000011111010011101100000",
+    "ACTLR": "0b00000000000000000000000000000111"
+  },
+  "number_of_mpu_regions": 12,
+  "have_security_ext": true,
+  "have_virt_ext": false,
+  "arch_version": 6,
+  "jazelle_accepts_execution": false,
+  "memory_system_architecture": "PMSA",
+  "have_lpae": false,
+  "have_mp_ext": false,
+  "have_adv_simd_or_vfp": false,
+  "have_thumbee": false,
+  "have_jazelle": false,
+  "implementation_supports_transient": false,
+  "processor_id": 0,
+  "is_armv7r_profile": false,
+  "has_imp_def_reset_vector": false
+}

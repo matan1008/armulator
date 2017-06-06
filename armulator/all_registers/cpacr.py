@@ -1,13 +1,13 @@
-from bitstring import BitArray
+from armulator.all_registers.abstract_register import AbstractRegister
 
 
-class CPACR(object):
+class CPACR(AbstractRegister):
     """
     Coprocessor Access Control Register
     """
 
     def __init__(self):
-        self.value = BitArray(length=32)
+        super(CPACR, self).__init__()
 
     def set_cp_n(self, n, cp):
         assert n < 14

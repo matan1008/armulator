@@ -1,13 +1,13 @@
-from bitstring import BitArray
+from armulator.all_registers.abstract_register import AbstractRegister
 
 
-class MPUIR(object):
+class MPUIR(AbstractRegister):
     """
     MPU Type Register
     """
 
     def __init__(self):
-        self.value = BitArray(length=32)
+        super(MPUIR, self).__init__()
 
     def set_nu(self, flag):
         self.value[31] = flag

@@ -1,13 +1,13 @@
-from bitstring import BitArray
+from armulator.all_registers.abstract_register import AbstractRegister
 
 
-class HSCTLR(object):
+class HSCTLR(AbstractRegister):
     """
     Hyp System Control Register
     """
 
     def __init__(self):
-        self.value = BitArray(length=32)
+        super(HSCTLR, self).__init__()
 
     def set_te(self, flag):
         self.value[1] = flag

@@ -1,13 +1,13 @@
-from bitstring import BitArray
+from armulator.all_registers.abstract_register import AbstractRegister
 
 
-class JMCR(object):
+class JMCR(AbstractRegister):
     """
     Jazelle Main Configuration Register
     """
 
     def __init__(self):
-        self.value = BitArray(length=32)
+        super(JMCR, self).__init__()
 
     def set_je(self, flag):
         self.value[31] = flag

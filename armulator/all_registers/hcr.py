@@ -1,13 +1,13 @@
-from bitstring import BitArray
+from armulator.all_registers.abstract_register import AbstractRegister
 
 
-class HCR(object):
+class HCR(AbstractRegister):
     """
     Hyp Configuration Register
     """
 
     def __init__(self):
-        self.value = BitArray(length=32)
+        super(HCR, self).__init__()
 
     def set_tge(self, flag):
         self.value[4] = flag

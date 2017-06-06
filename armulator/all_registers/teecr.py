@@ -1,13 +1,13 @@
-from bitstring import BitArray
+from armulator.all_registers.abstract_register import AbstractRegister
 
 
-class TEECR(object):
+class TEECR(AbstractRegister):
     """
     ThumbEE Configuration Register
     """
 
     def __init__(self):
-        self.value = BitArray(length=32)
+        super(TEECR, self).__init__()
 
     def set_xed(self, flag):
         self.value[31] = flag

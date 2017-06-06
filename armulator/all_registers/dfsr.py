@@ -1,13 +1,14 @@
 from bitstring import BitArray
+from armulator.all_registers.abstract_register import AbstractRegister
 
 
-class DFSR(object):
+class DFSR(AbstractRegister):
     """
     Data Fault Status Register
     """
 
     def __init__(self):
-        self.value = BitArray(length=32)
+        super(DFSR, self).__init__()
 
     def set_cm(self, flag):
         self.value[18] = flag

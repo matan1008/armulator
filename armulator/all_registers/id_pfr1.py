@@ -1,13 +1,13 @@
-from bitstring import BitArray
+from armulator.all_registers.abstract_register import AbstractRegister
 
 
-class IdPfr1(object):
+class IdPfr1(AbstractRegister):
     """
     Processor Feature Register 1
     """
 
     def __init__(self):
-        self.value = BitArray(length=32)
+        super(IdPfr1, self).__init__()
 
     def set_gt(self, gt):
         """

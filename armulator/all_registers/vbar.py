@@ -1,13 +1,13 @@
-from bitstring import BitArray
+from armulator.all_registers.abstract_register import AbstractRegister
 
 
-class VBAR(object):
+class VBAR(AbstractRegister):
     """
     Vector Base Address Register
     """
 
     def __init__(self):
-        self.value = BitArray(length=32)
+        super(VBAR, self).__init__()
 
     def set_base_address(self, base_address):
         self.value[0:27] = base_address

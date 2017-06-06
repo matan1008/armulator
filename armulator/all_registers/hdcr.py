@@ -1,13 +1,13 @@
-from bitstring import BitArray
+from armulator.all_registers.abstract_register import AbstractRegister
 
 
-class HDCR(object):
+class HDCR(AbstractRegister):
     """
     Hyp Debug Configuration Register
     """
 
     def __init__(self):
-        self.value = BitArray(length=32)
+        super(HDCR, self).__init__()
 
     def set_tdra(self, flag):
         self.value[20] = flag

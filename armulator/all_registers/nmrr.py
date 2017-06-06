@@ -1,13 +1,13 @@
-from bitstring import BitArray
+from armulator.all_registers.abstract_register import AbstractRegister
 
 
-class NMRR(object):
+class NMRR(AbstractRegister):
     """
     Normal Memory Remap Register
     """
 
     def __init__(self):
-        self.value = BitArray(length=32)
+        super(NMRR, self).__init__()
 
     def set_ir_n(self, n, ir):
         assert n < 8

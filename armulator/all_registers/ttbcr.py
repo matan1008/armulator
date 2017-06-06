@@ -1,13 +1,13 @@
-from bitstring import BitArray
+from armulator.all_registers.abstract_register import AbstractRegister
 
 
-class TTBCR(object):
+class TTBCR(AbstractRegister):
     """
     Translation Table Base Control Register
     """
 
     def __init__(self):
-        self.value = BitArray(length=32)
+        super(TTBCR, self).__init__()
 
     def set_eae(self, flag):
         self.value[0] = flag

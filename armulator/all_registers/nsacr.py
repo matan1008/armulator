@@ -1,13 +1,13 @@
-from bitstring import BitArray
+from armulator.all_registers.abstract_register import AbstractRegister
 
 
-class NSACR(object):
+class NSACR(AbstractRegister):
     """
     Non-Secure Access Control Register
     """
 
     def __init__(self):
-        self.value = BitArray(length=32)
+        super(NSACR, self).__init__()
 
     def set_cp_n(self, n, flag):
         assert n < 14

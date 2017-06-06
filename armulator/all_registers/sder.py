@@ -1,13 +1,13 @@
-from bitstring import BitArray
+from armulator.all_registers.abstract_register import AbstractRegister
 
 
-class SDER(object):
+class SDER(AbstractRegister):
     """
     Secure Debug Enable Register
     """
 
     def __init__(self):
-        self.value = BitArray(length=32)
+        super(SDER, self).__init__()
 
     def set_suniden(self, flag):
         self.value[30] = flag

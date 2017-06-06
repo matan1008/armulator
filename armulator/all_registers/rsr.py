@@ -1,13 +1,13 @@
-from bitstring import BitArray
+from armulator.all_registers.abstract_register import AbstractRegister
 
 
-class RSR(object):
+class RSR(AbstractRegister):
     """
     Region Size and Enable Register
     """
 
     def __init__(self):
-        self.value = BitArray(length=32)
+        super(RSR, self).__init__()
 
     def set_sd_n(self, n, flag):
         self.value[23 - n] = flag

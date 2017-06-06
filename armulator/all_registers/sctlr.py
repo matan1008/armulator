@@ -1,13 +1,13 @@
-from bitstring import BitArray
+from armulator.all_registers.abstract_register import AbstractRegister
 
 
-class SCTLR(object):
+class SCTLR(AbstractRegister):
     """
     System Control Register
     """
 
     def __init__(self):
-        self.value = BitArray(length=32)
+        super(SCTLR, self).__init__()
 
     def set_ie(self, flag):
         self.value[0] = flag

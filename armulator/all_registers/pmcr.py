@@ -1,13 +1,13 @@
-from bitstring import BitArray
+from armulator.all_registers.abstract_register import AbstractRegister
 
 
-class PMCR(object):
+class PMCR(AbstractRegister):
     """
     Performance Monitors Control Register
     """
 
     def __init__(self):
-        self.value = BitArray(length=32)
+        super(PMCR, self).__init__()
 
     def set_e(self, flag):
         self.value[31] = flag

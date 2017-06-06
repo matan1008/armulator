@@ -1,13 +1,13 @@
-from bitstring import BitArray
+from armulator.all_registers.abstract_register import AbstractRegister
 
 
-class DACR(object):
+class DACR(AbstractRegister):
     """
     Domain Access Control Register
     """
 
     def __init__(self):
-        self.value = BitArray(length=32)
+        super(DACR, self).__init__()
 
     def set_d_n(self, n, d):
         assert n < 16

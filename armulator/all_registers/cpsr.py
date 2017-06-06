@@ -1,13 +1,14 @@
 from bitstring import BitArray
+from armulator.all_registers.abstract_register import AbstractRegister
 
 
-class CPSR(object):
+class CPSR(AbstractRegister):
     """
     Current Program Status Register
     """
 
     def __init__(self):
-        self.value = BitArray(length=32)
+        super(CPSR, self).__init__()
 
     def set_n(self, flag):
         if type(flag) is not bool:

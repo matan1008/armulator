@@ -1,13 +1,13 @@
-from bitstring import BitArray
+from armulator.all_registers.abstract_register import AbstractRegister
 
 
-class HCPTR(object):
+class HCPTR(AbstractRegister):
     """
     Hyp Coprocessor Trap Register
     """
 
     def __init__(self):
-        self.value = BitArray(length=32)
+        super(HCPTR, self).__init__()
 
     def set_tcpac(self, flag):
         self.value[0] = flag
