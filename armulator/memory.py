@@ -4,6 +4,9 @@ from armulator.memory_types import MEMORY_TYPE_DICT
 
 
 class Memory(object):
+    """
+    Provides the CPU and memory and input/output devices to interact
+    """
     def __init__(self):
         self.memories = []
         self.__init_memory__()
@@ -19,7 +22,12 @@ class Memory(object):
                 return memory
 
     def __getitem__(self, (memaddrdesc, size)):
-        # mock
+        """
+        Reads memory as a little endian
+        :memaddrdesc: AddressDescriptor object
+        :size: Size in bytes to read
+        :return: BitArray of data
+        """
         assert size == 1 or size == 2 or size == 4 or size == 8
         memory = self.get_memory_by_address(memaddrdesc.paddress.physicaladdress.uint)
         if memory is not None:
@@ -29,7 +37,11 @@ class Memory(object):
         return BitArray(length=size * 8)
 
     def __setitem__(self, memaddrdesc_size, value):
-        # mock
+        """
+        Writes memory as a little endian
+        :memaddrdesc_size: tuople AddressDescriptor object and size in bytes
+        :value: Bytes to write
+        """
         memaddrdesc = memaddrdesc_size[0]
         size = memaddrdesc_size[1]
         assert size == 1 or size == 2 or size == 4 or size == 8
