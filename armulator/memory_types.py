@@ -43,14 +43,7 @@ class RAM(MemoryType):
     def write(self, address, size, value):
         self.__setitem__((address, size), value)
 
-    def load_file(self, file_path):
-        f = open(file_path, "rb")
-        data = f.read()
-        f.close()
-        size_limit = min(len(data), len(self.memory_array))
-        self.memory_array[0:size_limit] = data
 
-
-MemoryTypeDict = {
+MEMORY_TYPE_DICT = {
     "RAM": RAM
 }

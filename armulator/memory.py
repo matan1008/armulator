@@ -1,6 +1,6 @@
 from bitstring import BitArray
-from configurations import *
-from memory_types import *
+from armulator.configurations import memory_list
+from armulator.memory_types import MEMORY_TYPE_DICT
 
 
 class Memory(object):
@@ -10,7 +10,7 @@ class Memory(object):
 
     def __init_memory__(self):
         for i in memory_list:
-            mem = MemoryTypeDict[i[0]](i[2] - i[1])
+            mem = MEMORY_TYPE_DICT[i[0]](i[2] - i[1])
             self.memories.append((mem, (i[1], i[2])))
 
     def get_memory_by_address(self, address):
