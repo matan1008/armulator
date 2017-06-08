@@ -3,7 +3,7 @@ from armulator.configurations import memory_list
 from armulator.memory_types import MEMORY_TYPE_DICT
 
 
-class Memory(object):
+class MemoryController(object):
     """
     Provides the CPU and memory and input/output devices to interact
     """
