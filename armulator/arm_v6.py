@@ -7,7 +7,7 @@ from arm_exceptions import *
 from memory_attributes import MemoryAttributes, MemType
 from address_descriptor import AddressDescriptor
 from tlb_record import TLBRecord
-from memorycontroller import MemoryController
+from memory_controller import MemoryController
 from permissions import Permissions
 from enums import *
 import opcodes
