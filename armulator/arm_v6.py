@@ -7,7 +7,7 @@ from arm_exceptions import *
 from memory_attributes import MemoryAttributes, MemType
 from address_descriptor import AddressDescriptor
 from tlb_record import TLBRecord
-from memory_controller import MemoryController
+from memory_controller_hub import MemoryControllerHub
 from permissions import Permissions
 from enums import *
 import opcodes
@@ -19,7 +19,7 @@ class ArmV6:
         self.registers = Registers()
         self.run = True
         self.opcode = BitArray(length=32)
-        self.mem = MemoryController()
+        self.mem = MemoryControllerHub()
         self.is_wait_for_event = False
         self.is_wait_for_interrupt = False
         self.__init_registers__()

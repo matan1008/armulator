@@ -61,8 +61,3 @@ def is_armv7r_profile():
 
 def has_imp_def_reset_vector():
     return configurations["has_imp_def_reset_vector"]
-
-
-memory_list = [
-    # ("RAM", 0x000000, 0xFF0000)
-]
