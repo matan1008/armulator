@@ -1,4 +1,5 @@
 from armulator.arm_v6 import ArmV6
+from armulator.memory_controller_hub import MemoryController
 from bitstring import BitArray
 from armulator.shift import SRType
 from armulator.memory_types import RAM
@@ -20,7 +21,8 @@ def test_ldr_register_thumb():
     arm.registers.mpuir.set_dregion("0x01")  # declaring the region
     ram_memory = RAM(0x100)
     ram_memory.write(0x4, 4, "ECIN")
-    arm.mem.memories.append((ram_memory, (0x0F000000, 0x0F000100)))
+    mc = MemoryController(ram_memory, 0x0F000000, 0x0F000100)
+    arm.mem.memories.append(mc)
     opcode = arm.decode_instruction(instr)
     opcode = opcode.from_bitarray(instr, arm)
     assert type(opcode) == LdrRegisterThumbT1
@@ -45,7 +47,8 @@ def test_stm_thumb():
     arm.registers.mpuir.set_iregion("0x01")  # declaring the region
     arm.registers.mpuir.set_dregion("0x01")  # declaring the region
     ram_memory = RAM(0x100)
-    arm.mem.memories.append((ram_memory, (0x0F000000, 0x0F000100)))
+    mc = MemoryController(ram_memory, 0x0F000000, 0x0F000100)
+    arm.mem.memories.append(mc)
     opcode = arm.decode_instruction(instr)
     opcode = opcode.from_bitarray(instr, arm)
     assert type(opcode) == StmT1
