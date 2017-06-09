@@ -74,163 +74,6 @@ class ArmV6:
         reset_vector[31] = False
         self.registers.branch_to(reset_vector)
 
-    def take_hyp_trap_exception(self):
-        preferred_exceptn_return = BitArray(uint=(self.registers.get_pc().uint - 4
-                                                  if self.registers.cpsr.get_t()
-                                                  else self.registers.get_pc().uint - 8),
-                                            length=32)
-        new_spsr_value = self.registers.cpsr.value
-        self.registers.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, 20)
-
-    def take_smc_exception(self):
-        self.registers.it_advance()
-        new_lr_value = (self.registers.get_pc()
-                        if self.registers.cpsr.get_t()
-                        else BitArray(uint=(self.registers.get_pc().uint - 4), length=32))
-        new_spsr_value = self.registers.cpsr.value
-        vect_offset = 8
-        if self.registers.cpsr.get_m() == "0b10110":
-            self.registers.scr.set_ns(False)
-        self.registers.enter_monitor_mode(new_spsr_value, new_lr_value, vect_offset)
-
-    def take_data_abort_exception(self):
-        new_lr_value = (BitArray(uint=self.registers.get_pc().uint + 4, length=32)
-                        if self.registers.cpsr.get_t()
-                        else self.registers.get_pc())
-        new_spsr_value = self.registers.cpsr.value
-        vect_offset = 16
-        preferred_exceptn_return = BitArray(uint=(new_lr_value.uint - 8), length=32)
-        route_to_monitor = have_security_ext() and self.registers.scr.get_ea() and self.registers.is_external_abort()
-        take_to_hyp = (have_virt_ext() and
-                       have_security_ext() and
-                       self.registers.scr.get_ns() and
-                       self.registers.cpsr.get_m() == "0b11010")
-        route_to_hyp = (
-            have_virt_ext() and
-            have_security_ext() and
-            not self.registers.is_secure() and
-            (
-                self.registers.second_stage_abort() or
-                (
-                    self.registers.cpsr.get_m() != "0b11010" and
-                    (
-                        self.registers.is_external_abort() and
-                        self.registers.is_async_abort() and
-                        self.registers.hcr.get_amo()
-                    ) or
-                    (
-                        self.registers.debug_exception() and
-                        self.registers.hdcr.get_tde()
-                    )
-                ) or
-                (
-                    self.registers.cpsr.get_m() == "0b10000" and
-                    self.registers.hcr.get_tge() and
-                    (
-                        self.registers.is_alignment_fault() or
-                        (
-                            self.registers.is_external_abort() and
-                            not self.registers.is_async_abort()
-                        )
-                    )
-                )
-            )
-        )
-        if route_to_monitor:
-            if self.registers.cpsr.get_m() == "0b10110":
-                self.registers.scr.set_ns(False)
-            self.registers.enter_monitor_mode(new_spsr_value, new_lr_value, vect_offset)
-        elif take_to_hyp:
-            self.registers.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, vect_offset)
-        elif route_to_hyp:
-            self.registers.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, 20)
-        else:
-            if have_security_ext() and self.registers.cpsr.get_m() == "0b10110":
-                self.registers.scr.set_ns(False)
-            self.registers.cpsr.set_m("0b10111")
-            self.registers.set_spsr(new_spsr_value)
-            self.registers.set(14, new_lr_value)
-            self.registers.cpsr.set_i(True)
-            if (not have_security_ext() or
-                    have_virt_ext() or
-                    not self.registers.scr.get_ns() or
-                    self.registers.scr.get_aw()):
-                self.registers.cpsr.set_a(True)
-            self.registers.cpsr.set_it(BitArray(length=8))
-            self.registers.cpsr.set_j(False)
-            self.registers.cpsr.set_t(self.registers.sctlr.get_te())
-            self.registers.cpsr.set_e(self.registers.sctlr.get_ee())
-            self.registers.branch_to(BitArray(uint=(self.registers.exc_vector_base().uint + vect_offset), length=32))
-
-    def take_svc_exception(self):
-        self.registers.it_advance()
-        new_lr_value = (bits_ops.sub(self.registers.get_pc(), BitArray(bin="10"), 32)
-                        if self.registers.cpsr.get_t()
-                        else bits_ops.sub(self.registers.get_pc(), BitArray(bin="100"), 32))
-        new_spsr_value = self.registers.cpsr.value
-        vect_offset = 8
-        take_to_hyp = (have_virt_ext() and
-                       have_security_ext() and
-                       self.registers.scr.get_ns() and
-                       self.registers.cpsr.get_m() == "0b11010")
-        route_to_hyp = (have_virt_ext() and
-                        have_security_ext() and
-                        not self.registers.is_secure() and
-                        self.registers.hcr.get_tge() and
-                        self.registers.cpsr.get_m() == "0b10000")
-        preferred_exceptn_return = new_lr_value
-        if take_to_hyp:
-            self.registers.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, vect_offset)
-        elif route_to_hyp:
-            self.registers.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, 20)
-        else:
-            if self.registers.cpsr.get_m() == "0b10110":
-                self.registers.scr.set_ns(False)
-            self.registers.cpsr.set_m("0b10011")
-            self.registers.set_spsr(new_spsr_value)
-            self.registers.set(14, new_lr_value)
-            self.registers.cpsr.set_i(True)
-            self.registers.cpsr.set_it(BitArray(length=8))
-            self.registers.cpsr.set_j(False)
-            self.registers.cpsr.set_t(self.registers.sctlr.get_te())
-            self.registers.cpsr.set_e(self.registers.sctlr.get_ee())
-            self.registers.branch_to(
-                bits_ops.add(self.registers.exc_vector_base(), BitArray(uint=vect_offset, length=32), 32))
-
-    def take_undef_instr_exception(self):
-        new_lr_value = (BitArray(uint=(self.registers.get_pc().uint - 2), length=32)
-                        if self.registers.cpsr.get_t()
-                        else BitArray(uint=(self.registers.get_pc().uint - 4), length=32))
-        new_spsr_value = self.registers.cpsr.value
-        vect_offset = 4
-        take_to_hyp = (have_virt_ext() and
-                       have_security_ext() and
-                       self.registers.scr.get_ns() and
-                       self.registers.cpsr.get_m() == "0b11010")
-        route_to_hyp = (have_virt_ext() and
-                        have_security_ext() and
-                        not self.registers.is_secure() and
-                        self.registers.hcr.get_tge() and
-                        self.registers.cpsr.get_m() == "0b10000")
-        return_offset = 2 if self.registers.cpsr.get_t() else 4
-        preferred_exceptn_return = BitArray(uint=(new_lr_value.uint - return_offset), length=32)
-        if take_to_hyp:
-            self.registers.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, vect_offset)
-        elif route_to_hyp:
-            self.registers.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, 20)
-        else:
-            if self.registers.cpsr.get_m() == "0b10110":
-                self.registers.scr.set_ns(False)
-            self.registers.cpsr.set_m("0b11011")
-            self.registers.set_spsr(new_spsr_value)
-            self.registers.set(14, new_lr_value)
-            self.registers.cpsr.set_i(True)
-            self.registers.cpsr.set_it(BitArray(length=8))
-            self.registers.cpsr.set_j(False)
-            self.registers.cpsr.set_t(self.registers.sctlr.get_te())
-            self.registers.cpsr.set_e(self.registers.sctlr.get_ee())
-            self.registers.branch_to(BitArray(uint=(self.registers.exc_vector_base().uint + vect_offset), length=32))
-
     def big_endian_reverse(self, value, n):
         assert n == 1 or n == 2 or n == 4 or n == 8
         if n == 1:
@@ -741,7 +584,7 @@ class ArmV6:
             dfsr_string[3] = temp_pmsafsr[0]
             dfsr_string[10:14] = temp_pmsafsr[1:5]
             self.registers.dfsr.value[18:32] = dfsr_string
-        raise DataAbortException()
+        raise DataAbortException(dtype)
 
     def alignment_fault_v(self, address, iswrite, taketohyp, secondstageabort):
         ipaddress = BitArray(length=40)  # unknown
@@ -2053,15 +1896,15 @@ class ArmV6:
         except EndOfInstruction:
             pass
         except SVCException:
-            self.take_svc_exception()
+            self.registers.take_svc_exception()
         except SMCException:
-            self.take_smc_exception()
-        except DataAbortException:
-            self.take_data_abort_exception()
+            self.registers.take_smc_exception()
+        except DataAbortException, dabort_exception:
+            self.registers.take_data_abort_exception(dabort_exception)
         except HypTrapException:
-            self.take_hyp_trap_exception()
+            self.registers.take_hyp_trap_exception()
         except UndefinedInstructionException:
-            self.take_undef_instr_exception()
+            self.registers.take_undef_instr_exception()
 
     def fetch_instruction(self):
         if self.registers.current_instr_set() == InstrSet.InstrSet_ARM:

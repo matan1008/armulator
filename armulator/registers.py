@@ -534,10 +534,6 @@ class Registers:
         # mock
         return False
 
-    def is_alignment_fault(self):
-        # mock
-        return False
-
     def exc_vector_base(self):
         if self.sctlr.get_v():
             return BitArray(bin="11111111111111110000000000000000")
@@ -577,7 +573,7 @@ class Registers:
 
     def take_hyp_trap_exception(self):
         preferred_exceptn_return = BitArray(
-            uint=(self.get_pc().uint - 4 if self.cpsr.get_t() else self.get_pc().uint - 8), length=32)
+                uint=(self.get_pc().uint - 4 if self.cpsr.get_t() else self.get_pc().uint - 8), length=32)
         new_spsr_value = self.cpsr.value
         self.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, 20)
 
@@ -590,7 +586,7 @@ class Registers:
             self.scr.set_ns(False)
         self.enter_monitor_mode(new_spsr_value, new_lr_value, vect_offset)
 
-    def take_data_abort_exception(self):
+    def take_data_abort_exception(self, dabort_exception):
         new_lr_value = BitArray(uint=self.get_pc().uint + 4, length=32) if self.cpsr.get_t() else self.get_pc()
         new_spsr_value = self.cpsr.value
         vect_offset = 16
@@ -611,7 +607,7 @@ class Registers:
                 (
                     self.cpsr.get_m() == "0b10000" and
                     self.hcr.get_tge() and
-                    (self.is_alignment_fault() or (self.is_external_abort() and not self.is_async_abort()))
+                    (dabort_exception.is_alignment_fault() or (self.is_external_abort() and not self.is_async_abort()))
                 )
             )
         )
@@ -637,6 +633,68 @@ class Registers:
             self.cpsr.set_t(self.sctlr.get_te())
             self.cpsr.set_e(self.sctlr.get_ee())
             self.branch_to(BitArray(uint=(self.exc_vector_base().uint + vect_offset), length=32))
+
+    def take_undef_instr_exception(self):
+        new_lr_value = (BitArray(uint=(self.get_pc().uint - 2), length=32)
+                        if self.cpsr.get_t()
+                        else BitArray(uint=(self.get_pc().uint - 4), length=32))
+        new_spsr_value = self.cpsr.value
+        vect_offset = 4
+        take_to_hyp = have_virt_ext() and have_security_ext() and self.scr.get_ns() and self.cpsr.get_m() == "0b11010"
+        route_to_hyp = (have_virt_ext() and
+                        have_security_ext() and
+                        not self.is_secure() and
+                        self.hcr.get_tge() and
+                        self.cpsr.get_m() == "0b10000")
+        return_offset = 2 if self.cpsr.get_t() else 4
+        preferred_exceptn_return = BitArray(uint=(new_lr_value.uint - return_offset), length=32)
+        if take_to_hyp:
+            self.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, vect_offset)
+        elif route_to_hyp:
+            self.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, 20)
+        else:
+            if self.cpsr.get_m() == "0b10110":
+                self.scr.set_ns(False)
+            self.cpsr.set_m("0b11011")
+            self.set_spsr(new_spsr_value)
+            self.set(14, new_lr_value)
+            self.cpsr.set_i(True)
+            self.cpsr.set_it(BitArray(length=8))
+            self.cpsr.set_j(False)
+            self.cpsr.set_t(self.sctlr.get_te())
+            self.cpsr.set_e(self.sctlr.get_ee())
+            self.branch_to(BitArray(uint=(self.exc_vector_base().uint + vect_offset), length=32))
+
+    def take_svc_exception(self):
+        self.it_advance()
+        new_lr_value = (bits_ops.sub(self.get_pc(), BitArray(bin="10"), 32)
+                        if self.cpsr.get_t()
+                        else bits_ops.sub(self.get_pc(), BitArray(bin="100"), 32))
+        new_spsr_value = self.cpsr.value
+        vect_offset = 8
+        take_to_hyp = have_virt_ext() and have_security_ext() and self.scr.get_ns() and self.cpsr.get_m() == "0b11010"
+        route_to_hyp = (have_virt_ext() and
+                        have_security_ext() and
+                        not self.is_secure() and
+                        self.hcr.get_tge() and
+                        self.cpsr.get_m() == "0b10000")
+        preferred_exceptn_return = new_lr_value
+        if take_to_hyp:
+            self.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, vect_offset)
+        elif route_to_hyp:
+            self.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, 20)
+        else:
+            if self.cpsr.get_m() == "0b10110":
+                self.scr.set_ns(False)
+            self.cpsr.set_m("0b10011")
+            self.set_spsr(new_spsr_value)
+            self.set(14, new_lr_value)
+            self.cpsr.set_i(True)
+            self.cpsr.set_it(BitArray(length=8))
+            self.cpsr.set_j(False)
+            self.cpsr.set_t(self.sctlr.get_te())
+            self.cpsr.set_e(self.sctlr.get_ee())
+            self.branch_to(bits_ops.add(self.exc_vector_base(), BitArray(uint=vect_offset, length=32), 32))
 
     def increment_pc(self, opcode_length):
         self._R[self.RName.RName_PC] = bits_ops.add(self._R[self.RName.RName_PC], BitArray(bin=bin(opcode_length)), 32)
