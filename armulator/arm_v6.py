@@ -1477,8 +1477,7 @@ class ArmV6:
         if address != bits_ops.align(address, size):
             self.alignment_fault(address, True)
         else:
-            memaddrdesc = self.translate_address(address, self.registers.current_mode_is_not_user(), True, size,
-                                                 True)
+            memaddrdesc = self.translate_address(address, self.registers.current_mode_is_not_user(), True, size, True)
         passed = self.is_exclusive_local(memaddrdesc.paddress, processor_id(), size)
         if passed:
             self.clear_exclusive_local(processor_id())
