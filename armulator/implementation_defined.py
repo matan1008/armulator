@@ -7,5 +7,6 @@ translation_walk_sd_l1descaddr_attrs_10 = True
 translation_walk_sd_l1descaddr_hints_01 = True
 coproc_accepted_pl0_undefined = True
 impdef_reset_vector = 0x00000000
+impdef_irq_vector = 0x00000018
 # Implementation defined registers values
 vbar_bin = "00000000000000000000000000000000"
