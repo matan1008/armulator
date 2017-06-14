@@ -2,7 +2,8 @@
   "reset_values": {
     "SCTLR": "0b01000000000001010000000001111001",
     "MIDR": "0b01000001000011111010011101100000",
-    "ACTLR": "0b00000000000000000000000000000111"
+    "ACTLR": "0b00000000000000000000000000000111",
+    "VBAR": "0b00000000000000000000000000000000"
   },
   "number_of_mpu_regions": 12,
   "have_security_ext": true,
@@ -25,5 +26,15 @@
       "beginning": 0,
       "end": 256
     }
-  ]
+  ],
+  "write_hsr_hsr_value_24": false,
+  "write_hsr_23_22_cond": true,
+  "dfsr_string_12": true,
+  "data_abort_hsr_9": false,
+  "data_abort_pmsa_change_dfar": true,
+  "translation_walk_sd_l1descaddr_attrs_10": true,
+  "translation_walk_sd_l1descaddr_hints_01": true,
+  "coproc_accepted_pl0_undefined": true,
+  "impdef_reset_vector": 0,
+  "impdef_irq_vector": 24
 }

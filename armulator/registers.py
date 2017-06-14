@@ -3,7 +3,6 @@ from enum import Enum
 from configurations import *
 import shift
 import bits_ops
-import implementation_defined
 from enums import *
 from armulator.all_registers.sunavcr import SUNAVCR
 from armulator.all_registers.pmcr import PMCR
@@ -731,7 +730,7 @@ class Registers:
             self.cpsr.set_t(self.sctlr.get_te())
             self.cpsr.set_e(self.sctlr.get_ee())
             if self.sctlr.get_ve():
-                self.branch_to(BitArray(hex=implementation_defined.impdef_irq_vector))
+                self.branch_to(BitArray(hex=configurations["impdef_irq_vector"]))
             else:
                 self.branch_to(bits_ops.add(self.exc_vector_base(), BitArray(uint=vect_offset, length=32), 32))
 
@@ -739,4 +738,4 @@ class Registers:
         self._R[self.RName.RName_PC] = bits_ops.add(self._R[self.RName.RName_PC], BitArray(bin=bin(opcode_length)), 32)
 
     def reset_control_registers(self):
-        self.vbar.value = BitArray(bin=implementation_defined.vbar_bin)
+        self.vbar.value = BitArray(bin=configurations["reset_values"]["VBAR"])
