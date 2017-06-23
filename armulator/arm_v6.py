@@ -583,7 +583,7 @@ class ArmV6:
             dfsr_string[3] = temp_pmsafsr[0]
             dfsr_string[10:14] = temp_pmsafsr[1:5]
             self.registers.dfsr.value[18:32] = dfsr_string
-        raise DataAbortException(dtype)
+        raise DataAbortException(dtype, secondstageabort)
 
     def alignment_fault_v(self, address, iswrite, taketohyp, secondstageabort):
         ipaddress = BitArray(length=40)  # unknown

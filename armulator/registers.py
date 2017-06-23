@@ -521,10 +521,6 @@ class Registers:
         # mock
         return False
 
-    def second_stage_abort(self):
-        # mock
-        return False
-
     def is_async_abort(self):
         # mock
         return False
@@ -597,7 +593,7 @@ class Registers:
             have_security_ext() and
             not self.is_secure() and
             (
-                self.second_stage_abort() or
+                dabort_exception.second_stage_abort() or
                 (
                     self.cpsr.get_m() != "0b11010" and
                     (self.is_external_abort() and self.is_async_abort() and self.hcr.get_amo()) or

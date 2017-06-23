@@ -31,5 +31,6 @@ def test_ldm_alignment_fault():
     with pytest.raises(DataAbortException) as dabort_exception:
         arm.execute_instruction(opcode)
     assert dabort_exception.value.is_alignment_fault()
+    assert not dabort_exception.value.second_stage_abort()
     arm.registers.take_data_abort_exception(dabort_exception.value)
     assert arm.registers.get_pc() == "0x00000014"
