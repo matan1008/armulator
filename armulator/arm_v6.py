@@ -1862,14 +1862,6 @@ class ArmV6:
         raise NotImplementedError()
         pass
 
-    def it_advance(self):
-        if self.registers.cpsr.get_it()[5:8] == "0b000":
-            self.registers.cpsr.set_it(BitArray(bin="00000000"))
-        else:
-            it_state = self.registers.cpsr.get_it()[0:4]
-            it_state += shift.lsl(self.registers.cpsr.get_it()[4:8], 1)
-            self.registers.cpsr.set_it(it_state)
-
     def in_it_block(self):
         return self.registers.cpsr.get_it()[4:8] != "0b0000"
 
