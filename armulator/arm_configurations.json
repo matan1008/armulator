@@ -36,5 +36,6 @@
   "translation_walk_sd_l1descaddr_hints_01": true,
   "coproc_accepted_pl0_undefined": true,
   "impdef_reset_vector": 0,
-  "impdef_irq_vector": 24
+  "impdef_irq_vector": 24,
+  "impdef_fiq_vector": 28
 }

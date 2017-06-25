@@ -720,13 +720,54 @@ class Registers:
             self.set(14, new_lr_value)
             self.cpsr.set_i(True)
             if not have_security_ext() or have_virt_ext() or not self.scr.get_ns() or self.scr.get_aw():
-                self.cpsr.set_a(False)
+                self.cpsr.set_a(True)
             self.cpsr.set_it(BitArray(length=8))
             self.cpsr.set_j(False)
             self.cpsr.set_t(self.sctlr.get_te())
             self.cpsr.set_e(self.sctlr.get_ee())
             if self.sctlr.get_ve():
                 self.branch_to(BitArray(hex=configurations["impdef_irq_vector"]))
+            else:
+                self.branch_to(bits_ops.add(self.exc_vector_base(), BitArray(uint=vect_offset, length=32), 32))
+
+    def take_physical_fiq_exception(self):
+        new_lr_value = self.get_pc() if self.cpsr.get_t() else bits_ops.sub(self.get_pc(), BitArray(bin="100"), 32)
+        new_spsr_value = self.cpsr.value
+        vect_offset = 28
+        route_to_monitor = have_security_ext() and self.scr.get_fiq()
+        route_to_hyp = (
+            (have_virt_ext() and
+             have_security_ext() and
+             not self.scr.get_fiq() and
+             self.hcr.get_fmo() and
+             not self.is_secure()) or
+            self.cpsr.get_m() == "0b11010"
+        )
+        if route_to_monitor:
+            if self.cpsr.get_m() == "0b10110":
+                self.scr.set_ns(False)
+            self.enter_monitor_mode(new_spsr_value, new_lr_value, vect_offset)
+        elif route_to_hyp:
+            self.hsr.value = BitArray(length=32)  # unknown
+            preferred_exceptn_return = bits_ops.sub(new_lr_value, BitArray(bin="100"), 32)
+            self.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, vect_offset)
+        else:
+            if self.cpsr.get_m() == "0b10110":
+                self.scr.set_ns(False)
+            self.cpsr.set_m("0b10001")
+            self.set_spsr(new_spsr_value)
+            self.set(14, new_lr_value)
+            self.cpsr.set_i(True)
+            if not have_security_ext() or have_virt_ext() or not self.scr.get_ns() or self.scr.get_fw():
+                self.cpsr.set_f(True)
+            if not have_security_ext() or have_virt_ext() or not self.scr.get_ns() or self.scr.get_aw():
+                self.cpsr.set_a(True)
+            self.cpsr.set_it(BitArray(length=8))
+            self.cpsr.set_j(False)
+            self.cpsr.set_t(self.sctlr.get_te())
+            self.cpsr.set_e(self.sctlr.get_ee())
+            if self.sctlr.get_ve():
+                self.branch_to(BitArray(hex=configurations["impdef_fiq_vector"]))
             else:
                 self.branch_to(bits_ops.add(self.exc_vector_base(), BitArray(uint=vect_offset, length=32), 32))
 
