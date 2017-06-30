@@ -31,7 +31,7 @@ def test_branching_t1():
     arm.registers.sctlr.set_m(False)
     arm.registers.branch_to(prev_pc)
     ram_memory = RAM(0x100)
-    ram_memory[0xd8, 2] = "\x41\x1c"
+    ram_memory[0xd8, 2] = "\x41\x1c"  # ADDS R1, R0, #1
     ram_memory[0xf6, 2] = "\xef\xdc"
     mc = MemoryController(ram_memory, 0x00051400, 0x00051500)
     arm.mem.memories.append(mc)
