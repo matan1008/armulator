@@ -1,6 +1,5 @@
 from bitstring import BitArray
 from configurations import *
-import shift
 import bits_ops
 from arm_exceptions import *
 from memory_attributes import MemoryAttributes, MemType
@@ -223,24 +222,24 @@ class ArmV6:
 
     def condition_passed(self):
         cond = self.current_cond()
-        if cond.bin[0:3] == "000":
+        if cond[0:3] == "0b000":
             result = self.registers.cpsr.get_z()
-        elif cond.bin[0:3] == "001":
+        elif cond[0:3] == "0b001":
             result = self.registers.cpsr.get_c()
-        elif cond.bin[0:3] == "010":
+        elif cond[0:3] == "0b010":
             result = self.registers.cpsr.get_n()
-        elif cond.bin[0:3] == "011":
+        elif cond[0:3] == "0b011":
             result = self.registers.cpsr.get_v()
-        elif cond.bin[0:3] == "100":
+        elif cond[0:3] == "0b100":
             result = self.registers.cpsr.get_c() and not self.registers.cpsr.get_z()
-        elif cond.bin[0:3] == "101":
+        elif cond[0:3] == "0b101":
             result = self.registers.cpsr.get_n() == self.registers.cpsr.get_v()
-        elif cond.bin[0:3] == "110":
+        elif cond[0:3] == "0b110":
             result = (self.registers.cpsr.get_n() == self.registers.cpsr.get_v() and
                       not self.registers.cpsr.get_z())
-        elif cond.bin[0:3] == "111":
+        elif cond[0:3] == "0b111":
             result = True
-        if cond[3] and cond.bin != "1111":
+        if cond[3] and cond != "0b1111":
             result = not result
         return result
 
@@ -1908,4 +1907,8 @@ class ArmV6:
 
     def execute_instruction(self, opcode):
         self.registers.changed_registers = [False] * 16
-        opcode.execute(self)
+        if self.in_it_block():
+            opcode.execute(self)
+            self.registers.it_advance()
+        else:
+            opcode.execute(self)

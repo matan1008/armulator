@@ -456,7 +456,10 @@ class Registers:
             self.cpsr.set_it(BitArray(bin="0b00000000"))
         else:
             itstate = self.cpsr.get_it()
-            itstate.overwrite(shift.lsl(itstate[4:], 1), 4)
+            mask, carry = shift.lsl_c(itstate[4:], 1)
+            condition_state = BitArray(bool=carry) + mask
+            itstate.overwrite(condition_state, 3)
+            self.cpsr.set_it(itstate)
 
     def cpsr_write_by_instr(self, value, bytemask, is_excp_return):
         privileged = self.current_mode_is_not_user()
