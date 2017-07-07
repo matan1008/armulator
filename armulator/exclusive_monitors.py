@@ -13,7 +13,7 @@ class ExclusiveRecord(object):
         return self.paddress.uint <= paddress.uint < self.paddress.uint + self.size
 
     def is_end_in_block(self, paddress, size):
-        end = add(paddress, BitArray(uint=size, length=paddress.size), paddress.size)
+        end = add(paddress, BitArray(uint=size, length=len(paddress)), len(paddress))
         return self.is_in_block(end)
 
 
@@ -41,7 +41,7 @@ class LocalExclusiveMonitor(object):
         self.records.append(record)
 
     def clear_exclusive(self, proceesorid):
-        self.records = map(lambda record: record.processorid != proceesorid, self.records)
+        self.records = filter(lambda record: record.processorid != proceesorid, self.records)
 
 
 class GlobalExclusiveMonitor(object):
