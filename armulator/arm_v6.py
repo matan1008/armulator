@@ -10,6 +10,7 @@ from permissions import Permissions
 from enums import *
 import opcodes
 from armulator.registers import Registers
+from armulator.exclusive_monitors import LocalExclusiveMonitor
 
 
 class ArmV6:
@@ -20,6 +21,8 @@ class ArmV6:
         self.mem = MemoryControllerHub()
         self.is_wait_for_event = False
         self.is_wait_for_interrupt = False
+        if configurations["impdef_exclusive_monitors"]:
+            self.local_monitor = LocalExclusiveMonitor(configurations["impdef_exclusives_reservation_granule"])
         self.__init_registers__()
 
     def __init_registers__(self):
@@ -1439,31 +1442,32 @@ class ArmV6:
             return self.translate_address_p(va, ispriv, iswrite, wasaligned)
 
     def is_exclusive_local(self, paddress, processorid, size):
-        # mock
-        raise NotImplementedError()
+        if configurations["impdef_exclusive_monitors"]:
+            return self.local_monitor.is_exclusive(paddress, processorid, size)
+        else:
+            return False
 
     def is_exclusive_global(self, paddress, processorid, size):
-        # mock
-        raise NotImplementedError()
+        if configurations["impdef_exclusive_monitors"]:
+            return self.mem.global_monitor.is_exclusive(paddress, processorid, size)
+        else:
+            return False
 
     def clear_exclusive_local(self, processorid):
-        # mock
-        raise NotImplementedError()
-        pass
+        if configurations["impdef_exclusive_monitors"]:
+            return self.local_monitor.clear_exclusive(processorid)
 
     def clear_exclusive_by_address(self, paddress, processorid, size):
-        # mock
-        raise NotImplementedError()
+        if configurations["impdef_exclusive_monitors"]:
+            return self.mem.global_monitor.clear_exclusive_by_address(paddress, processorid, size)
 
     def mark_exclusive_global(self, paddress, processorid, size):
-        # mock
-        raise NotImplementedError()
-        pass
+        if configurations["impdef_exclusive_monitors"]:
+            return self.mem.global_monitor.mark_exclusive(paddress, processorid, size)
 
     def mark_exclusive_local(self, paddress, processorid, size):
-        # mock
-        raise NotImplementedError()
-        pass
+        if configurations["impdef_exclusive_monitors"]:
+            return self.local_monitor.mark_exclusive(paddress, processorid, size)
 
     def bkpt_instr_debug_event(self):
         # mock

@@ -1,6 +1,7 @@
 from bitstring import BitArray
 from armulator.configurations import configurations
 from armulator.memory_types import MEMORY_TYPE_DICT
+from armulator.exclusive_monitors import GlobalExclusiveMonitor
 
 
 class MemoryController(object):
@@ -22,6 +23,8 @@ class MemoryControllerHub(object):
     def __init__(self):
         self.memories = []
         self.init_memory()
+        if configurations["impdef_exclusive_monitors"]:
+            self.global_monitor = GlobalExclusiveMonitor(configurations["impdef_exclusives_reservation_granule"])
 
     def init_memory(self):
         for memory in configurations["memory_list"]:

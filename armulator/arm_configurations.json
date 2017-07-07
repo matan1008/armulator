@@ -37,5 +37,10 @@
   "coproc_accepted_pl0_undefined": true,
   "impdef_reset_vector": 0,
   "impdef_irq_vector": 24,
-  "impdef_fiq_vector": 28
+  "impdef_fiq_vector": 28,
+  "impdef_exclusive_monitors": false,
+  "impdef_exclusives_reservation_granule": 3,
+  "impdef_is_exclusive_not_cover_all_size": false,
+  "impdef_gexclusive_clear_cur_processor": false,
+  "impdef_g_is_exclusive_different_addr": false
 }
