@@ -1439,30 +1439,21 @@ class ArmV6:
             return self.translate_address_p(va, ispriv, iswrite, wasaligned)
 
     def is_exclusive_local(self, paddress, processorid, size):
-        # mock
-        raise NotImplementedError()
+        return False
 
     def is_exclusive_global(self, paddress, processorid, size):
-        # mock
-        raise NotImplementedError()
+        return False
 
     def clear_exclusive_local(self, processorid):
-        # mock
-        raise NotImplementedError()
         pass
 
     def clear_exclusive_by_address(self, paddress, processorid, size):
-        # mock
-        raise NotImplementedError()
+        pass
 
     def mark_exclusive_global(self, paddress, processorid, size):
-        # mock
-        raise NotImplementedError()
         pass
 
     def mark_exclusive_local(self, paddress, processorid, size):
-        # mock
-        raise NotImplementedError()
         pass
 
     def bkpt_instr_debug_event(self):
