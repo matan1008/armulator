@@ -25,3 +25,9 @@ class LdrhLiteral(AbstractOpcode):
                     processor.registers.set(self.t, zero_extend(data, 32))
                 else:
                     processor.registers.set(self.t, BitArray(length=32))  # unknown
+
+    def instruction_syndrome(self):
+        if self.t == 15:
+            return BitArray(length=9)
+        else:
+            return BitArray(bin="10100") + BitArray(uint=self.t, length=4)

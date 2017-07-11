@@ -1,5 +1,6 @@
 from armulator.opcodes.abstract_opcode import AbstractOpcode
 from armulator.bits_ops import add as bits_add, sub as bits_sub, zero_extend
+from bitstring import BitArray
 
 
 class LdrbImmediateArm(AbstractOpcode):
@@ -20,3 +21,9 @@ class LdrbImmediateArm(AbstractOpcode):
             processor.registers.set(self.t, zero_extend(processor.mem_u_get(address, 1), 32))
             if self.wback:
                 processor.registers.set(self.n, offset_addr)
+
+    def instruction_syndrome(self):
+        if self.t == 15 or self.wback:
+            return BitArray(length=9)
+        else:
+            return BitArray(bin="10000") + BitArray(uint=self.t, length=4)

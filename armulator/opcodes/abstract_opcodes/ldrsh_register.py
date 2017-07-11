@@ -26,7 +26,7 @@ class LdrshRegister(AbstractOpcode):
             offset = shift(processor.registers.get(self.m), self.shift_t, self.shift_n,
                            processor.registers.cpsr.get_c())
             offset_addr = bits_add(processor.registers.get(self.n), offset, 32) if self.add else bits_sub(
-                    processor.registers.get(self.n), offset, 32)
+                processor.registers.get(self.n), offset, 32)
             address = offset_addr if self.index else processor.registers.get(self.n)
             data = processor.mem_u_get(address, 2)
             if self.wback:
@@ -35,3 +35,9 @@ class LdrshRegister(AbstractOpcode):
                 processor.registers.set(self.t, sign_extend(data, 32))
             else:
                 processor.registers.set(self.t, BitArray(length=32))  # unknown
+
+    def instruction_syndrome(self):
+        if self.t == 15 or self.wback:
+            return BitArray(length=9)
+        else:
+            return BitArray(bin="10110") + BitArray(uint=self.t, length=4)
