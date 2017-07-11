@@ -32,7 +32,7 @@ class Strt(AbstractOpcode):
                     offset = shift(processor.registers.get(self.m), self.shift_t, self.shift_n,
                                    processor.registers.cpsr.get_c()) if self.register_form else self.imm32
                     offset_addr = bits_add(processor.registers.get(self.n), offset, 32) if self.add else bits_sub(
-                            processor.registers.get(self.n), offset, 32)
+                        processor.registers.get(self.n), offset, 32)
                     address = processor.registers.get(self.n) if self.post_index else offset_addr
                     if self.t == 15:
                         data = processor.registers.pc_store_value()
@@ -46,3 +46,6 @@ class Strt(AbstractOpcode):
                         processor.mem_u_unpriv_set(address, 4, BitArray(length=32))  # unknown
                     if self.post_index:
                         processor.registers.set(self.n, offset_addr)
+
+    def instruction_syndrome(self):
+        return BitArray(bin="11000") + BitArray(uint=self.t, length=4)

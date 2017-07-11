@@ -8,8 +8,16 @@ from tlb_record import TLBRecord
 from memory_controller_hub import MemoryControllerHub
 from permissions import Permissions
 from enums import *
-import opcodes
+import armulator.opcodes
 from armulator.registers import Registers
+from armulator.opcodes.abstract_opcodes.ldrt import Ldrt
+from armulator.opcodes.abstract_opcodes.ldrbt import Ldrbt
+from armulator.opcodes.abstract_opcodes.ldrht import Ldrht
+from armulator.opcodes.abstract_opcodes.ldrsht import Ldrsht
+from armulator.opcodes.abstract_opcodes.ldrsbt import Ldrsbt
+from armulator.opcodes.abstract_opcodes.strt import Strt
+from armulator.opcodes.abstract_opcodes.strht import Strht
+from armulator.opcodes.abstract_opcodes.strbt import Strbt
 
 
 class ArmV6:
@@ -324,8 +332,13 @@ class ArmV6:
         raise NotImplementedError()
 
     def ls_instruction_syndrome(self):
-        # mock
-        raise NotImplementedError()
+        if not hasattr(self.executed_opcode, "instruction_syndrome"):
+            return BitArray(length=9)
+        elif (isinstance(self.executed_opcode, (Strt, Strht, Strbt, Ldrt, Ldrht, Ldrsht, Ldrbt, Ldrsbt)) and
+                self.registers.current_instr_set() == InstrSet.InstrSet_ARM):
+            return BitArray(length=9)
+        else:
+            return self.executed_opcode.instruction_syndrome()
 
     def null_check_if_thumbee(self, n):
         if self.registers.current_instr_set() == InstrSet.InstrSet_ThumbEE:
@@ -1359,8 +1372,8 @@ class ArmV6:
                 tlbrecord_s2 = self.translation_table_walk_ld(s1outputaddr, mva, iswrite, False, s2fs1walk, size)
                 if (not wasaligned and
                         tlbrecord_s2.addrdesc.memattrs.type in (
-                                MemType.MemType_Device,
-                                MemType.MemType_StronglyOrdered
+                            MemType.MemType_Device,
+                            MemType.MemType_StronglyOrdered
                         )):
                     taketohypmode = True
                     secondstageabort = True
@@ -1894,10 +1907,11 @@ class ArmV6:
         return self.opcode
 
     def decode_instruction(self, instr):
-        return opcodes.decode_instruction(instr, self)
+        return armulator.opcodes.decode_instruction(instr, self)
 
     def execute_instruction(self, opcode):
         self.registers.changed_registers = [False] * 16
+        self.executed_opcode = opcode
         if self.in_it_block():
             opcode.execute(self)
             self.registers.it_advance()

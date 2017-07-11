@@ -1,6 +1,7 @@
 from armulator.opcodes.abstract_opcode import AbstractOpcode
 from armulator.bits_ops import add as bits_add, sub as bits_sub, zero_extend, align
 from armulator.arm_exceptions import EndOfInstruction
+from bitstring import BitArray
 
 
 class LdrbLiteral(AbstractOpcode):
@@ -20,3 +21,9 @@ class LdrbLiteral(AbstractOpcode):
                 base = align(processor.registers.get_pc(), 4)
                 address = bits_add(base, self.imm32, 32) if self.add else bits_sub(base, self.imm32, 32)
                 processor.registers.set(self.t, zero_extend(processor.mem_u_get(address, 1), 32))
+
+    def instruction_syndrome(self):
+        if self.t == 15:
+            return BitArray(length=9)
+        else:
+            return BitArray(bin="10000") + BitArray(uint=self.t, length=4)

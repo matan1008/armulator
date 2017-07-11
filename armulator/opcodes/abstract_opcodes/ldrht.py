@@ -27,7 +27,7 @@ class Ldrht(AbstractOpcode):
                 else:
                     offset = processor.registers.get(self.m) if self.register_form else self.imm32
                     offset_addr = bits_add(processor.registers.get(self.n), offset, 32) if self.add else bits_sub(
-                            processor.registers.get(self.n), offset, 32)
+                        processor.registers.get(self.n), offset, 32)
                     address = processor.registers.get(self.n) if self.post_index else offset_addr
                     data = processor.mem_u_unpriv_get(address, 2)
                     if self.post_index:
@@ -36,3 +36,9 @@ class Ldrht(AbstractOpcode):
                         processor.registers.set(self.t, zero_extend(data, 32))
                     else:
                         processor.registers.set(self.t, BitArray(length=32))  # unknown
+
+    def instruction_syndrome(self):
+        if self.t == 15:
+            return BitArray(length=9)
+        else:
+            return BitArray(bin="10100") + BitArray(uint=self.t, length=4)

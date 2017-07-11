@@ -27,7 +27,7 @@ class StrhRegister(AbstractOpcode):
                 offset = shift(processor.registers.get(self.m), self.shift_t, self.shift_n,
                                processor.registers.cpsr.get_c())
                 offset_addr = bits_add(processor.registers.get(self.n), offset, 32) if self.add else bits_sub(
-                        processor.registers.get(self.n), offset, 32)
+                    processor.registers.get(self.n), offset, 32)
                 address = offset_addr if self.index else processor.registers.get(self.n)
                 if processor.unaligned_support() or not address[31]:
                     processor.mem_u_set(address, 2, processor.registers.get(self.t)[16:32])
@@ -35,3 +35,9 @@ class StrhRegister(AbstractOpcode):
                     processor.mem_u_set(address, 2, BitArray(length=16))  # unknown
                 if self.wback:
                     processor.registers.set(self.n, offset_addr)
+
+    def instruction_syndrome(self):
+        if self.wback:
+            return BitArray(length=9)
+        else:
+            return BitArray(bin="10100") + BitArray(uint=self.t, length=4)
