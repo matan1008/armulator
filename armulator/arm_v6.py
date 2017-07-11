@@ -31,6 +31,7 @@ class ArmV6:
         self.is_wait_for_interrupt = False
         if configurations["impdef_exclusive_monitors"]:
             self.local_monitor = LocalExclusiveMonitor(configurations["impdef_exclusives_reservation_granule"])
+        self.executed_opcode = None
         self.__init_registers__()
 
     def __init_registers__(self):
