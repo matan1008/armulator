@@ -28,6 +28,7 @@ class ArmV6:
         self.mem = MemoryControllerHub()
         self.is_wait_for_event = False
         self.is_wait_for_interrupt = False
+        self.executed_opcode = None
         self.__init_registers__()
 
     def __init_registers__(self):
