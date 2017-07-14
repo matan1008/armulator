@@ -1,7 +1,7 @@
-from armulator.arm_v6 import ArmV6
+from armulator.armv6.arm_v6 import ArmV6
 from bitstring import BitArray
-from armulator.memory_controller_hub import MemoryController
-from armulator.memory_types import RAM
+from armulator.armv6.memory_controller_hub import MemoryController
+from armulator.armv6.memory_types import RAM
 
 
 def test_exclusive_sanity():

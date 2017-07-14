@@ -1,24 +1,26 @@
 from bitstring import BitArray
-from configurations import *
-from armulator.armv6 import bits_ops
-from arm_exceptions import *
-from memory_attributes import MemoryAttributes, MemType
-from address_descriptor import AddressDescriptor
-from tlb_record import TLBRecord
-from memory_controller_hub import MemoryControllerHub
-from permissions import Permissions
-from enums import *
+
 import armulator.armv6.opcodes
-from armulator.armv6.registers import Registers
-from armulator.armv6.opcodes.abstract_opcodes.ldrt import Ldrt
+from address_descriptor import AddressDescriptor
+from arm_exceptions import *
+from armulator.armv6 import bits_ops
+from armulator.armv6.exclusive_monitors import LocalExclusiveMonitor
 from armulator.armv6.opcodes.abstract_opcodes.ldrbt import Ldrbt
 from armulator.armv6.opcodes.abstract_opcodes.ldrht import Ldrht
-from armulator.armv6.opcodes.abstract_opcodes.ldrsht import Ldrsht
 from armulator.armv6.opcodes.abstract_opcodes.ldrsbt import Ldrsbt
-from armulator.armv6.opcodes.abstract_opcodes.strt import Strt
-from armulator.armv6.opcodes.abstract_opcodes.strht import Strht
+from armulator.armv6.opcodes.abstract_opcodes.ldrsht import Ldrsht
+from armulator.armv6.opcodes.abstract_opcodes.ldrt import Ldrt
 from armulator.armv6.opcodes.abstract_opcodes.strbt import Strbt
-from armulator.exclusive_monitors import LocalExclusiveMonitor
+from armulator.armv6.opcodes.abstract_opcodes.strht import Strht
+from armulator.armv6.opcodes.abstract_opcodes.strt import Strt
+from armulator.armv6.registers import Registers
+from configurations import *
+from enums import *
+from memory_attributes import MemoryAttributes, MemType
+from memory_controller_hub import MemoryControllerHub
+from permissions import Permissions
+from tlb_record import TLBRecord
+
 
 class ArmV6:
     def __init__(self):

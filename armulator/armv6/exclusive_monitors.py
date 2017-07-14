@@ -1,6 +1,6 @@
 from bitstring import BitArray
-from armulator.bits_ops import add
-from armulator.configurations import configurations
+from armulator.armv6.bits_ops import add
+from armulator.armv6.configurations import configurations
 
 
 class ExclusiveRecord(object):
