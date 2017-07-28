@@ -536,7 +536,7 @@ class Registers:
         if self.sctlr.get_v():
             return BitArray(bin="11111111111111110000000000000000")
         elif have_security_ext():
-            return self.vbar.value
+            return self.vbar.value.copy()
         else:
             return BitArray(length=32)
 
@@ -572,13 +572,13 @@ class Registers:
     def take_hyp_trap_exception(self):
         preferred_exceptn_return = BitArray(
                 uint=(self.get_pc().uint - 4 if self.cpsr.get_t() else self.get_pc().uint - 8), length=32)
-        new_spsr_value = self.cpsr.value
+        new_spsr_value = self.cpsr.value.copy()
         self.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, 20)
 
     def take_smc_exception(self):
         self.it_advance()
         new_lr_value = self.get_pc() if self.cpsr.get_t() else BitArray(uint=(self.get_pc().uint - 4), length=32)
-        new_spsr_value = self.cpsr.value
+        new_spsr_value = self.cpsr.value.copy()
         vect_offset = 8
         if self.cpsr.get_m() == "0b10110":
             self.scr.set_ns(False)
@@ -586,7 +586,7 @@ class Registers:
 
     def take_data_abort_exception(self, dabort_exception):
         new_lr_value = BitArray(uint=self.get_pc().uint + 4, length=32) if self.cpsr.get_t() else self.get_pc()
-        new_spsr_value = self.cpsr.value
+        new_spsr_value = self.cpsr.value.copy()
         vect_offset = 16
         preferred_exceptn_return = BitArray(uint=(new_lr_value.uint - 8), length=32)
         route_to_monitor = have_security_ext() and self.scr.get_ea() and self.is_external_abort()
@@ -636,7 +636,7 @@ class Registers:
         new_lr_value = (BitArray(uint=(self.get_pc().uint - 2), length=32)
                         if self.cpsr.get_t()
                         else BitArray(uint=(self.get_pc().uint - 4), length=32))
-        new_spsr_value = self.cpsr.value
+        new_spsr_value = self.cpsr.value.copy()
         vect_offset = 4
         take_to_hyp = have_virt_ext() and have_security_ext() and self.scr.get_ns() and self.cpsr.get_m() == "0b11010"
         route_to_hyp = (have_virt_ext() and
@@ -668,7 +668,7 @@ class Registers:
         new_lr_value = (bits_ops.sub(self.get_pc(), BitArray(bin="10"), 32)
                         if self.cpsr.get_t()
                         else bits_ops.sub(self.get_pc(), BitArray(bin="100"), 32))
-        new_spsr_value = self.cpsr.value
+        new_spsr_value = self.cpsr.value.copy()
         vect_offset = 8
         take_to_hyp = have_virt_ext() and have_security_ext() and self.scr.get_ns() and self.cpsr.get_m() == "0b11010"
         route_to_hyp = (have_virt_ext() and
@@ -696,7 +696,7 @@ class Registers:
 
     def take_physical_irq_exception(self):
         new_lr_value = self.get_pc() if self.cpsr.get_t() else bits_ops.sub(self.get_pc(), BitArray(bin="100"), 32)
-        new_spsr_value = self.cpsr.value
+        new_spsr_value = self.cpsr.value.copy()
         vect_offset = 24
         route_to_monitor = have_security_ext() and self.scr.get_irq()
         route_to_hyp = (
@@ -735,7 +735,7 @@ class Registers:
 
     def take_physical_fiq_exception(self):
         new_lr_value = self.get_pc() if self.cpsr.get_t() else bits_ops.sub(self.get_pc(), BitArray(bin="100"), 32)
-        new_spsr_value = self.cpsr.value
+        new_spsr_value = self.cpsr.value.copy()
         vect_offset = 28
         route_to_monitor = have_security_ext() and self.scr.get_fiq()
         route_to_hyp = (

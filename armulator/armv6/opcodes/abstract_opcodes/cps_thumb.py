@@ -15,7 +15,7 @@ class CpsThumb(AbstractOpcode):
 
     def execute(self, processor):
         if processor.registers.current_mode_is_not_user():
-            cpsr_val = processor.registers.cpsr.value
+            cpsr_val = processor.registers.cpsr.value.copy()
             if self.enable:
                 if self.affect_a:
                     cpsr_val[23] = False
