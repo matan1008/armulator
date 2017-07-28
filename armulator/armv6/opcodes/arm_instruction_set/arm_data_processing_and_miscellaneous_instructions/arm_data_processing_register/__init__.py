@@ -95,37 +95,37 @@ def decode_instruction(instr):
             return SubsPcLrArmA2
         else:
             return OrrRegisterA1
-    elif instr.bin[7:11] == "1100" and instr.bin[25:27] == "00" and instr.bin[20:25] == "00000":
+    elif instr.bin[7:11] == "1101" and instr.bin[25:27] == "00" and instr.bin[20:25] == "00000":
         # Move
         if instr[16:20] == "0b1111" and instr[11]:
             return SubsPcLrArmA2
         else:
             return MovRegisterArmA1
-    elif instr.bin[7:11] == "1100" and instr.bin[25:27] == "00" and instr.bin[20:25] != "00000":
+    elif instr.bin[7:11] == "1101" and instr.bin[25:27] == "00" and instr.bin[20:25] != "00000":
         # Logical Shift Left
         if instr[16:20] == "0b1111" and instr[11]:
             return SubsPcLrArmA2
         else:
             return LslImmediateA1
-    elif instr.bin[7:11] == "1100" and instr.bin[25:27] == "01":
+    elif instr.bin[7:11] == "1101" and instr.bin[25:27] == "01":
         # Logical Shift Right
         if instr[16:20] == "0b1111" and instr[11]:
             return SubsPcLrArmA2
         else:
             return LsrImmediateA1
-    elif instr.bin[7:11] == "1100" and instr.bin[25:27] == "10":
+    elif instr.bin[7:11] == "1101" and instr.bin[25:27] == "10":
         # Arithmetic Shift Right
         if instr[16:20] == "0b1111" and instr[11]:
             return SubsPcLrArmA2
         else:
             return AsrImmediateA1
-    elif instr.bin[7:11] == "1100" and instr.bin[25:27] == "11" and instr.bin[20:25] == "00000":
+    elif instr.bin[7:11] == "1101" and instr.bin[25:27] == "11" and instr.bin[20:25] == "00000":
         # Rotate Right with Extend
         if instr[16:20] == "0b1111" and instr[11]:
             return SubsPcLrArmA2
         else:
             return RrxA1
-    elif instr.bin[7:11] == "1100" and instr.bin[25:27] == "11" and instr.bin[20:25] != "00000":
+    elif instr.bin[7:11] == "1101" and instr.bin[25:27] == "11" and instr.bin[20:25] != "00000":
         # Rotate Right
         if instr[16:20] == "0b1111" and instr[11]:
             return SubsPcLrArmA2
