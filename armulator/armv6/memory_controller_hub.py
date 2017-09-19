@@ -62,7 +62,7 @@ class MemoryControllerHub(object):
         assert size == 1 or size == 2 or size == 4 or size == 8
         mc = self.get_memory_by_address(memaddrdesc.paddress.physicaladdress.uint)
         if mc is not None:
-            value.byteswap()
+            value = value.copy().byteswap()
             mc.mem[memaddrdesc.paddress.physicaladdress.uint - mc.beginning, size] = value.hex.decode("hex")
 
     def set_bits(self, memaddrdesc, size, ind, amount, bits):
