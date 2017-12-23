@@ -6,7 +6,7 @@ class MemoryType(object):
 
     @abstractmethod
     def __init__(self, size):
-        pass
+        self.size = size
 
     def __getitem__(self, (address, size)):
         return self.read(address, size)

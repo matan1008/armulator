@@ -21,11 +21,12 @@ from armulator.armv6.opcodes.abstract_opcodes.strbt import Strbt
 
 
 class ArmV6:
-    def __init__(self):
+    def __init__(self, config_file="armulator/armv6/arm_configurations.json"):
+        configurations.load(config_file)
         self.registers = Registers()
         self.run = True
         self.opcode = BitArray(length=32)
-        self.mem = MemoryControllerHub()
+        self.mem = MemoryControllerHub.from_memory_list(configurations.memory_list)
         self.is_wait_for_event = False
         self.is_wait_for_interrupt = False
         self.executed_opcode = None
@@ -75,7 +76,7 @@ class ArmV6:
         self.registers.cpsr.set_j(False)
         self.registers.cpsr.set_t(self.registers.sctlr.get_te())
         self.registers.cpsr.set_e(self.registers.sctlr.get_ee())
-        reset_vector = (configurations["impdef_reset_vector"]
+        reset_vector = (configurations.impdef_reset_vector
                         if has_imp_def_reset_vector()
                         else self.registers.exc_vector_base())
         reset_vector[31] = False
@@ -268,11 +269,11 @@ class ArmV6:
                 hsr_value[7] = True
                 hsr_value[8:12] = self.current_cond()
             else:
-                hsr_value[7] = configurations["write_hsr_hsr_value_24"]
+                hsr_value[7] = configurations.write_hsr_hsr_value_24
                 if hsr_value[7]:
                     if self.condition_passed():
                         hsr_value[8:12] = (self.current_cond()
-                                           if configurations["write_hsr_23_22_cond"]
+                                           if configurations.write_hsr_23_22_cond
                                            else BitArray(bin="1110"))
                     else:
                         hsr_value[8:12] = self.current_cond()
@@ -512,7 +513,7 @@ class ArmV6:
                 if ldfsr_format:
                     dfsr_string[0] = self.tlb_lookup_came_from_cache_maintenance()
                     if dtype in (DAbort.DAbort_AsyncExternal, DAbort.DAbort_SyncExternal):
-                        dfsr_string[1] = configurations["dfsr_string_12"]
+                        dfsr_string[1] = configurations.dfsr_string_12
                     else:
                         dfsr_string[1] = False
                     if dtype in (DAbort.DAbort_SyncWatchpoint, DAbort.DAbort_AsyncWatchpoint):
@@ -527,7 +528,7 @@ class ArmV6:
                     if have_lpae():
                         dfsr_string[0] = self.tlb_lookup_came_from_cache_maintenance()
                     if dtype in (DAbort.DAbort_AsyncExternal, DAbort.DAbort_SyncExternal):
-                        dfsr_string[1] = configurations["dfsr_string_12"]
+                        dfsr_string[1] = configurations.dfsr_string_12
                     else:
                         dfsr_string[1] = False
                     if dtype in (DAbort.DAbort_SyncWatchpoint, DAbort.DAbort_AsyncWatchpoint):
@@ -568,7 +569,7 @@ class ArmV6:
                     ec[0:6] = "0b100101"
                     hsr_string[0] = False
                 if dtype in (DAbort.DAbort_AsyncExternal, DAbort.DAbort_SyncExternal):
-                    hsr_string[15] = configurations["data_abort_hsr_9"]
+                    hsr_string[15] = configurations.data_abort_hsr_9
                 hsr_string[16] = self.tlb_lookup_came_from_cache_maintenance()
                 hsr_string[17] = s2fs1walk
                 hsr_string[18] = iswrite
@@ -580,12 +581,12 @@ class ArmV6:
                     (dtype == DAbort.DAbort_SyncWatchpoint and self.registers.dbgdidr.get_version().uint <= 4)):
                 self.registers.dfar = BitArray(length=32)  # unknown
             elif dtype == DAbort.DAbort_SyncParity:
-                if configurations["data_abort_pmsa_change_dfar"]:
+                if configurations.data_abort_pmsa_change_dfar:
                     self.registers.dfar = vaddress
             else:
                 self.registers.dfar = vaddress
             if dtype in (DAbort.DAbort_AsyncExternal, DAbort.DAbort_SyncExternal):
-                dfsr_string[1] = configurations["dfsr_string_12"]
+                dfsr_string[1] = configurations.dfsr_string_12
             else:
                 dfsr_string[1] = False
             if dtype in (DAbort.DAbort_SyncWatchpoint, DAbort.DAbort_AsyncWatchpoint):
@@ -1189,10 +1190,10 @@ class ArmV6:
                 l1descaddr.memattrs.innerhints = hintsattrs[0:2]
             else:
                 l1descaddr.memattrs.innerattrs[0:2] = ("0b10"
-                                                       if configurations["translation_walk_sd_l1descaddr_attrs_10"]
+                                                       if configurations.translation_walk_sd_l1descaddr_attrs_10
                                                        else "0b11")
                 l1descaddr.memattrs.innerhints[0:2] = ("0b01"
-                                                       if configurations["translation_walk_sd_l1descaddr_hints_01"]
+                                                       if configurations.translation_walk_sd_l1descaddr_hints_01
                                                        else "0b11")
         if not have_virt_ext() or self.registers.is_secure():
             l1descaddr2 = l1descaddr
@@ -1754,7 +1755,7 @@ class ArmV6:
                     cr_nnum != 14 and
                     self.registers.hstr.get_t_n(cr_nnum)):
                 if not self.registers.current_mode_is_not_user() and self.instr_is_pl0_undefined(instr):
-                    if configurations["coproc_accepted_pl0_undefined"]:
+                    if configurations.coproc_accepted_pl0_undefined:
                         raise UndefinedInstructionException()
                 hsr_string = bits_ops.zeros(25)
                 if two_reg:
@@ -1784,7 +1785,7 @@ class ArmV6:
                         cr_nnum == 10 and cr_mnum in (0, 1, 4, 8)) or (
                         cr_nnum == 11 and cr_mnum in (0, 1, 2, 3, 4, 5, 6, 7, 8, 15)):
                     if not self.registers.current_mode_is_not_user() and self.instr_is_pl0_undefined(instr):
-                        if configurations["coproc_accepted_pl0_undefined"]:
+                        if configurations.coproc_accepted_pl0_undefined:
                             raise UndefinedInstructionException()
                         hsr_string = bits_ops.zeros(25)
                         hsr_string[5:8] = instr[24:27]

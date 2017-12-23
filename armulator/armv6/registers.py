@@ -96,14 +96,14 @@ class Registers:
         self.dacr = DACR()
         self.mpuir = MPUIR()
         self.cpacr = CPACR()
-        self.rgnr = RGNR(number_of_mpu_regions)
+        self.rgnr = RGNR(number_of_mpu_regions())
         self.hcptr = HCPTR()
-        self.drsrs = [DRSR()] * number_of_mpu_regions
-        self.drbars = [BitArray(length=32)] * number_of_mpu_regions
-        self.dracrs = [DRACR()] * number_of_mpu_regions
-        self.irbars = [BitArray(length=32)] * number_of_mpu_regions
-        self.irsrs = [IRSR()] * number_of_mpu_regions
-        self.iracrs = [IRACR()] * number_of_mpu_regions
+        self.drsrs = [DRSR()] * number_of_mpu_regions()
+        self.drbars = [BitArray(length=32)] * number_of_mpu_regions()
+        self.dracrs = [DRACR()] * number_of_mpu_regions()
+        self.irbars = [BitArray(length=32)] * number_of_mpu_regions()
+        self.irsrs = [IRSR()] * number_of_mpu_regions()
+        self.iracrs = [IRACR()] * number_of_mpu_regions()
         self.teecr = TEECR()
         self.event_register = False
         self.midr = MIDR()
@@ -729,7 +729,7 @@ class Registers:
             self.cpsr.set_t(self.sctlr.get_te())
             self.cpsr.set_e(self.sctlr.get_ee())
             if self.sctlr.get_ve():
-                self.branch_to(BitArray(hex=configurations["impdef_irq_vector"]))
+                self.branch_to(BitArray(hex=configurations.impdef_irq_vector))
             else:
                 self.branch_to(bits_ops.add(self.exc_vector_base(), BitArray(uint=vect_offset, length=32), 32))
 
@@ -770,7 +770,7 @@ class Registers:
             self.cpsr.set_t(self.sctlr.get_te())
             self.cpsr.set_e(self.sctlr.get_ee())
             if self.sctlr.get_ve():
-                self.branch_to(BitArray(hex=configurations["impdef_fiq_vector"]))
+                self.branch_to(BitArray(hex=configurations.impdef_fiq_vector))
             else:
                 self.branch_to(bits_ops.add(self.exc_vector_base(), BitArray(uint=vect_offset, length=32), 32))
 
@@ -778,4 +778,4 @@ class Registers:
         self._R[self.RName.RName_PC] = bits_ops.add(self._R[self.RName.RName_PC], BitArray(bin=bin(opcode_length)), 32)
 
     def reset_control_registers(self):
-        self.vbar.value = BitArray(bin=configurations["reset_values"]["VBAR"])
+        self.vbar.value = BitArray(bin=configurations.reset_values["VBAR"])
