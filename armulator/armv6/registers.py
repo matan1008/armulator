@@ -96,14 +96,14 @@ class Registers:
         self.dacr = DACR()
         self.mpuir = MPUIR()
         self.cpacr = CPACR()
-        self.rgnr = RGNR(number_of_mpu_regions)
+        self.rgnr = RGNR(number_of_mpu_regions())
         self.hcptr = HCPTR()
-        self.drsrs = [DRSR()] * number_of_mpu_regions
-        self.drbars = [BitArray(length=32)] * number_of_mpu_regions
-        self.dracrs = [DRACR()] * number_of_mpu_regions
-        self.irbars = [BitArray(length=32)] * number_of_mpu_regions
-        self.irsrs = [IRSR()] * number_of_mpu_regions
-        self.iracrs = [IRACR()] * number_of_mpu_regions
+        self.drsrs = [DRSR()] * number_of_mpu_regions()
+        self.drbars = [BitArray(length=32)] * number_of_mpu_regions()
+        self.dracrs = [DRACR()] * number_of_mpu_regions()
+        self.irbars = [BitArray(length=32)] * number_of_mpu_regions()
+        self.irsrs = [IRSR()] * number_of_mpu_regions()
+        self.iracrs = [IRACR()] * number_of_mpu_regions()
         self.teecr = TEECR()
         self.event_register = False
         self.midr = MIDR()
@@ -778,4 +778,4 @@ class Registers:
         self._R[self.RName.RName_PC] = bits_ops.add(self._R[self.RName.RName_PC], BitArray(bin=bin(opcode_length)), 32)
 
     def reset_control_registers(self):
-        self.vbar.value = BitArray(bin=configurations["reset_values"]["VBAR"])
+        self.vbar.value = BitArray(bin=reset_values()["VBAR"])

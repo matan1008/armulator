@@ -21,11 +21,12 @@ from armulator.armv6.opcodes.abstract_opcodes.strbt import Strbt
 
 
 class ArmV6:
-    def __init__(self):
+    def __init__(self, config_file="armulator/armv6/arm_configurations.json"):
+        init_configurations(config_file)
         self.registers = Registers()
         self.run = True
         self.opcode = BitArray(length=32)
-        self.mem = MemoryControllerHub()
+        self.mem = MemoryControllerHub.from_memory_list(memory_list())
         self.is_wait_for_event = False
         self.is_wait_for_interrupt = False
         self.executed_opcode = None

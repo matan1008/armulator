@@ -21,11 +21,13 @@ class MemoryControllerHub(object):
 
     def __init__(self):
         self.memories = []
-        self.init_memory()
 
-    def init_memory(self):
-        for memory in configurations["memory_list"]:
-            self.add_memory(**memory)
+    @staticmethod
+    def from_memory_list(memory_list):
+        mch = MemoryControllerHub()
+        for memory in memory_list:
+            mch.add_memory(**memory)
+        return mch
 
     def add_memory(self, mem_type, beginning, end):
         mem = MEMORY_TYPE_DICT[mem_type](end - beginning)

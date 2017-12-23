@@ -1,10 +1,17 @@
 import json
 from armulator.armv6.enums import *
 
-with open("armulator/armv6/arm_configurations.json") as f:
-    configurations = json.load(f)
+configurations = {}
 
-number_of_mpu_regions = configurations["number_of_mpu_regions"]
+
+def init_configurations(path):
+    global configurations
+    with open(path) as f:
+        configurations = json.load(f)
+
+
+def number_of_mpu_regions():
+    return configurations["number_of_mpu_regions"]
 
 
 def have_security_ext():
@@ -61,3 +68,11 @@ def is_armv7r_profile():
 
 def has_imp_def_reset_vector():
     return configurations["has_imp_def_reset_vector"]
+
+
+def reset_values():
+    return configurations["reset_values"]
+
+
+def memory_list():
+    return configurations["memory_list"]
