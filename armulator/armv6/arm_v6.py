@@ -1,3 +1,4 @@
+from os import path
 from bitstring import BitArray
 from configurations import *
 from armulator.armv6 import bits_ops
@@ -21,7 +22,7 @@ from armulator.armv6.opcodes.abstract_opcodes.strbt import Strbt
 
 
 class ArmV6:
-    def __init__(self, config_file="armulator/armv6/arm_configurations.json"):
+    def __init__(self, config_file=path.join(path.abspath(path.dirname(__file__)), "arm_configurations.json")):
         configurations.load(config_file)
         self.registers = Registers()
         self.run = True
