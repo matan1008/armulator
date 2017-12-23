@@ -1879,8 +1879,8 @@ class ArmV6:
             self.registers.increment_pc(self.this_instr_length() / 8)
 
     def emulate_cycle(self):
-        instr = self.fetch_instruction()
         try:
+            instr = self.fetch_instruction()
             opcode_c = self.decode_instruction(instr)
             if not opcode_c:
                 raise UndefinedInstructionException()
