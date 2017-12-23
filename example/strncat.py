@@ -3,49 +3,62 @@ from armulator.armv6.arm_v6 import ArmV6
 from armulator.armv6.memory_types import RAM
 from armulator.armv6.memory_controller_hub import MemoryController
 
-strncat_impl = RAM(38)  # R0 - destination, R1 - source, R2 - num
-strncat_impl[0, 2] = "\x10\xb4"  # PUSH {R4}
-strncat_impl[2, 2] = "\x43\x1e"  # SUBS R3, R0, #1
-strncat_impl[4, 2] = "\x5b\x1c"  # ADDS R3, R3, #1
-strncat_impl[6, 2] = "\x1c\x78"  # LDRB R4, [R3]
-strncat_impl[8, 2] = "\x00\x2c"  # CMP R4, #0
-strncat_impl[0xa, 2] = "\xfb\xd1"  # BNE 4
-strncat_impl[0xc, 2] = "\x05\xe0"  # B 0x1a
-strncat_impl[0xe, 2] = "\x0c\x78"  # LDRB R4, [R1]
-strncat_impl[0x10, 2] = "\x49\x1c"  # ADDS R1, R1, #1
-strncat_impl[0x12, 2] = "\x1c\x70"  # STRB R4, [R3]
-strncat_impl[0x14, 2] = "\x5b\x1c"  # ADDS R3, R3, #1
-strncat_impl[0x16, 2] = "\x00\x2c"  # CMP R4, #0
-strncat_impl[0x18, 2] = "\x03\xd0"  # BEQ 0x22
-strncat_impl[0x1a, 2] = "\x52\x1e"  # SUBS R2, R2, #1
-strncat_impl[0x1c, 2] = "\xf7\xd2"  # BCS 0xe
-strncat_impl[0x1e, 2] = "\x00\x21"  # MOVS R1, #0
-strncat_impl[0x20, 2] = "\x19\x70"  # STRB R1, [R3]
-strncat_impl[0x22, 2] = "\x10\xbc"  # POP {R4}
-strncat_impl[0x24, 2] = "\x70\x47"  # BX LR
+STRNCAT_IMPL = (  # R0 - destination, R1 - source, R2 - num
+    "\x10\xb4"  # PUSH {R4}
+    "\x43\x1e"  # SUBS R3, R0, #1
+    "\x5b\x1c"  # ADDS R3, R3, #1
+    "\x1c\x78"  # LDRB R4, [R3]
+    "\x00\x2c"  # CMP R4, #0
+    "\xfb\xd1"  # BNE 4
+    "\x05\xe0"  # B 0x1a
+    "\x0c\x78"  # LDRB R4, [R1]
+    "\x49\x1c"  # ADDS R1, R1, #1
+    "\x1c\x70"  # STRB R4, [R3]
+    "\x5b\x1c"  # ADDS R3, R3, #1
+    "\x00\x2c"  # CMP R4, #0
+    "\x03\xd0"  # BEQ 0x22
+    "\x52\x1e"  # SUBS R2, R2, #1
+    "\xf7\xd2"  # BCS 0xe
+    "\x00\x21"  # MOVS R1, #0
+    "\x19\x70"  # STRB R1, [R3]
+    "\x10\xbc"  # POP {R4}
+    "\x70\x47"  # BX LR
+)
+FUNCTION_BASE = 0xF0000000
+
+
+def call_function_without_stack(proc, function_binary, register_params):
+    function_memory = RAM(len(function_binary))
+    function_memory.write(0, len(function_binary), function_binary)
+    mc = MemoryController(function_memory, FUNCTION_BASE, FUNCTION_BASE + len(function_binary))
+    proc.mem.memories.append(mc)
+    for register_index in register_params:
+        proc.registers.set(register_index, register_params[register_index])
+    curr_pc = BitArray(hex="0xF0000000")
+    proc.registers.branch_to(curr_pc)
+    while proc.registers.pc_store_value().uint != 0:
+        proc.emulate_cycle()
 
 
 def strncat(destination, source, num):
-    arm = ArmV6()
+    arm = ArmV6("../armulator/armv6/arm_configurations.json")
     arm.take_reset()
-    curr_pc = BitArray(hex="0xF0000000")
     arm.registers.sctlr.set_m(False)
-    mc = MemoryController(strncat_impl, 0xF0000000, 0xF0000026)
-    arm.mem.memories.append(mc)
     strings = RAM((len(destination) + len(source)) * 2)
     strings[0, len(destination)] = destination
-    strings[len(destination) + len(source), len(source)] = source
+    source_offset = len(destination) + len(source)
+    strings[source_offset, len(source)] = source
     strings_base = 0xE0000000
-    mc = MemoryController(strings, strings_base, strings_base + (len(destination) + len(source)) * 2)
+    mc = MemoryController(strings, strings_base, strings_base + strings.size)
     arm.mem.memories.append(mc)
-    arm.registers.set(0, BitArray(uint=strings_base, length=32))
-    arm.registers.set(1, BitArray(uint=strings_base + len(destination) + len(source), length=32))
-    arm.registers.set(2, BitArray(uint=num, length=32))
-    arm.registers.branch_to(curr_pc)
-    while arm.registers.pc_store_value().uint != 0:
-        arm.emulate_cycle()
-    return strings.read(0, min(len(destination) + len(source), num))
+    call_function_without_stack(arm, STRNCAT_IMPL, {
+        0: BitArray(uint=strings_base, length=32),  # Address of destination string
+        1: BitArray(uint=strings_base + source_offset, length=32),  # Address of destination string
+        2: BitArray(uint=num, length=32)  # Address of destination string
+    })
+    return strings.read(0, min(len(destination) + len(source) - 1, num))
 
 
-print strncat("hey \x00", "I just met you\x00", 8)
-print strncat("hey \x00", "I just met you\x00", 100)
+if __name__ == "__main__":
+    assert strncat("hey \x00", "I just met you\x00", 100) == "hey I just met you\x00"
+    assert strncat("hey \x00", "I just met you\x00", 8) == "hey I ju"
