@@ -1,5 +1,4 @@
 from bitstring import BitArray
-from armulator.armv6.configurations import configurations
 from armulator.armv6.memory_types import MEMORY_TYPE_DICT
 
 
