@@ -41,7 +41,7 @@ def call_function_without_stack(proc, function_binary, register_params):
 
 
 def strncat(destination, source, num):
-    arm = ArmV6("../armulator/armv6/arm_configurations.json")
+    arm = ArmV6()
     arm.take_reset()
     arm.registers.sctlr.set_m(False)
     strings = RAM((len(destination) + len(source)) * 2)
