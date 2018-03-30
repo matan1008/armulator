@@ -22,7 +22,7 @@ class LdrRegisterArmA1(LdrRegisterArm, Opcode):
         w = instr[10]
         index = instr[7]
         add = instr[8]
-        wback = (not index) and w
+        wback = (not index) or w
         shift_t, shift_n = decode_imm_shift(type_o, imm5)
         if rm.uint == 15 or (wback and (rn.uint == 15 or rn.uint == rt.uint)) or (
                             arch_version() < 6 and wback and rm.uint == rn.uint):

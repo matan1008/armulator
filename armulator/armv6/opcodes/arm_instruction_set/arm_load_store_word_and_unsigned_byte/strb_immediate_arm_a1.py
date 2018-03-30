@@ -18,7 +18,7 @@ class StrbImmediateArmA1(StrbImmediateArm, Opcode):
         imm12 = instr[20:32]
         rt = instr[16:20]
         rn = instr[12:16]
-        wback = (not index) and w
+        wback = (not index) or w
         imm32 = "0b00000000000000000000" + imm12
         if rt.uint == 15 or (wback and (rn.uint == 15 or rn.uint == rt.uint)):
             print "unpredictable"

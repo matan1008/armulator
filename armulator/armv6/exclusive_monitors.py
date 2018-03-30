@@ -28,7 +28,7 @@ class LocalExclusiveMonitor(object):
         address = paddress.physicaladdress
         for record in self.records:
             if record.processorid == processorid and record.is_in_block(address):
-                if record.is_end_in_block(address, size) or configurations["impdef_is_exclusive_not_cover_all_size"]:
+                if record.is_end_in_block(address, size) or configurations.impdef_is_exclusive_not_cover_all_size:
                     return True
         return False
 
@@ -76,7 +76,7 @@ class GlobalExclusiveMonitor(object):
         records = []
         for record in self.records:
             if record.is_in_block(paddress.physicaladdress):
-                if processorid != record.processorid or configurations["impdef_gexclusive_clear_cur_processor"]:
+                if processorid != record.processorid or configurations.impdef_gexclusive_clear_cur_processor:
                     continue
             records.append(record)
         self.records = records
