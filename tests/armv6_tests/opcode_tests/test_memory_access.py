@@ -6,6 +6,8 @@ from armulator.armv6.memory_types import RAM
 from armulator.armv6.opcodes.thumb_instruction_set.thumb_instruction_set_encoding_16_bit. \
     thumb_load_store_single_data_item.ldr_register_thumb_t1 import LdrRegisterThumbT1
 from armulator.armv6.opcodes.thumb_instruction_set.thumb_instruction_set_encoding_16_bit.stm_t1 import StmT1
+from armulator.armv6.opcodes.arm_instruction_set.arm_data_processing_and_miscellaneous_instructions. \
+    arm_extra_load_store_instructions.strd_immediate_a1 import StrdImmediateA1
 
 
 def test_ldr_register_thumb():
@@ -51,8 +53,8 @@ def test_stm_thumb():
     arm.mem.memories.append(mc)
     opcode = arm.decode_instruction(instr)
     opcode = opcode.from_bitarray(instr, arm)
-    assert type(opcode) == StmT1
-    assert opcode.wback is True
+    assert isinstance(opcode, StmT1)
+    assert opcode.wback
     assert opcode.n == 1
     assert opcode.registers == "0b0000000000100100"
     arm.registers.set(opcode.n, BitArray(hex="0x0F000004"))
@@ -61,3 +63,36 @@ def test_stm_thumb():
     arm.execute_instruction(opcode)
     assert ram_memory[4, 8] == "VERYNICE"
     assert arm.registers.get(opcode.n) == "0x0F00000C"
+
+
+def test_strd_immediate_arm():
+    arm = ArmV6()
+    arm.registers.sctlr.set_te(False)  # Switch to ARM mode after reset
+    arm.take_reset()
+    instr = BitArray(bin="11100001110011010000000011110000")  # Store double to SP
+    arm.registers.drsrs[0].set_en(True)  # enabling memory region
+    arm.registers.drsrs[0].set_rsize("0b01000")  # setting region size
+    arm.registers.drbars[0] = BitArray(hex="0x0F000000")  # setting region base address
+    arm.registers.dracrs[0].set_ap("0b011")  # setting access permissions
+    arm.registers.mpuir.set_iregion("0x01")  # declaring the region
+    arm.registers.mpuir.set_dregion("0x01")  # declaring the region
+    ram_memory = RAM(0x100)
+    mc = MemoryController(ram_memory, 0x0F000000, 0x0F000100)
+    arm.mem.memories.append(mc)
+    arm.opcode = instr
+    opcode = arm.decode_instruction(instr)
+    opcode = opcode.from_bitarray(instr, arm)
+    assert isinstance(opcode, StrdImmediateA1)
+    assert not opcode.wback
+    assert opcode.n == 13
+    assert opcode.index
+    assert opcode.add
+    assert opcode.imm32.int == 0
+    assert opcode.t == 0
+    assert opcode.t2 == 1
+    arm.registers.set(opcode.n, BitArray(hex="0x0F000004"))
+    arm.registers.set(opcode.t, BitArray(bytes="YREV"))
+    arm.registers.set(opcode.t2, BitArray(bytes="ECIN"))
+    arm.execute_instruction(opcode)
+    assert ram_memory[4, 8] == "VERYNICE"
+    assert arm.registers.get(opcode.n) == "0x0F000004"
