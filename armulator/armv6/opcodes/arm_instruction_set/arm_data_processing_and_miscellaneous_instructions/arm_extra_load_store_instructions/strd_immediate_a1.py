@@ -17,7 +17,7 @@ class StrdImmediateA1(StrdImmediate, Opcode):
         imm4_l = instr[-4:]
         imm4_h = instr[20:24]
         rt = instr[16:20]
-        rn = instr[162:12]
+        rn = instr[12:16]
         add = instr[8]
         imm32 = "0b000000000000000000000000" + imm4_h + imm4_l
         t2 = rt.uint + 1
