@@ -288,7 +288,7 @@ class ArmV6:
 
     def branch_write_pc(self, address):
         if self.registers.current_instr_set() == InstrSet.InstrSet_ARM:
-            if arch_version() < 6 and address.bin[29:] != "00":
+            if arch_version() < 6 and address.bin[30:] != "00":
                 print "unpredictable"
             self.registers.branch_to(address[:-2] + BitArray(bin="00"))
         elif self.registers.current_instr_set() == InstrSet.InstrSet_Jazelle:
@@ -1391,7 +1391,7 @@ class ArmV6:
 
     def translate_address_p(self, va, ispriv, iswrite, wasaligned):
         result = AddressDescriptor()
-        perms = Permissions
+        perms = Permissions()
         result.paddress.physicaladdress = "0b00000000" + va
         # IMPLEMENTATION_DEFINED setting of result.paddress.NS;
         if not self.registers.sctlr.get_m():
