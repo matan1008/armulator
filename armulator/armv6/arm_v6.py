@@ -1893,7 +1893,7 @@ class ArmV6:
             self.registers.take_svc_exception()
         except SMCException:
             self.registers.take_smc_exception()
-        except DataAbortException, dabort_exception:
+        except DataAbortException as dabort_exception:
             self.registers.take_data_abort_exception(dabort_exception)
         except HypTrapException:
             self.registers.take_hyp_trap_exception()
