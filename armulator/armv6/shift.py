@@ -154,15 +154,15 @@ def thumb_expand_imm_c(imm12, carry_in):
             imm32 = bits_ops.zero_extend(imm12[4:12], 32)
         elif imm12[2:4] == "0b01":
             if imm12[4:12] == "0b00000000":
-                print "unpredictable"
+                print("unpredictable")
             imm32 = "0b00000000" + imm12[4:12] + "0b00000000" + imm12[4:12]
         elif imm12[2:4] == "0b10":
             if imm12[4:12] == "0b00000000":
-                print "unpredictable"
+                print("unpredictable")
             imm32 = imm12[4:12] + "0b00000000" + imm12[4:12] + "0b00000000"
         elif imm12[2:4] == "0b11":
             if imm12[4:12] == "0b00000000":
-                print "unpredictable"
+                print("unpredictable")
             imm32 = imm12[4:12] + imm12[4:12] + imm12[4:12] + imm12[4:12]
         carry_out = carry_in
     else:

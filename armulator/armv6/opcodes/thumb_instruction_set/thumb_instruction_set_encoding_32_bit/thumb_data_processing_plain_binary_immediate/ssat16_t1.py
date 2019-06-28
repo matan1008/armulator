@@ -17,6 +17,6 @@ class Ssat16T1(Ssat16, Opcode):
         rn = instr[12:16]
         saturate_to = sat_imm.uint + 1
         if rd.uint in (13, 15) or rn.uint in (13, 15):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return Ssat16T1(instr, **{"saturate_to": saturate_to, "d": rd.uint, "n": rn.uint})

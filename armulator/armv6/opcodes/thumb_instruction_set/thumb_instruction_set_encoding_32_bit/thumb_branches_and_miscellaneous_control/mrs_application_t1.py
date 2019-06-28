@@ -14,6 +14,6 @@ class MrsApplicationT1(MrsApplication, Opcode):
     def from_bitarray(instr, processor):
         rd = instr[20:24]
         if rd.uint in (13, 15):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return MrsApplicationT1(instr, **{"d": rd.uint})

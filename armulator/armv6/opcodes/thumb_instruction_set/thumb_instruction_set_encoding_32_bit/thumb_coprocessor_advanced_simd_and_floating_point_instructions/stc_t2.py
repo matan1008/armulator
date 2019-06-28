@@ -24,7 +24,7 @@ class StcT2(Stc, Opcode):
         if instr[7:11] == "0b0000" or coproc[0:3] == "0b101":
             raise UndefinedInstructionException()
         elif rn.uint == 15:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return StcT2(instr, **{"cp": coproc.uint, "n": rn.uint, "add": add, "imm32": imm32, "index": index,
                                    "wback": wback})

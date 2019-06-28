@@ -24,7 +24,7 @@ class StrdRegisterA1(StrdRegister, Opcode):
         if rt[3] or (not index and w) or (t2 == 15 or rm.uint == 15) or (
                     wback and (rn.uint == 15 or rn.uint == rt.uint or rn.uint == t2)) or (
                             arch_version() < 6 and wback and rn.uint == rm.uint):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return StrdRegisterA1(instr, **{"add": add, "wback": wback, "index": index, "m": rm.uint, "t": rt.uint,
                                             "t2": t2, "n": rn.uint})

@@ -18,6 +18,6 @@ class BfcT1(Bfc, Opcode):
         imm3 = instr[17:20]
         lsbit = (imm3 + imm2).uint
         if rd.uint in (13, 15):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return BfcT1(instr, **{"lsbit": lsbit, "msbit": msb.uint, "d": rd.uint})

@@ -20,7 +20,7 @@ class LdmExceptionReturn(AbstractOpcode):
                 raise UndefinedInstructionException()
             elif (processor.registers.current_mode_is_user_or_system() or
                   processor.registers.current_instr_set() == InstrSet.InstrSet_ThumbEE):
-                print "unpredictable"
+                print("unpredictable")
             else:
                 length = 4 * self.registers.count(1) + 4
                 address = processor.registers.get(self.n) if self.increment else sub(
@@ -46,6 +46,6 @@ class LdmExceptionReturn(AbstractOpcode):
                 if (processor.registers.cpsr.get_m() == "0b11010" and
                         processor.registers.cpsr.get_j() and
                         processor.registers.cpsr.get_t()):
-                    print "unpredictable"
+                    print("unpredictable")
                 else:
                     processor.branch_write_pc(new_pc_value)

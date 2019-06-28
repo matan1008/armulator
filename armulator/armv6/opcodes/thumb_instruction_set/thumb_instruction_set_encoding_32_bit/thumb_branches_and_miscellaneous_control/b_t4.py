@@ -22,6 +22,6 @@ class BT4(B, Opcode):
         i2 = ~(j2 ^ s)
         imm32 = sign_extend(s + i1 + i2 + imm10 + imm11 + "0b0", 32)
         if processor.in_it_block() and not processor.last_in_it_block():
-            print "unpredictable"
+            print("unpredictable")
         else:
             return BT4(instr, **{"imm32": imm32})

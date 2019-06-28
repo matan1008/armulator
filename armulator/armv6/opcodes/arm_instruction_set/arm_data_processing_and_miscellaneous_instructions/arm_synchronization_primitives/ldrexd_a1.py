@@ -16,6 +16,6 @@ class LdrexdA1(Ldrexd, Opcode):
         rn = instr[12:16]
         t2 = rt.uint + 1
         if rn.uint == 15 or rt[3] or rt.uint == 14:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return LdrexdA1(instr, **{"t": rt.uint, "t2": t2, "n": rn.uint})

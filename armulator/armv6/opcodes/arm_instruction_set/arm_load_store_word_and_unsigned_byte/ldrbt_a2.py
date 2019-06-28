@@ -24,7 +24,7 @@ class LdrbtA2(Ldrbt, Opcode):
         shift_t, shift_n = decode_imm_shift(type_o, imm5)
         if rt.uint == 15 or rn.uint == 15 or rn.uint == rt.uint or rm.uint == 15 or (
                         arch_version() < 6 and rm.uint == rn.uint):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return LdrbtA2(instr, **{"add": add, "post_index": post_index, "t": rt.uint,
                                      "n": rn.uint, "m": rm.uint, "shift_t": shift_t, "shift_n": shift_n})

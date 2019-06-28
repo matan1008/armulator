@@ -24,7 +24,7 @@ class LdrshImmediateT2(LdrshImmediate, Opcode):
         if not index and not wback:
             raise UndefinedInstructionException()
         elif rt.uint == 13 or (rt.uint == 15 and wback) or (wback and rt.uint == rn.uint):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return LdrshImmediateT2(instr, **{"add": add, "wback": wback, "index": index, "imm32": imm32, "t": rt.uint,
                                               "n": rn.uint})

@@ -18,7 +18,7 @@ class LdrLiteralA1(LdrLiteral, Opcode):
         imm12 = instr[20:32]
         rt = instr[16:20]
         if index == w:
-            print "unpredictable"
+            print("unpredictable")
         else:
             imm32 = "0b00000000000000000000" + imm12
             return LdrLiteralA1(instr, **{"add": add, "imm32": imm32, "t": rt.uint})

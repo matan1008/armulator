@@ -21,7 +21,7 @@ class PkhbtA1(Pkhbt, Opcode):
         tb_form = tb[0]
         shift_t, shift_n = decode_imm_shift(tb + "0b0", imm5)
         if rd.uint == 15 or rm.uint == 15 or rn.uint == 15:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return PkhbtA1(instr, **{"tb_form": tb_form, "m": rm.uint, "d": rd.uint, "n": rn.uint, "shift_t": shift_t,
                                      "shift_n": shift_n})

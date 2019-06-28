@@ -18,7 +18,7 @@ class SmlsldA1(Smlsld, Opcode):
         rd_lo = instr[16:20]
         rd_hi = instr[12:16]
         if rd_lo.uint == 15 or rd_hi.uint == 15 or rn.uint == 15 or rm.uint == 15 or rd_lo.uint == rd_hi.uint:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return SmlsldA1(instr, **{"m_swap": m_swap, "m": rm.uint, "d_hi": rd_hi.uint, "d_lo": rd_lo.uint,
                                       "n": rn.uint})

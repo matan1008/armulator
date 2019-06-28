@@ -21,7 +21,7 @@ class SubsPcLrArm(AbstractOpcode):
             if processor.registers.current_mode_is_hyp():
                 raise UndefinedInstructionException()
             elif processor.registers.current_mode_is_user_or_system():
-                print "unpredictable"
+                print("unpredictable")
             else:
                 operand2 = shift(processor.registers.get(self.m), self.shift_t, self.shift_n,
                                  processor.registers.cpsr.get_c()) if self.register_form else self.imm32
@@ -56,6 +56,6 @@ class SubsPcLrArm(AbstractOpcode):
                 if (processor.registers.cpsr.get_m() == "0b11010" and
                         processor.registers.cpsr.get_j() and
                         processor.registers.cpsr.get_t()):
-                    print "unpredictable"
+                    print("unpredictable")
                 else:
                     processor.branch_write_pc(result)

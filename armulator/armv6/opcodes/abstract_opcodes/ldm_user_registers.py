@@ -17,7 +17,7 @@ class LdmUserRegisters(AbstractOpcode):
             if processor.registers.current_mode_is_hyp():
                 raise UndefinedInstructionException()
             elif processor.registers.current_mode_is_user_or_system():
-                print "unpredictable"
+                print("unpredictable")
             else:
                 length = 4 * self.registers.count(1)
                 address = processor.registers.get(self.n) if self.increment else sub(

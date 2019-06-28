@@ -18,6 +18,6 @@ class LdrLiteralT2(LdrLiteral, Opcode):
         add = instr[8]
         imm32 = zero_extend(imm12, 32)
         if rt.uint == 15 and processor.in_it_block() and not processor.last_in_it_block():
-            print "unpredictable"
+            print("unpredictable")
         else:
             return LdrLiteralT2(instr, **{"add": add, "imm32": imm32, "t": rt.uint})

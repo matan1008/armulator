@@ -19,6 +19,6 @@ class CmnImmediateT1(CmnImmediate, Opcode):
         i = instr[5:6]
         imm32 = thumb_expand_imm(i + imm3 + imm8)
         if rn.uint == 15:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return CmnImmediateT1(instr, **{"n": rn.uint, "imm32": imm32})

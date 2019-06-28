@@ -20,6 +20,6 @@ class MovImmediateT2(MovImmediate, Opcode):
         i = instr[5:6]
         imm32, carry = thumb_expand_imm_c(i + imm3 + imm8, processor.registers.cpsr.get_c())
         if rd.uint in (13, 15):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return MovImmediateT2(instr, **{"setflags": setflags, "d": rd.uint, "imm32": imm32, "carry": carry})

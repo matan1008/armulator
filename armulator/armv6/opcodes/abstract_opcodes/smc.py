@@ -20,7 +20,7 @@ class Smc(AbstractOpcode):
                 else:
                     if processor.registers.scr.get_scd():
                         if processor.registers.is_secure():
-                            print "unpredictable"
+                            print("unpredictable")
                         else:
                             raise UndefinedInstructionException()
                     else:

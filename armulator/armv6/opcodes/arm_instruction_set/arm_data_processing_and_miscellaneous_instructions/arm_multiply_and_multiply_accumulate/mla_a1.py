@@ -20,6 +20,6 @@ class MlaA1(Mla, Opcode):
         setflags = instr[11]
         if rd.uint == 15 or rm.uint == 15 or rn.uint == 15 or ra.uint == 15 or (
                 rn.uint == rd.uint and arch_version() < 6):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return MlaA1(instr, **{"setflags": setflags, "m": rm.uint, "a": ra.uint, "d": rd.uint, "n": rn.uint})

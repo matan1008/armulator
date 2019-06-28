@@ -19,6 +19,6 @@ class MrrcT2(Mrrc, Opcode):
         if coproc[0:3] == "0b101":
             raise UndefinedInstructionException()
         elif rt.uint == 15 or rt2.uint == 15 or rt.uint == rt2.uint or (rt.uint == 13 or rt2.uint == 13):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return MrrcT2(instr, **{"cp": coproc.uint, "t": rt.uint, "t2": rt2.uint})

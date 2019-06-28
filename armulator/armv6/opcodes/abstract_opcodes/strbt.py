@@ -21,7 +21,7 @@ class Strbt(AbstractOpcode):
     def execute(self, processor):
         if processor.condition_passed():
             if processor.registers.current_mode_is_hyp():
-                print "unpredictable"
+                print("unpredictable")
             else:
                 try:
                     processor.null_check_if_thumbee(self.n)

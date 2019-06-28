@@ -17,6 +17,6 @@ class PushT2(Push, Opcode):
         unaligned_allowed = True
         registers = "0b0" + m + "0b0" + register_list
         if registers.count(1) < 2:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return PushT2(instr, **{"registers": registers, "unaligned_allowed": unaligned_allowed})

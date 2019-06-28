@@ -17,6 +17,6 @@ class UmaalA1(Umaal, Opcode):
         rd_lo = instr[16:20]
         rd_hi = instr[12:16]
         if rd_hi.uint == 15 or rm.uint == 15 or rn.uint == 15 or rd_lo.uint == 15 or (rd_lo.uint == rd_hi.uint):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return UmaalA1(instr, **{"m": rm.uint, "d_hi": rd_hi.uint, "d_lo": rd_lo.uint, "n": rn.uint})

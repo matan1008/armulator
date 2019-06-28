@@ -17,6 +17,6 @@ class MovImmediateA2(MovImmediate, Opcode):
         imm4 = instr[12:16]
         imm32 = "0b0000000000000000" + imm4 + imm12
         if rd.uint == 15:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return MovImmediateA2(instr, **{"d": rd.uint, "imm32": imm32})

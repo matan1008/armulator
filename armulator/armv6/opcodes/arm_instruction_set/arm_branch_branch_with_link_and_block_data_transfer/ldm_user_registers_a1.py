@@ -17,7 +17,7 @@ class LdmUserRegistersA1(LdmUserRegisters, Opcode):
         increment = instr[8]
         word_higher = increment == instr[7]
         if rn.uint == 15 or register_list.count(1) < 1:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return LdmUserRegistersA1(instr, **{"increment": increment, "word_higher": word_higher,
                                                 "registers": register_list, "n": rn.uint})

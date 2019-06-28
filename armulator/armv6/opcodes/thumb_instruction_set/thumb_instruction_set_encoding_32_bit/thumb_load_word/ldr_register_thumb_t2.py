@@ -18,7 +18,7 @@ class LdrRegisterThumbT2(LdrRegisterThumb, Opcode):
         rt = instr[16:20]
         rn = instr[12:16]
         if rm.uint in (13, 15) or (rt.uint == 15 and processor.in_it_block() and not processor.last_in_it_block()):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return LdrRegisterThumbT2(instr, **{"m": rm.uint, "t": rt.uint, "n": rn.uint,
                                                 "shift_t": SRType.SRType_LSL, "shift_n": imm2.uint})

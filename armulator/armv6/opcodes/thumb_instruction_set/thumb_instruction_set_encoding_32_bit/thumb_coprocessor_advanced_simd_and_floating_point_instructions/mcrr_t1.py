@@ -16,6 +16,6 @@ class McrrT1(Mcrr, Opcode):
         rt = instr[16:20]
         rt2 = instr[12:16]
         if rt.uint == 15 or rt2.uint == 15 or (rt.uint == 13 or rt2.uint == 13):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return McrrT1(instr, **{"cp": coproc.uint, "t": rt.uint, "t2": rt2.uint})

@@ -19,7 +19,7 @@ class LdrbtA1(Ldrbt, Opcode):
         add = instr[8]
         post_index = True
         if rt.uint == 15 or rn.uint == 15 or rt.uint == rn.uint:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return LdrbtA1(instr, **{"add": add, "post_index": post_index, "t": rt.uint,
                                      "n": rn.uint, "imm32": imm32})

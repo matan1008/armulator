@@ -19,7 +19,7 @@ class PldRegisterT1(PldRegister, Opcode):
         is_pldw = instr[10]
         rn = instr[12:16]
         if rm.uint in (13, 15):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return PldRegisterT1(instr, **{"add": add, "is_pldw": is_pldw, "m": rm.uint, "n": rn.uint,
                                            "shift_t": SRType.SRType_LSL, "shift_n": imm2.uint})

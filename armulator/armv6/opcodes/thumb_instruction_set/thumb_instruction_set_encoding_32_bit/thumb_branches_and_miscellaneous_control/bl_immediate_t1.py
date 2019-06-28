@@ -23,6 +23,6 @@ class BlImmediateT1(BlImmediate, Opcode):
         imm32 = sign_extend(s + i1 + i2 + imm10h + imm11 + "0b0", 32)
         target_instr_set = processor.registers.current_instr_set()
         if processor.in_it_block() and not processor.last_in_it_block():
-            print "unpredictable"
+            print("unpredictable")
         else:
             return BlImmediateT1(instr, **{"target_instr_set": target_instr_set, "imm32": imm32})

@@ -22,7 +22,7 @@ class StrhImmediateArmA1(StrhImmediateArm, Opcode):
         imm32 = "0b000000000000000000000000" + imm4_h + imm4_l
         wback = (not p) or w
         if rt.uint == 15 or (wback and (rn.uint == 15 or rn.uint == rt.uint)):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return StrhImmediateArmA1(instr, **{"add": add, "wback": wback, "index": p, "imm32": imm32,
                                                 "t": rt.uint, "n": rn.uint})

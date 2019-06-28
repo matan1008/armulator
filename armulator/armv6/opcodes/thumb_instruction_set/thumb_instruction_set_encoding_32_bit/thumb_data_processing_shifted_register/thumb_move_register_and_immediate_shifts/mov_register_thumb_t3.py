@@ -17,6 +17,6 @@ class MovRegisterThumbT3(MovRegisterThumb, Opcode):
         setflags = instr[11]
         if (setflags and (rd.uint in (13, 15) or rm.uint in (13, 15))) or (
                     not setflags and (rd.uint == 15 or rm.uint == 15 or (rd.uint == 13 and rm.uint == 13))):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return MovRegisterThumbT3(instr, **{"setflags": setflags, "m": rm.uint, "d": rd.uint})

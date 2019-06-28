@@ -18,6 +18,6 @@ class PopThumbT3(PopThumb, Opcode):
         registers[15 - rt.uint] = True
         unaligned_allowed = True
         if rt.uint == 13 or (rt.uint == 15 and processor.in_it_block() and not processor.last_in_it_block()):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return PopThumbT3(instr, **{"registers": registers, "unaligned_allowed": unaligned_allowed})

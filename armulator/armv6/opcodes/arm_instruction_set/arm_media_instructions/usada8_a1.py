@@ -17,6 +17,6 @@ class Usada8A1(Usada8, Opcode):
         ra = instr[16:20]
         rd = instr[12:16]
         if rd.uint == 15 or rm.uint == 15 or rn.uint == 15:
-            print "unpredicatble"
+            print("unpredictable")
         else:
             return Usada8A1(instr, **{"m": rm.uint, "a": ra.uint, "d": rd.uint, "n": rn.uint})

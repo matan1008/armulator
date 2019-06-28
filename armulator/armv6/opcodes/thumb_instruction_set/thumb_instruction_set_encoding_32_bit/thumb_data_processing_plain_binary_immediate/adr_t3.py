@@ -19,6 +19,6 @@ class AdrT3(Adr, Opcode):
         i = instr[5:6]
         imm32 = zero_extend(i + imm3 + imm8, 32)
         if rd.uint in (13, 15):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return AdrT3(instr, **{"d": rd.uint, "imm32": imm32})

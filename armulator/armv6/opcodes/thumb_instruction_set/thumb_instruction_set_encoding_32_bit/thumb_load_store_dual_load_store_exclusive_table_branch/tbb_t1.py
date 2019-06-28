@@ -16,6 +16,6 @@ class TbbT1(Tbb, Opcode):
         is_tbh = instr[27]
         rn = instr[12:16]
         if rn.uint == 13 or rm.uint in (13, 15) or (processor.in_it_block() and not processor.last_in_it_block()):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return TbbT1(instr, **{"is_tbh": is_tbh, "m": rm.uint, "n": rn.uint})

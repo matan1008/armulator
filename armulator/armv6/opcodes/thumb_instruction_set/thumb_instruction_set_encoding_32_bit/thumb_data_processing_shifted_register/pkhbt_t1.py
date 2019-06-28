@@ -26,7 +26,7 @@ class PkhbtT1(Pkhbt, Opcode):
         if s or t:
             raise UndefinedInstructionException()
         elif rn.uint in (13, 15) or rm.uint in (13, 15) or rd.uint in (13, 15):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return PkhbtT1(instr, **{"tb_form": tbform, "m": rm.uint, "d": rd.uint, "n": rn.uint, "shift_t": shift_t,
                                      "shift_n": shift_n})

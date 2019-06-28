@@ -23,7 +23,7 @@ class StrbtT1(Strbt, Opcode):
         if rn == "0b1111":
             raise UndefinedInstructionException()
         elif rt.uint in (13, 15):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return StrbtT1(instr, **{"add": add, "post_index": post_index, "t": rt.uint,
                                      "n": rn.uint, "imm32": imm32})

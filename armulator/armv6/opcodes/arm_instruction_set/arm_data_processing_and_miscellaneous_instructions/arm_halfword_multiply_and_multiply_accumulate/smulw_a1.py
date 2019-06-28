@@ -17,6 +17,6 @@ class SmulwA1(Smulw, Opcode):
         rm = instr[20:24]
         rd = instr[12:16]
         if rm.uint == 15 or rd.uint == 15 or rn.uint == 15:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return SmulwA1(instr, **{"m_high": m_high, "m": rm.uint, "d": rd.uint, "n": rn.uint})

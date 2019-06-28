@@ -18,6 +18,6 @@ class SmladA1(Smlad, Opcode):
         ra = instr[16:20]
         rd = instr[12:16]
         if rd.uint == 15 or rn.uint == 15 or rm.uint == 15:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return SmladA1(instr, **{"m_swap": m_swap, "m": rm.uint, "a": ra.uint, "d": rd.uint, "n": rn.uint})

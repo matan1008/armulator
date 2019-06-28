@@ -15,6 +15,6 @@ class LdrexhT1(Ldrexh, Opcode):
         rt = instr[16:20]
         rn = instr[12:16]
         if rt.uint in (13, 15) or rn.uint == 15:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return LdrexhT1(instr, **{"t": rt.uint, "n": rn.uint})

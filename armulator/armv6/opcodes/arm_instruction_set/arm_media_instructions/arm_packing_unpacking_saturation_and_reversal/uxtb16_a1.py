@@ -17,6 +17,6 @@ class Uxtb16A1(Uxtb16, Opcode):
         rd = instr[16:20]
         rotation = rotate.uint * 8
         if rd.uint == 15 or rm.uint == 15:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return Uxtb16A1(instr, **{"m": rm.uint, "d": rd.uint, "rotation": rotation})

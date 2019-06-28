@@ -19,7 +19,7 @@ class StrbtA1(Strbt, Opcode):
         post_index = True
         imm32 = "0b00000000000000000000" + imm12
         if rt.uint == 15 or rn.uint == 15 or rn.uint == rt.uint:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return StrbtA1(instr, **{"add": add, "post_index": post_index, "t": rt.uint,
                                      "n": rn.uint, "imm32": imm32})

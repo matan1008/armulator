@@ -20,7 +20,7 @@ class AndRegisterShiftedRegisterA1(AndRegisterShiftedRegister, Opcode):
         rn = instr[12:16]
         s = instr[11]
         if rd == "0b1111" or rn == "0b1111" or rm == "0b1111" or rs == "0b1111":
-            print "unpredictable"
+            print("unpredictable")
         else:
             shift_t = decode_reg_shift(type_o)
             return AndRegisterShiftedRegisterA1(instr, **{"setflags": s, "m": rm.uint, "s": rs.uint, "d": rd.uint,

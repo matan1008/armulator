@@ -21,7 +21,7 @@ class LdrImmediateArmA1(LdrImmediateArm, Opcode):
         imm32 = "0b00000000000000000000" + imm12
         wback = (not index) or w
         if wback and rn.uint == rt.uint:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return LdrImmediateArmA1(instr, **{"add": add, "wback": wback, "index": index, "t": rt.uint,
                                                "n": rn.uint, "imm32": imm32})

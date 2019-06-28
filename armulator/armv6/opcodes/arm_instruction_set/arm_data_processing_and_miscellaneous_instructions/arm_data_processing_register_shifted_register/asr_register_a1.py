@@ -17,7 +17,7 @@ class AsrRegisterA1(AsrRegister, Opcode):
         rd = instr[16:20]
         s = instr[11]
         if rd == "0b1111" or rn == "0b1111" or rm == "0b1111":
-            print "unpredictable"
+            print("unpredictable")
         else:
             return AsrRegisterA1(instr, **{"setflags": s, "m": rm.uint, "d": rd.uint,
                                            "n": rn.uint})

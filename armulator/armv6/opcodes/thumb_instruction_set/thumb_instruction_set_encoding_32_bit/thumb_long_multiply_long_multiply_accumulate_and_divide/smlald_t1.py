@@ -19,7 +19,7 @@ class SmlaldT1(Smlald, Opcode):
         m_swap = instr[27]
         if rm.uint in (13, 15) or rn.uint in (13, 15) or rd_hi.uint in (13, 15) or rd_lo.uint in (
                 13, 15) or rd_hi.uint == rd_lo.uint:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return SmlaldT1(instr, **{"m_swap": m_swap, "m": rm.uint, "d_hi": rd_hi.uint, "d_lo": rd_lo.uint,
                                       "n": rn.uint})

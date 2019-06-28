@@ -26,7 +26,7 @@ class LdrImmediateArm(AbstractOpcode):
                 if address[30:32] == "0b00":
                     processor.load_write_pc(data)
                 else:
-                    print "unpredictable"
+                    print("unpredictable")
             elif processor.unaligned_support() or address[30:32] == "0b00":
                 processor.registers.set(self.t, data)
             else:

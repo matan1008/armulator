@@ -17,7 +17,7 @@ def decode_instruction(instr):
         # Set Endianness
         return SetendA1
     elif instr[5:12] == "0b0010010" and instr[24:28] == "0b0111":
-        print "unpredictable"
+        print("unpredictable")
     elif instr[5:7] == "0b01":
         # v7 variant, will not be impelemented
         raise NotImplementedError()
@@ -32,12 +32,12 @@ def decode_instruction(instr):
         # Preload Instruction
         raise NotImplementedError()
     elif instr[5:8] == "0b100" and instr[10:12] == "0b11":
-        print "unpredictable"
+        print("unpredictable")
     elif instr[5:8] == "0b101" and instr[9:12] == "0b001" and instr[12:16] != "0b1111":
         # MP extension, will not be impelemented
         raise NotImplementedError()
     elif instr[5:8] == "0b101" and instr[9:12] == "0b001" and instr[12:16] == "0b1111":
-        print "unpredictable"
+        print("unpredictable")
     elif instr[5:8] == "0b101" and instr[9:12] == "0b101" and instr[12:16] != "0b1111":
         # Preload Data
         return PldImmediateA1
@@ -45,14 +45,14 @@ def decode_instruction(instr):
         # Preload Data
         return PldLiteralA1
     elif instr[5:12] == "0b1010011":
-        print "unpredictable"
+        print("unpredictable")
     elif instr[5:12] == "0b1010111" and instr[24:28] == "0b0000":
-        print "unpredictable"
+        print("unpredictable")
     elif instr[5:12] == "0b1010111" and instr[24:28] == "0b0001":
         # Clear-Exclusive
         return ClrexA1
     elif instr[5:12] == "0b1010111" and instr[24:27] == "0b001":
-        print "unpredictable"
+        print("unpredictable")
     elif instr[5:12] == "0b1010111" and instr[24:28] == "0b0100":
         # Data Synchronization Barrier
         return DsbA1
@@ -63,11 +63,11 @@ def decode_instruction(instr):
         # Instruction Synchronization Barrier
         return IsbA1
     elif instr[5:12] == "0b1010111" and instr[24:28] == "0b0111":
-        print "unpredictable"
+        print("unpredictable")
     elif instr[5:12] == "0b1010111" and instr[24]:
-        print "unpredictable"
+        print("unpredictable")
     elif instr[5:9] == "0b1011" and instr[10:12] == "0b11":
-        print "unpredictable"
+        print("unpredictable")
     elif instr[5:8] == "0b110" and instr[9:12] == "0b001" and not instr[27]:
         # MP extension, will not be impelemented
         raise NotImplementedError()
@@ -81,6 +81,6 @@ def decode_instruction(instr):
         # Preload Data
         return PldRegisterA1
     elif instr[5:7] == "0b11" and instr[10:12] == "0b11":
-        print "unpredictable"
+        print("unpredictable")
     elif instr[5:12] == "0b1111111" and instr[24:28] == "0b1111":
         raise UndefinedInstructionException()

@@ -18,6 +18,6 @@ class StmdbT1(Stmdb, Opcode):
         rn = instr[12:16]
         registers = "0b0" + m + "0b0" + register_list
         if rn.uint == 15 or registers.count(1) < 2 or (wback and registers[15 - rn.uint]):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return StmdbT1(instr, **{"wback": wback, "registers": registers, "n": rn.uint})

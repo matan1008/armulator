@@ -18,6 +18,6 @@ class StrexA1(Strex, Opcode):
         rn = instr[12:16]
         imm32 = zeros(32)
         if rd.uint == 15 or rn.uint == 15 or rt.uint == 15 or rn.uint == rd.uint or rd.uint == rt.uint:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return StrexA1(instr, **{"imm32": imm32, "t": rt.uint, "d": rd.uint, "n": rn.uint})

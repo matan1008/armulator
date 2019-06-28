@@ -18,6 +18,6 @@ class MsrImmediateSystemA1(MsrImmediateSystem, Opcode):
         write_spsr = instr[9]
         imm32 = arm_expand_imm(imm12)
         if mask == "0b0000":
-            print "unpredictable"
+            print("unpredictable")
         else:
             return MsrImmediateSystemA1(instr, **{"write_spsr": write_spsr, "mask": mask, "imm32": imm32})

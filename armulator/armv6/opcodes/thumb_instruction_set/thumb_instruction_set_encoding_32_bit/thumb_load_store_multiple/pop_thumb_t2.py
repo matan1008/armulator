@@ -19,6 +19,6 @@ class PopThumbT2(PopThumb, Opcode):
         unaligned_allowed = False
         if registers.count(1) < 2 or (p == "0b1" and m == "0b1") or (
                         registers[0] and processor.in_it_block() and not processor.last_in_it_block()):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return PopThumbT2(instr, **{"registers": registers, "unaligned_allowed": unaligned_allowed})

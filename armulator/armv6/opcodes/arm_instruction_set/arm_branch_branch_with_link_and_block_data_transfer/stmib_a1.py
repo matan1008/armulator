@@ -16,6 +16,6 @@ class StmibA1(Stmib, Opcode):
         rn = instr[12:16]
         wback = instr[10]
         if rn.uint == 15 or register_list.count(1) < 1:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return StmibA1(instr, **{"wback": wback, "registers": register_list, "n": rn.uint})

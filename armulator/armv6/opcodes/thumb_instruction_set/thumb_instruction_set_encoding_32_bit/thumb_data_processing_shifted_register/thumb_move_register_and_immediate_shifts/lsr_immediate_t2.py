@@ -21,6 +21,6 @@ class LsrImmediateT2(LsrImmediate, Opcode):
         setflags = instr[11]
         shift_t, shift_n = decode_imm_shift(BitArray(bin="01"), imm3 + imm2)
         if rd.uint in (13, 15) or rm.uint in (13, 15):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return LsrImmediateT2(instr, **{"setflags": setflags, "m": rm.uint, "d": rd.uint, "shift_n": shift_n})

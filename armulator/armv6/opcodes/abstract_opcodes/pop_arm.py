@@ -32,7 +32,7 @@ class PopArm(AbstractOpcode):
                         if address[30:32] == "0b00":
                             processor.load_write_pc(processor.mem_u_get(address, 4))
                         else:
-                            print "unpredictable"
+                            print("unpredictable")
                     else:
                         processor.load_write_pc(processor.mem_a_get(address, 4))
                 if not self.registers[2]:

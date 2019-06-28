@@ -19,7 +19,7 @@ class SmlaT1(Smla, Opcode):
         m_high = instr[27]
         n_high = instr[26]
         if rd.uint in (13, 15) or rn.uint in (13, 15) or rm.uint in (13, 15) or ra.uint == 13:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return SmlaT1(instr, **{"m_high": m_high, "n_high": n_high, "m": rm.uint, "a": ra.uint, "d": rd.uint,
                                     "n": rn.uint})

@@ -230,7 +230,7 @@ class Registers:
     def select_instr_set(self, iset):
         if iset == InstrSet.InstrSet_ARM:
             if self.current_instr_set() == InstrSet.InstrSet_ThumbEE:
-                print "unpredictable"
+                print("unpredictable")
             else:
                 self.cpsr.set_isetstate(BitArray(bin="0b00"))
         if iset == InstrSet.InstrSet_Thumb:
@@ -268,21 +268,21 @@ class Registers:
 
     def current_mode_is_not_user(self):
         if self.bad_mode(self.cpsr.get_m()):
-            print "unpredictable"
+            print("unpredictable")
         if self.cpsr.get_m() == "0b10000":
             return False
         return True
 
     def current_mode_is_hyp(self):
         if self.bad_mode(self.cpsr.get_m()):
-            print "unpredictable"
+            print("unpredictable")
         if self.cpsr.get_m() == "0b11010":
             return True
         return False
 
     def current_mode_is_user_or_system(self):
         if self.bad_mode(self.cpsr.get_m()):
-            print "unpredictable"
+            print("unpredictable")
         if self.cpsr.get_m() == "0b10000":
             return True
         if self.cpsr.get_m() == "0b11111":
@@ -291,7 +291,7 @@ class Registers:
 
     def r_bank_select(self, mode, usr, fiq, irq, svc, abt, und, mon, hyp):
         if self.bad_mode(mode):
-            print "unpredictable"
+            print("unpredictable")
             result = usr
         else:
             if mode == "0b10000":
@@ -358,19 +358,19 @@ class Registers:
     def get_rmode(self, n, mode):
         assert 0 <= n <= 14
         if not self.is_secure() and mode == "0b10110":
-            print "unpredictable"
+            print("unpredictable")
         if not self.is_secure() and mode == "0b10001" and self.nsacr.get_rfr():
-            print "unpredictable"
+            print("unpredictable")
         return self._R[self.look_up_rname(n, mode)]
 
     def set_rmode(self, n, mode, value):
         assert 0 <= n <= 14
         if not self.is_secure() and mode == "0b10110":
-            print "unpredictable"
+            print("unpredictable")
         if not self.is_secure() and mode == "0b10001" and self.nsacr.get_rfr():
-            print "unpredictable"
+            print("unpredictable")
         if n == 13 and value[30:32] != "0b00" and self.current_instr_set() != InstrSet.InstrSet_ARM:
-            print "unpredictable"
+            print("unpredictable")
         self._R[self.look_up_rname(n, mode)] = value
 
     def get(self, n):
@@ -408,7 +408,7 @@ class Registers:
 
     def get_spsr(self):
         if self.bad_mode(self.cpsr.get_m()):
-            print "unpredictable"
+            print("unpredictable")
             result = BitArray(length=32)
         else:
             result = BitArray(length=32)
@@ -427,12 +427,12 @@ class Registers:
             elif self.cpsr.get_m() == "0b11011":
                 result = self.spsr_und
             else:
-                print "unpredictable"
+                print("unpredictable")
         return result
 
     def set_spsr(self, value):
         if self.bad_mode(self.cpsr.get_m()):
-            print "unpredictable"
+            print("unpredictable")
         else:
             if self.cpsr.get_m() == "0b10001":
                 self.spsr_fiq = value
@@ -449,7 +449,7 @@ class Registers:
             elif self.cpsr.get_m() == "0b11011":
                 self.spsr_und = value
             else:
-                print "unpredictable"
+                print("unpredictable")
 
     def it_advance(self):
         if self.cpsr.get_it()[-3:] == "0b000":
@@ -487,24 +487,24 @@ class Registers:
                 self.cpsr.set_t(value[26])
             if privileged:
                 if self.bad_mode(value[27:]):
-                    print "unpredictable"
+                    print("unpredictable")
                 else:
                     if not self.is_secure() and value[27:] == "0b10110":
-                        print "unpredictable"
+                        print("unpredictable")
                     elif not self.is_secure() and value[27:] == "0b10001" and self.nsacr.get_rfr():
-                        print "unpredictable"
+                        print("unpredictable")
                     elif not self.scr.get_ns() and value[27:] == "0b11010":
-                        print "unpredictable"
+                        print("unpredictable")
                     elif not self.is_secure() and self.cpsr.get_m() != "0b11010" and value[27:] == "0b11010":
-                        print "unpredictable"
+                        print("unpredictable")
                     elif self.cpsr.get_m() == "0b11010" and value[27:] != "0b11010" and not is_excp_return:
-                        print "unpredictable"
+                        print("unpredictable")
                     else:
                         self.cpsr.set_m(value[27:32])
 
     def spsr_write_by_instr(self, value, bytemask):
         if self.current_mode_is_user_or_system():
-            print "unpredictable"
+            print("unpredictable")
         spsr = self.get_spsr()
         if bytemask[0]:
             spsr.overwrite(value[0:5], 0)
@@ -515,7 +515,7 @@ class Registers:
         if bytemask[3]:
             spsr.overwrite(value[24:27], 24)
             if self.bad_mode(value[27:]):
-                print "unpredictable"
+                print("unpredictable")
             else:
                 spsr.overwrite(value[27:], 27)
         self.set_spsr(spsr)

@@ -18,6 +18,6 @@ class LdrsbLiteralT1(LdrsbLiteral, Opcode):
         add = instr[8]
         imm32 = zero_extend(imm12, 32)
         if rt.uint == 13:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return LdrsbLiteralT1(instr, **{"add": add, "imm32": imm32, "t": rt.uint})

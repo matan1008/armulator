@@ -41,23 +41,23 @@ class ArmV6:
         self.take_reset()
 
     def print_registers(self):
-        print "{0}:{1}".format("R0", self.registers.get(0))
-        print "{0}:{1}".format("R1", self.registers.get(1))
-        print "{0}:{1}".format("R2", self.registers.get(2))
-        print "{0}:{1}".format("R3", self.registers.get(3))
-        print "{0}:{1}".format("R4", self.registers.get(4))
-        print "{0}:{1}".format("R5", self.registers.get(5))
-        print "{0}:{1}".format("R6", self.registers.get(6))
-        print "{0}:{1}".format("R7", self.registers.get(7))
-        print "{0}:{1}".format("R8", self.registers.get(8))
-        print "{0}:{1}".format("R9", self.registers.get(9))
-        print "{0}:{1}".format("R10", self.registers.get(10))
-        print "{0}:{1}".format("R11", self.registers.get(11))
-        print "{0}:{1}".format("R12", self.registers.get(12))
-        print "{0}:{1}".format("SP", self.registers.get_sp())
-        print "{0}:{1}".format("LR", self.registers.get_lr())
-        print "{0}:{1}".format("PC", self.registers.pc_store_value())
-        print "{0}:{1}".format("CPSR", self.registers.cpsr.value)
+        print("{0}:{1}".format("R0", self.registers.get(0)))
+        print("{0}:{1}".format("R1", self.registers.get(1)))
+        print("{0}:{1}".format("R2", self.registers.get(2)))
+        print("{0}:{1}".format("R3", self.registers.get(3)))
+        print("{0}:{1}".format("R4", self.registers.get(4)))
+        print("{0}:{1}".format("R5", self.registers.get(5)))
+        print("{0}:{1}".format("R6", self.registers.get(6)))
+        print("{0}:{1}".format("R7", self.registers.get(7)))
+        print("{0}:{1}".format("R8", self.registers.get(8)))
+        print("{0}:{1}".format("R9", self.registers.get(9)))
+        print("{0}:{1}".format("R10", self.registers.get(10)))
+        print("{0}:{1}".format("R11", self.registers.get(11)))
+        print("{0}:{1}".format("R12", self.registers.get(12)))
+        print("{0}:{1}".format("SP", self.registers.get_sp()))
+        print("{0}:{1}".format("LR", self.registers.get_lr()))
+        print("{0}:{1}".format("PC", self.registers.pc_store_value()))
+        print("{0}:{1}".format("CPSR", self.registers.cpsr.value))
 
     def take_reset(self):
         self.registers.cpsr.set_m("0b10011")
@@ -228,7 +228,7 @@ class ArmV6:
             elif self.registers.cpsr.get_it() == "0b00000000":
                 result = BitArray(bin="1110")
             else:
-                print "unpredictable"
+                print("unpredictable")
         return result
 
     def condition_passed(self):
@@ -289,7 +289,7 @@ class ArmV6:
     def branch_write_pc(self, address):
         if self.registers.current_instr_set() == InstrSet.InstrSet_ARM:
             if arch_version() < 6 and address.bin[30:] != "00":
-                print "unpredictable"
+                print("unpredictable")
             self.registers.branch_to(address[:-2] + BitArray(bin="00"))
         elif self.registers.current_instr_set() == InstrSet.InstrSet_Jazelle:
             if jazelle_accepts_execution():
@@ -306,7 +306,7 @@ class ArmV6:
                 address.set(False, 31)
                 self.registers.branch_to(address)
             else:
-                print "unpredictable"
+                print("unpredictable")
         else:
             if address[31]:
                 self.registers.select_instr_set(InstrSet.InstrSet_Thumb)
@@ -316,7 +316,7 @@ class ArmV6:
                 self.registers.select_instr_set(InstrSet.InstrSet_ARM)
                 self.registers.branch_to(address)
             else:
-                print "unpredictable"
+                print("unpredictable")
 
     def alu_write_pc(self, address):
         if arch_version() >= 7 and self.registers.current_instr_set() == InstrSet.InstrSet_ARM:
@@ -347,10 +347,10 @@ class ArmV6:
         if self.registers.current_instr_set() == InstrSet.InstrSet_ThumbEE:
             if n == 15:
                 if bits_ops.align(self.registers.get_pc(), 4).all(False):
-                    print "unpredictable"
+                    print("unpredictable")
             elif n == 13:
                 if self.registers.get_sp().all(False):
-                    print "unpredictable"
+                    print("unpredictable")
             else:
                 if self.registers.get(n).all(False):
                     self.registers.set_lr(self.registers.get_pc()[:-1] + BitArray(bin="1"))
@@ -429,7 +429,7 @@ class ArmV6:
         elif perms.ap == "0b011":
             abort = False
         elif perms.ap == "0b100":
-            print "unpredictable"
+            print("unpredictable")
         elif perms.ap == "0b101":
             abort = not ispriv or iswrite
         elif perms.ap == "0b110":
@@ -438,7 +438,7 @@ class ArmV6:
             if memory_system_architecture() == MemArch.MemArch_VMSA:
                 abort = iswrite
             else:
-                print "unpredictable"
+                print("unpredictable")
         if abort:
             self.data_abort(mva, ipa, domain, level, iswrite, DAbort.DAbort_Permission, taketohypmode,
                             secondstageabort, ipavalid, ldfsr_format, s2fs1walk)
@@ -468,7 +468,7 @@ class ArmV6:
         elif self.registers.dacr.get_d_n(domain.uint) == "0b01":
             permission_check = True
         if self.registers.dacr.get_d_n(domain.uint) == "0b10":
-            print "unpredictable"
+            print("unpredictable")
         if self.registers.dacr.get_d_n(domain.uint) == "0b11":
             permission_check = False
         return permission_check
@@ -874,7 +874,7 @@ class ArmV6:
             memattrs.outerhints = hintsattrs[0:2]
             memattrs.shareable = s
         else:
-            print "unpredictable"
+            print("unpredictable")
         memattrs.outershareable = memattrs.shareable
         return memattrs
 
@@ -941,7 +941,7 @@ class ArmV6:
                     ba_lower_bound = 9 * current_level - t0_size - 4
                     base_address = self.registers.httbr[24:64 - ba_lower_bound] + BitArray(length=ba_lower_bound)
                     if self.registers.httbr[64 - ba_lower_bound:61].uint != 0:
-                        print "unpredictable"
+                        print("unpredictable")
                     base_found = True
                     start_bit = 31 - t0_size
                     walkaddr.memattrs.type = MemType.MemType_Normal
@@ -962,7 +962,7 @@ class ArmV6:
                     ba_lower_bound = 9 * current_level - t0_size - 4
                     base_address = self.registers.ttbr0_64[24:64 - ba_lower_bound] + BitArray(length=ba_lower_bound)
                     if self.registers.ttbr0_64[64 - ba_lower_bound:61].uint != 0:
-                        print "unpredictable"
+                        print("unpredictable")
                     base_found = True
                     disabled = self.registers.ttbcr.get_epd0()
                     start_bit = 31 - t0_size
@@ -981,7 +981,7 @@ class ArmV6:
                     ba_lower_bound = 9 * current_level - t1_size - 4
                     base_address = self.registers.ttbr1_64[24:64 - ba_lower_bound] + BitArray(length=ba_lower_bound)
                     if self.registers.ttbr1_64[64 - ba_lower_bound:61].uint != 0:
-                        print "unpredictable"
+                        print("unpredictable")
                     base_found = True
                     disabled = self.registers.ttbcr.get_epd1()
                     start_bit = 31 - t1_size
@@ -999,13 +999,13 @@ class ArmV6:
             s_level = self.registers.vtcr.get_sl0().uint
             ba_lower_bound = 14 - t0_size - (9 * s_level)
             if s_level == 0 and t0_size < -2:
-                print "unpredictable"
+                print("unpredictable")
             if s_level == 1 and t0_size > 1:
-                print "unpredictable"
+                print("unpredictable")
             if self.registers.vtcr.get_sl0()[0]:
-                print "unpredictable"
+                print("unpredictable")
             if self.registers.vttbr[64 - ba_lower_bound:61].uint != 0:
-                print "unpredictable"
+                print("unpredictable")
             if t0_size == -8 or ia[0:t0_size + 8].uint == 0:
                 current_level = 2 - s_level
                 base_address = self.registers.vttbr[24:64 - ba_lower_bound] + BitArray(length=ba_lower_bound)
@@ -1137,15 +1137,15 @@ class ArmV6:
             result.addrdesc.paddress.ns = True
         if stage1 and self.registers.current_mode_is_hyp():
             if not attrs[8]:
-                print "unpredictable"
+                print("unpredictable")
             if not table_user:
-                print "unpredictable"
+                print("unpredictable")
             if attrs[1]:
-                print "unpredictable"
+                print("unpredictable")
             if not table_pxn:
-                print "unpredictable"
+                print("unpredictable")
             if attrs[3]:
-                print "unpredictable"
+                print("unpredictable")
         return result
 
     def translation_table_walk_sd(self, mva, is_write, size):
@@ -1320,7 +1320,7 @@ class ArmV6:
             result.addrdesc.memattrs.shareable = False
             result.addrdesc.memattrs.outershareable = False
             if not self.registers.hcr.get_vm():
-                print "unpredictable"
+                print("unpredictable")
         result.perms.ap = BitArray(length=3)  # unknown
         result.perms.xn = False
         result.perms.pxn = False
@@ -1342,7 +1342,7 @@ class ArmV6:
                     not self.registers.is_secure() and
                     not ishyp and
                     self.registers.hcr.get_tge()):
-                print "unpredictable"
+                print("unpredictable")
             uses_ld = ishyp or self.registers.ttbcr.get_eae()
             if uses_ld:
                 ia_in = BitArray(bin="00000000") + mva
@@ -1360,7 +1360,7 @@ class ArmV6:
         if (not wasaligned and
                 tlbrecord_s1.addrdesc.memattrs.type in (MemType.MemType_StronglyOrdered, MemType.MemType_Device)):
             if not have_virt_ext():
-                print "unpredictable"
+                print("unpredictable")
             secondstageabort = False
             self.alignment_fault_v(mva, iswrite, ishyp, secondstageabort)
         if check_domain:
@@ -1407,9 +1407,9 @@ class ArmV6:
                 if size_enable.get_en():
                     ls_bit = size_enable.get_rsize().uint + 1
                     if ls_bit < 2:
-                        print "unpredictable"
+                        print("unpredictable")
                     if ls_bit > 2 and base_address[32 - ls_bit:30].uint != 0:
-                        print "unpredictable"
+                        print("unpredictable")
                     if ls_bit == 32 or va[0:32 - ls_bit] == base_address[0:32 - ls_bit]:
                         if ls_bit >= 8:
                             subregion = va[32 - ls_bit:35 - ls_bit].uint
@@ -1444,7 +1444,7 @@ class ArmV6:
                     perms.xn = not self.registers.sctlr.get_v() if va[0:4] == "0b1111" else va[0]
                     perms.pxn = False
             if not wasaligned and result.memattrs.type in (MemType.MemType_Device, MemType.MemType_StronglyOrdered):
-                print "unpredictable"
+                print("unpredictable")
             self.check_permission(perms, va, 0, BitArray(length=4), iswrite, ispriv, False, False)
         return result
 
@@ -1667,7 +1667,7 @@ class ArmV6:
                     if not self.registers.current_mode_is_not_user():
                         raise UndefinedInstructionException()
                 elif self.registers.cpacr.get_cp_n(cp_num) == "0b10":
-                    print "unpredictable"
+                    print("unpredictable")
                 elif self.registers.cpacr.get_cp_n(cp_num) == "0b11":
                     pass
             if have_security_ext() and have_virt_ext() and not self.registers.is_secure() and \
@@ -1687,7 +1687,7 @@ class ArmV6:
                 opc1 = instr[8:11].uint
                 two_reg = False
                 if instr[16:20] == "0b1111" and not (instr[8:16] == "0b00010000" and instr[24:32] == "0b00010001"):
-                    print "unpredictable"
+                    print("unpredictable")
             elif instr[4:12] == "0b11000101" and instr[0:4] != "0b1111":
                 opc1 = instr[24:28].uint
                 if opc1 != 0:
@@ -1707,7 +1707,7 @@ class ArmV6:
                 if two_reg:
                     raise UndefinedInstructionException()
                 if instr[24:27] != "0b000" or instr[28:31] != "0b000" or instr[16:20] == "0b1111":
-                    print "unpredictable"
+                    print("unpredictable")
                 else:
                     if not instr[31]:
                         if not self.registers.current_mode_is_not_user():
@@ -1741,14 +1741,14 @@ class ArmV6:
                 cr_nnum = instr[12:16].uint
                 two_reg = False
                 if instr[16:20] == "0b1111":
-                    print "unpredictable"
+                    print("unpredictable")
             elif instr[4:11] == "0b1100010" and instr[0:4] != "0b1111":
                 cr_nnum = instr[28:32].uint
                 two_reg = True
             else:
                 raise UndefinedInstructionException()
             if cr_nnum == 4:
-                print "unpredictable"
+                print("unpredictable")
             if (have_security_ext() and
                     have_virt_ext() and
                     not self.registers.is_secure() and

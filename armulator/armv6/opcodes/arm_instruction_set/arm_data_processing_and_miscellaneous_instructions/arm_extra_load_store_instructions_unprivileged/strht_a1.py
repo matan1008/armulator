@@ -20,7 +20,7 @@ class StrhtA1(Strht, Opcode):
         post_index = True
         imm32 = "0b000000000000000000000000" + imm4_h + imm4_l
         if rt.uint == 15 or rn.uint == 15 or rt.uint == rn.uint:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return StrhtA1(instr, **{"add": add, "post_index": post_index,
                                      "t": rt.uint, "n": rn.uint, "imm32": imm32})

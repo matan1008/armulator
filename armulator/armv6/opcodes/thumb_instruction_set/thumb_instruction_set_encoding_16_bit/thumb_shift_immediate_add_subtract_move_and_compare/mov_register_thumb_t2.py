@@ -15,6 +15,6 @@ class MovRegisterThumbT2(MovRegisterThumb, Opcode):
         rd = instr[13:16]
         rm = instr[10:13]
         if processor.in_it_block():
-            print "unpredictable"
+            print("unpredictable")
         else:
             return MovRegisterThumbT2(instr, **{"m": rm.uint, "d": rd.uint})

@@ -15,6 +15,6 @@ class McrA1(Mcr, Opcode):
         coproc = instr[20:24]
         rt = instr[16:20]
         if rt.uint == 15:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return McrA1(instr, **{"cp": coproc.uint, "t": rt.uint})

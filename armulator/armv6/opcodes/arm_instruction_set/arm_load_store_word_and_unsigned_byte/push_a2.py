@@ -18,6 +18,6 @@ class PushA2(Push, Opcode):
         registers[15 - rt.uint] = True
         unaligned_allowed = True
         if rt.uint == 13:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return PushA2(instr, **{"registers": registers, "unaligned_allowed": unaligned_allowed})

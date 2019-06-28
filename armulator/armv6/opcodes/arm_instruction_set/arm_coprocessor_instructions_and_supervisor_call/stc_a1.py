@@ -24,7 +24,7 @@ class StcA1(Stc, Opcode):
         if not index and not add and not d and not wback:
             raise UndefinedInstructionException()
         elif rn.uint == 15 and wback:
-            print "unpredictable"
+            print("unpredictable")
         else:
             imm32 = zero_extend(imm8 + "0b00", 32)
             return StcA1(instr, **{"cp": coproc.uint, "n": rn.uint, "add": add, "imm32": imm32, "index": index,

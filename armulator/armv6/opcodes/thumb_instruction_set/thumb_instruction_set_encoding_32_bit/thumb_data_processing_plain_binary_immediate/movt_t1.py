@@ -19,6 +19,6 @@ class MovtT1(Movt, Opcode):
         i = instr[5:6]
         imm16 = imm4 + i + imm3 + imm8
         if rd.uint in (13, 15):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return MovtT1(instr, **{"d": rd.uint, "imm16": imm16})

@@ -16,6 +16,6 @@ class Usub8T1(Usub8, Opcode):
         rd = instr[20:24]
         rn = instr[12:16]
         if rd.uint in (13, 15) or rn.uint in (13, 15) or rm.uint in (13, 15):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return Usub8T1(instr, **{"m": rm.uint, "d": rd.uint, "n": rn.uint})

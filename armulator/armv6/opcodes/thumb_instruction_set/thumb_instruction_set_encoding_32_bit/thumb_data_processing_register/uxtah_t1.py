@@ -18,6 +18,6 @@ class UxtahT1(Uxtah, Opcode):
         rn = instr[12:16]
         rotation = (rotate + "0b000").uint
         if rd.uint in (13, 15) or rn.uint == 13 or rm.uint in (13, 15):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return UxtahT1(instr, **{"m": rm.uint, "d": rd.uint, "n": rn.uint, "rotation": rotation})

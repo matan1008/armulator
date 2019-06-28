@@ -19,7 +19,7 @@ class SmlalxyA1(Smlalxy, Opcode):
         rd_lo = instr[16:20]
         rd_hi = instr[12:16]
         if rm.uint == 15 or rd_hi.uint == 15 or rd_lo.uint == 15 or rn.uint == 15 or rd_hi.uint == rd_lo.uint:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return SmlalxyA1(instr, **{"m_high": m_high, "n_high": n_high, "m": rm.uint, "d_hi": rd_hi.uint,
                                        "d_lo": rd_lo.uint, "n": rn.uint})

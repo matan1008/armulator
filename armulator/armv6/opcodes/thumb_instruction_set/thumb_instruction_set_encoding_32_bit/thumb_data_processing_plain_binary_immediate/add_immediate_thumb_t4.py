@@ -21,6 +21,6 @@ class AddImmediateThumbT4(AddImmediateThumb, Opcode):
         setflags = False
         imm32 = zero_extend(i + imm3 + imm8, 32)
         if rd.uint in (13, 15):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return AddImmediateThumbT4(instr, **{"setflags": setflags, "d": rd.uint, "n": rn.uint, "imm32": imm32})

@@ -19,7 +19,7 @@ class StrtA1(Strt, Opcode):
         post_index = True
         imm32 = "0b00000000000000000000" + imm12
         if rn.uint == 15 or rn.uint == rt.uint:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return StrtA1(instr, **{"add": add, "post_index": post_index, "t": rt.uint,
                                     "n": rn.uint, "imm32": imm32})

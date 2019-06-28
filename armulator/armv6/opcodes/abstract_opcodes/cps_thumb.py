@@ -36,4 +36,4 @@ class CpsThumb(AbstractOpcode):
             if (processor.registers.cpsr.get_m() == "0b11010" and
                     processor.registers.cpsr.get_j() and
                     processor.registers.cpsr.get_t()):
-                print "unpredictable"
+                print("unpredictable")

@@ -18,6 +18,6 @@ class SmlawA1(Smlaw, Opcode):
         ra = instr[16:20]
         rd = instr[12:16]
         if rm.uint == 15 or ra.uint == 15 or rd.uint == 15 or rn.uint == 15:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return SmlawA1(instr, **{"m_high": m_high, "m": rm.uint, "a": ra.uint, "d": rd.uint, "n": rn.uint})

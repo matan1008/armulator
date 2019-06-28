@@ -22,7 +22,7 @@ class UsatT1(Usat, Opcode):
         saturate_to = sat_imm.uint + 1
         shift_t, shift_n = decode_imm_shift(sh + "0b0", imm3 + imm2)
         if rd.uint in (13, 15) or rn.uint in (13, 15):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return UsatT1(instr, **{"saturate_to": saturate_to, "d": rd.uint, "n": rn.uint, "shift_t": shift_t,
                                     "shift_n": shift_n})

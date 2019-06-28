@@ -18,6 +18,6 @@ class MulA1(Mul, Opcode):
         rd = instr[12:16]
         setflags = instr[11]
         if rd.uint == 15 or rm.uint == 15 or rn.uint == 15 or (rn.uint == rd.uint and arch_version() < 6):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return MulA1(instr, **{"setflags": setflags, "m": rm.uint, "d": rd.uint, "n": rn.uint})

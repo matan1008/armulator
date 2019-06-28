@@ -18,7 +18,7 @@ class AddSpPlusRegisterThumbT1(AddSpPlusRegisterThumb, Opcode):
         shift_t = SRType.SRType_LSL
         shift_n = 0
         if rdm.uint == 15 and processor.in_it_block() and not processor.last_in_it_block():
-            print "unpredictable"
+            print("unpredictable")
         else:
             return AddSpPlusRegisterThumbT1(instr, **{"setflags": setflags, "m": rdm.uint, "d": rdm.uint,
                                                       "shift_t": shift_t, "shift_n": shift_n})

@@ -19,6 +19,6 @@ class LdrdLiteralT1(LdrdLiteral, Opcode):
         add = instr[8]
         imm32 = zero_extend(imm8 + "0b00", 32)
         if rt.uint == rt2.uint or rt.uint in (13, 15) or rt2.uint in (13, 15) or instr[10]:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return LdrdLiteralT1(instr, **{"add": add, "imm32": imm32, "t": rt.uint, "t2": rt2.uint})

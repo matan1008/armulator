@@ -17,6 +17,6 @@ class Usat16A1(Usat16, Opcode):
         sat_imm = instr[12:16]
         saturate_to = sat_imm.uint + 1
         if rd.uint == 15 or rn.uint == 15:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return Usat16A1(instr, **{"saturate_to": saturate_to, "d": rd.uint, "n": rn.uint})

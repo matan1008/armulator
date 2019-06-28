@@ -17,6 +17,6 @@ class SbfxA1(Sbfx, Opcode):
         rd = instr[16:20]
         widthm1 = instr[11:16]
         if rd.uint == 15 or rn.uint == 15:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return SbfxA1(instr, **{"lsbit": lsb.uint, "widthminus1": widthm1.uint, "d": rd.uint, "n": rn.uint})

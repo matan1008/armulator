@@ -19,7 +19,7 @@ class LdmExceptionReturnA1(LdmExceptionReturn, Opcode):
         word_higher = increment == instr[7]
         wback = instr[10]
         if rn.uint == 15 or (wback and register_list[15 - rn.uint] and arch_version() >= 7):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return LdmExceptionReturnA1(instr, **{"increment": increment, "word_higher": word_higher, "wback": wback,
                                                   "registers": register_list, "n": rn.uint})

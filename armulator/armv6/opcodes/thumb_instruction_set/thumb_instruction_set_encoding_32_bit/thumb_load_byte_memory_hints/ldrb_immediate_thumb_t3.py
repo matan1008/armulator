@@ -24,7 +24,7 @@ class LdrbImmediateThumbT3(LdrbImmediateThumb, Opcode):
         if not index and not wback:
             raise UndefinedInstructionException()
         elif rt.uint == 13 or (rt.uint == 15 and wback) or (wback and rn.uint == rt.uint):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return LdrbImmediateThumbT3(instr, **{"add": add, "wback": wback, "index": index, "t": rt.uint,
                                                   "n": rn.uint, "imm32": imm32})

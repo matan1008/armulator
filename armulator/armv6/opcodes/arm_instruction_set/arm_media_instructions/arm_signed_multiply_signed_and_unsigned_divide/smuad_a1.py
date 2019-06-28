@@ -17,6 +17,6 @@ class SmuadA1(Smuad, Opcode):
         rm = instr[20:24]
         rd = instr[12:16]
         if rd.uint == 15 or rn.uint == 15 or rm.uint == 15:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return SmuadA1(instr, **{"m_swap": m_swap, "m": rm.uint, "d": rd.uint, "n": rn.uint})

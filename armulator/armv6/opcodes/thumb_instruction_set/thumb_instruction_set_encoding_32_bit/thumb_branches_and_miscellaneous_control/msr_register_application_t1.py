@@ -16,6 +16,6 @@ class MsrRegisterApplicationT1(MsrRegisterApplication, Opcode):
         write_nzcvq = instr[20]
         write_g = instr[21]
         if (not write_g and not write_nzcvq) or rn.uint in (13, 15):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return MsrRegisterApplicationT1(instr, **{"write_nzcvq": write_nzcvq, "write_g": write_g, "n": rn.uint})

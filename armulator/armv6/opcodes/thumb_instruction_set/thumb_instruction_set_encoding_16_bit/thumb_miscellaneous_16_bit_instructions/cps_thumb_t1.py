@@ -18,7 +18,7 @@ class CpsThumbT1(CpsThumb, Opcode):
         enable = not instr[11]
         disable = instr[11]
         if (not affect_a and not affect_i and not affect_f) or processor.in_it_block():
-            print "unpredictable"
+            print("unpredictable")
         else:
             return CpsThumbT1(instr, **{"affect_a": affect_a, "affect_i": affect_i, "affect_f": affect_f,
                                         "enable": enable, "disable": disable})

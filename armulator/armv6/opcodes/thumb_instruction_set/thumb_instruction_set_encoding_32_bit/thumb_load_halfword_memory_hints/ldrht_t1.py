@@ -20,7 +20,7 @@ class LdrhtT1(Ldrht, Opcode):
         add = True
         imm32 = zero_extend(imm8, 32)
         if rt.uint in (13, 15):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return LdrhtT1(instr, **{"add": add, "post_index": post_index, "t": rt.uint,
                                      "n": rn.uint, "imm32": imm32})

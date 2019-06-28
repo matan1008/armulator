@@ -17,6 +17,6 @@ class StmT1(Stm, Opcode):
         wback = True
         registers = "0b00000000" + register_list
         if registers.count(1) < 1:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return StmT1(instr, **{"wback": wback, "registers": registers, "n": rn.uint})

@@ -22,6 +22,6 @@ class SubsPcLrThumbT1(SubsPcLrThumb, Opcode):
             raise UndefinedInstructionException()
         elif ((processor.in_it_block() and not processor.last_in_it_block()) or
               processor.registers.current_instr_set() == InstrSet.InstrSet_ThumbEE):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return SubsPcLrThumbT1(instr, **{"imm32": imm32, "n": n})

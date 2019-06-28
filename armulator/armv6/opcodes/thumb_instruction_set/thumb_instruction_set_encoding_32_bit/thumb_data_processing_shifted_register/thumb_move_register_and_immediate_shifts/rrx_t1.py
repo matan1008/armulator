@@ -16,6 +16,6 @@ class RrxT1(Rrx, Opcode):
         rd = instr[20:24]
         setflags = instr[11]
         if rd.uint in (13, 15) or rm.uint in (13, 15):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return RrxT1(instr, **{"setflags": setflags, "m": rm.uint, "d": rd.uint})

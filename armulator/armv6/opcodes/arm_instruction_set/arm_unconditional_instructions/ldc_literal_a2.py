@@ -22,7 +22,7 @@ class LdcLiteralA2(LdcLiteral, Opcode):
         if coproc[0:3] == "0b101":
             raise UndefinedInstructionException()
         elif wback:
-            print "unpredictable"
+            print("unpredictable")
         else:
             imm32 = sign_extend(imm8 + "0b00", 32)
             return LdcLiteralA2(instr, **{"cp": coproc.uint, "add": add, "imm32": imm32, "index": index})

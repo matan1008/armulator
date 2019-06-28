@@ -19,6 +19,6 @@ class UbfxT1(Ubfx, Opcode):
         rn = instr[12:16]
         lsbit = (imm3 + imm2).uint
         if rd.uint in (13, 15) or rn.uint in (13, 15):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return UbfxT1(instr, **{"lsbit": lsbit, "widthminus1": widthm1.uint, "d": rd.uint, "n": rn.uint})

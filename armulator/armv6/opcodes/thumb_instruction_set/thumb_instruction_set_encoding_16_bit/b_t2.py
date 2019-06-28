@@ -16,6 +16,6 @@ class BT2(B, Opcode):
         imm11 = instr[5:16]
         imm32 = sign_extend(imm11 + "0b0", 32)
         if processor.in_it_block() and not processor.last_in_it_block():
-            print "unpredictable"
+            print("unpredictable")
         else:
             return BT2(instr, **{"imm32": imm32})

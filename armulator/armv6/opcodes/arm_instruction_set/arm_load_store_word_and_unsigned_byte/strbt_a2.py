@@ -24,7 +24,7 @@ class StrbtA2(Strbt, Opcode):
         post_index = True
         if rt.uint == 15 or rn.uint == 15 or rn.uint == rt.uint or rm.uint or (
                 arch_version() < 6 and rm.uint == rn.uint):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return StrbtA2(instr, **{"add": add, "post_index": post_index, "t": rt.uint,
                                      "n": rn.uint, "m": rm.uint, "shift_t": shift_t, "shift_n": shift_n})

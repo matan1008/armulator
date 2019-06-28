@@ -16,6 +16,6 @@ class LdrexdT1(Ldrexd, Opcode):
         rt = instr[16:20]
         rn = instr[12:16]
         if rt.uint in (13, 15) or rt2.uint in (13, 15) or rn.uint == 15 or rt2.uint == rt.uint:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return LdrexdT1(instr, **{"t": rt.uint, "t2": rt2.uint, "n": rn.uint})

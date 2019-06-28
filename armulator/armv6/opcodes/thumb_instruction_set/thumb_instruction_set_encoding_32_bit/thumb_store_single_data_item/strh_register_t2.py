@@ -24,7 +24,7 @@ class StrhRegisterT2(StrhRegister, Opcode):
         if rn == "0b1111":
             raise UndefinedInstructionException()
         elif rt.uint in (13, 15) or rm.uint in (13, 15):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return StrhRegisterT2(instr, **{"add": add, "wback": wback, "index": index, "m": rm.uint, "t": rt.uint,
                                             "n": rn.uint, "shift_t": SRType.SRType_LSL, "shift_n": imm2.uint})

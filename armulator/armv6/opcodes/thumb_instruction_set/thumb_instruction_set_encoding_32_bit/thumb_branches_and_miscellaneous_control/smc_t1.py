@@ -13,6 +13,6 @@ class SmcT1(Smc, Opcode):
     @staticmethod
     def from_bitarray(instr, processor):
         if processor.in_it_block() and not processor.last_in_it_block():
-            print "unpredictable"
+            print("unpredictable")
         else:
             return SmcT1(instr)

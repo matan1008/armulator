@@ -19,6 +19,6 @@ class StrexT1(Strex, Opcode):
         rn = instr[12:16]
         imm32 = zero_extend(imm8 + "0b00", 32)
         if rd.uint in (13, 15) or rt.uint in (13, 15) or rn.uint == 15 or rd.uint == rn.uint or rd.uint == rt.uint:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return StrexT1(instr, **{"imm32": imm32, "t": rt.uint, "d": rd.uint, "n": rn.uint})

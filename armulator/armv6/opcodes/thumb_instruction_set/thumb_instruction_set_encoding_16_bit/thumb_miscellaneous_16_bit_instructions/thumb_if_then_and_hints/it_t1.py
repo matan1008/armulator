@@ -15,6 +15,6 @@ class ItT1(It, Opcode):
         mask = instr[12:16]
         first_cond = instr[8:12]
         if first_cond == "0b1111" or (first_cond == "0b1110" and mask.count(1) != 1) or processor.in_it_block():
-            print "unpredictable"
+            print("unpredictable")
         else:
             return ItT1(instr, **{"firstcond": first_cond, "mask": mask})

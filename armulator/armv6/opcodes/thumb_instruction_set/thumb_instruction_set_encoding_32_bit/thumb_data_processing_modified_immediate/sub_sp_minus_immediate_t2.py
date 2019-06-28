@@ -20,6 +20,6 @@ class SubSpMinusImmediateT2(SubSpMinusImmediate, Opcode):
         i = instr[5:6]
         imm32 = thumb_expand_imm(i + imm3 + imm8)
         if rd.uint == 15 and not setflags:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return SubSpMinusImmediateT2(instr, **{"setflags": setflags, "d": rd.uint, "imm32": imm32})

@@ -21,7 +21,7 @@ class LdrhImmediateThumbT2(LdrhImmediateThumb, Opcode):
         add = True
         wback = False
         if rt.uint == 13:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return LdrhImmediateThumbT2(instr, **{"add": add, "wback": wback, "index": index, "t": rt.uint,
                                                   "n": rn.uint, "imm32": imm32})

@@ -18,7 +18,7 @@ class CmpRegisterShiftedRegisterA1(CmpRegisterShiftedRegister, Opcode):
         rs = instr[20:24]
         rn = instr[12:16]
         if rn == "0b1111" or rm == "0b1111" or rs == "0b1111":
-            print "unpredictable"
+            print("unpredictable")
         else:
             shift_t = decode_reg_shift(type_o)
             return CmpRegisterShiftedRegisterA1(instr, **{"m": rm.uint, "s": rs.uint,

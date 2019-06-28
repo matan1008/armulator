@@ -20,6 +20,6 @@ class TstRegisterT2(TstRegister, Opcode):
         rn = instr[12:16]
         shift_t, shift_n = decode_imm_shift(type_o, imm3 + imm2)
         if rn.uint in (13, 15) or rm.uint in (13, 15):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return TstRegisterT2(instr, **{"m": rm.uint, "n": rn.uint, "shift_t": shift_t, "shift_n": shift_n})

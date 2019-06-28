@@ -11,7 +11,7 @@ from ldrexh_a1 import LdrexhA1
 def decode_instruction(instr):
     if instr[8:12].uint == 0:
         # Swap Word, Swap Byte
-        print "deprecated"
+        print("deprecated")
     elif instr[8:12] == "0b1000":
         # Store Register Exclusive
         return StrexA1

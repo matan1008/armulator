@@ -15,6 +15,6 @@ class Rev16A1(Rev16, Opcode):
         rm = instr[28:32]
         rd = instr[16:20]
         if rd.uint == 15 or rm.uint == 15:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return Rev16A1(instr, **{"m": rm.uint, "d": rd.uint})

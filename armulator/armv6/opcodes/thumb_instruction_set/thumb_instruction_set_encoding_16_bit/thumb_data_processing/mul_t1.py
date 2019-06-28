@@ -17,6 +17,6 @@ class MulT1(Mul, Opcode):
         rn = instr[10:13]
         setflags = not processor.in_it_block()
         if arch_version() < 6 and rdm.uint == rn.uint:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return MulT1(instr, **{"setflags": setflags, "m": rdm.uint, "d": rdm.uint, "n": rn.uint})

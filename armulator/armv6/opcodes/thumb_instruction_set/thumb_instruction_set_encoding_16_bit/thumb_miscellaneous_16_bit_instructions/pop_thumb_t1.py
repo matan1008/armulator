@@ -17,6 +17,6 @@ class PopThumbT1(PopThumb, Opcode):
         p = instr[7:8]
         registers = p + "0b0000000" + registers_list
         if registers.count(1) < 1 or (registers[0] and processor.in_it_block() and not processor.last_in_it_block()):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return PopThumbT1(instr, **{"registers": registers, "unaligned_allowed": unaligned_allowed})

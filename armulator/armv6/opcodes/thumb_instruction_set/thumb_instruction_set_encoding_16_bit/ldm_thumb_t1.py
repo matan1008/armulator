@@ -17,6 +17,6 @@ class LdmThumbT1(LdmThumb, Opcode):
         registers = "0b00000000" + register_list
         wback = registers[15 - rn.uint]
         if registers.count(1) < 1:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return LdmThumbT1(instr, **{"wback": wback, "registers": registers, "n": rn.uint})

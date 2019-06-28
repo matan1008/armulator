@@ -16,6 +16,6 @@ class MrrcA1(Mrrc, Opcode):
         rt = instr[16:20]
         rt2 = instr[12:16]
         if rt.uint == 15 or rt2.uint == 15 or rt.uint == rt2.uint:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return MrrcA1(instr, **{"cp": coproc.uint, "t": rt.uint, "t2": rt2.uint})

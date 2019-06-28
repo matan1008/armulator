@@ -21,7 +21,7 @@ class LdrImmediateThumbT3(LdrImmediateThumb, Opcode):
         rn = instr[12:16]
         imm32 = zero_extend(imm12, 32)
         if rt.uint == 15 and processor.in_it_block() and not processor.last_in_it_block():
-            print "unpredictable"
+            print("unpredictable")
         else:
             return LdrImmediateThumbT3(instr, **{"add": add, "wback": wback, "index": index, "t": rt.uint,
                                                  "n": rn.uint, "imm32": imm32})

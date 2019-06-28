@@ -21,7 +21,7 @@ class LdrsbImmediateT1(LdrsbImmediate, Opcode):
         add = True
         wback = False
         if rt.uint == 13:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return LdrsbImmediateT1(instr, **{"add": add, "wback": wback, "index": index, "imm32": imm32, "t": rt.uint,
                                               "n": rn.uint})

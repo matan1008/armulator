@@ -22,6 +22,6 @@ class LdcLiteralT1(LdcLiteral, Opcode):
         if instr[7:11] == "0b0000":
             raise UndefinedInstructionException()
         elif instr[10] or not index:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return LdcLiteralT1(instr, **{"cp": coproc.uint, "add": add, "imm32": imm32, "index": index})

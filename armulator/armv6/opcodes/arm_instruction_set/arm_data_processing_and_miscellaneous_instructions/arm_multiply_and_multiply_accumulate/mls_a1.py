@@ -17,6 +17,6 @@ class MlsA1(Mls, Opcode):
         ra = instr[16:20]
         rd = instr[12:16]
         if rd.uint == 15 or rm.uint == 15 or rn.uint == 15 or ra.uint == 15:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return MlsA1(instr, **{"m": rm.uint, "a": ra.uint, "d": rd.uint, "n": rn.uint})

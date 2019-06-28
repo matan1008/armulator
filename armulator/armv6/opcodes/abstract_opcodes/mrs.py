@@ -11,7 +11,7 @@ class Mrs(AbstractOpcode):
         if processor.condition_passed():
             if self.read_spsr:
                 if processor.registers.current_mode_is_user_or_system():
-                    print "unpredictable"
+                    print("unpredictable")
                 else:
                     processor.registers.set(self.d, processor.registers.get_spsr())
             else:

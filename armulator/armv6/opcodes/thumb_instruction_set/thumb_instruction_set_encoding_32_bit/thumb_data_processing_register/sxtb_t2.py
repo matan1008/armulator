@@ -17,6 +17,6 @@ class SxtbT2(Sxtb, Opcode):
         rd = instr[20:24]
         rotation = (rotate + "0b000").uint
         if rd.uint in (13, 15) or rm.uint in (13, 15):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return SxtbT2(instr, **{"m": rm.uint, "d": rd.uint, "rotation": rotation})

@@ -25,7 +25,7 @@ class StrdImmediateT1(StrdImmediate, Opcode):
                 rn.uint == 15 or
                 rt.uint in (13, 15) or
                 rt2.uint in (13, 15)):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return StrdImmediateT1(instr, **{"add": add, "wback": wback, "index": index, "imm32": imm32, "t": rt.uint,
                                              "t2": rt2.uint, "n": rn.uint})

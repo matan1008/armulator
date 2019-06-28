@@ -18,6 +18,6 @@ class PushT3(Push, Opcode):
         registers[15 - rt.uint] = True
         unaligned_allowed = True
         if rt.uint in (13, 15):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return PushT3(instr, **{"registers": registers, "unaligned_allowed": unaligned_allowed})

@@ -20,6 +20,6 @@ class BT3(B, Opcode):
         s = instr[5:6]
         imm32 = sign_extend(s + j2 + j1 + imm6 + imm11 + "0b0", 32)
         if processor.in_it_block():
-            print "unpredictable"
+            print("unpredictable")
         else:
             return BT3(instr, **{"imm32": imm32})

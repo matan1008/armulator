@@ -17,4 +17,4 @@ class Bfi(AbstractOpcode):
                                                            31 - self.msbit + self.lsbit:32]
                 processor.registers.set(self.d, temp_rd)
             else:
-                print "unpredictable"
+                print("unpredictable")

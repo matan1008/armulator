@@ -18,6 +18,6 @@ class LdmdbA1(Ldmdb, Opcode):
         wback = instr[10]
         if rn.uint == 15 or register_list.count(1) < 1 or (
                         wback and register_list[15 - rn.uint] and arch_version() >= 7):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return LdmdbA1(instr, **{"wback": wback, "registers": register_list, "n": rn.uint})

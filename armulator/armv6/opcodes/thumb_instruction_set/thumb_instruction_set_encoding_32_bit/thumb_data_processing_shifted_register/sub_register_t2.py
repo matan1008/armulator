@@ -22,7 +22,7 @@ class SubRegisterT2(SubRegister, Opcode):
         setflags = instr[11]
         shift_t, shift_n = decode_imm_shift(type_o, imm3 + imm2)
         if rd.uint == 13 or (rd.uint == 15 and not setflags) or rn.uint == 15 or rm.uint in (13, 15):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return SubRegisterT2(instr, **{"setflags": setflags, "m": rm.uint, "d": rd.uint, "n": rn.uint,
                                            "shift_t": shift_t, "shift_n": shift_n})

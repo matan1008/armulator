@@ -16,6 +16,6 @@ class RevshT2(Revsh, Opcode):
         rd = instr[20:24]
         rm1 = instr[12:16]
         if rm.uint in (13, 15) or rd.uint in (13, 15) or rm != rm1:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return RevshT2(instr, **{"m": rm.uint, "d": rd.uint})

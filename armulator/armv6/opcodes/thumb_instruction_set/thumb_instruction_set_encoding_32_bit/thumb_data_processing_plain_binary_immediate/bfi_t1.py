@@ -19,6 +19,6 @@ class BfiT1(Bfi, Opcode):
         rn = instr[12:16]
         lsbit = (imm3 + imm2).uint
         if rd.uint in (13, 15) or rn.uint == 13:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return BfiT1(instr, **{"lsbit": lsbit, "msbit": msb.uint, "d": rd.uint, "n": rn.uint})

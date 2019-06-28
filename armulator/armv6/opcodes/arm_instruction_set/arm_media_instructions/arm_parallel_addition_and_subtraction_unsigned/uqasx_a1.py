@@ -16,6 +16,6 @@ class UqasxA1(Uqasx, Opcode):
         rd = instr[16:20]
         rn = instr[12:16]
         if rd.uint == 15 or rn.uint == 15 or rm.uint == 15:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return UqasxA1(instr, **{"m": rm.uint, "d": rd.uint, "n": rn.uint})

@@ -16,6 +16,6 @@ class RfeT2(Rfe, Opcode):
         wback = instr[10]
         wordhigher = False
         if rn.uint == 15 or (processor.in_it_block() and not processor.last_in_it_block()):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return RfeT2(instr, **{"word_higher": wordhigher, "wback": wback, "n": rn.uint})

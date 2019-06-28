@@ -16,6 +16,6 @@ class MovRegisterThumbT1(MovRegisterThumb, Opcode):
         rm = instr[9:13]
         setflags = False
         if rd.uint == 15 and processor.in_it_block() and not processor.last_in_it_block():
-            print "unpredictable"
+            print("unpredictable")
         else:
             return MovRegisterThumbT1(instr, **{"setflags": setflags, "m": rm.uint, "d": rd.uint})

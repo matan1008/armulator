@@ -23,7 +23,7 @@ class SmlalxyT1(Smlalxy, Opcode):
                 rd_hi.uint in (13, 15) or
                 rd_lo.uint in (13, 15) or
                 rd_hi.uint == rd_lo.uint):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return SmlalxyT1(instr, **{"m_high": m_high, "n_high": n_high, "m": rm.uint, "d_hi": rd_hi.uint,
                                        "d_lo": rd_lo.uint, "n": rn.uint})

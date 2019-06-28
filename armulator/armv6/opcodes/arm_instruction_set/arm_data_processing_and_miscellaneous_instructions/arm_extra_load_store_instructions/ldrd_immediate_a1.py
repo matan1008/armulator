@@ -23,7 +23,7 @@ class LdrdImmediateA1(LdrdImmediate, Opcode):
         t2 = rt.uint + 1
         wback = (not index) or w
         if rt[3] or (not index and w) or (wback and (rn.uint == rt.uint or rn.uint == t2)) or t2 == 15:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return LdrdImmediateA1(instr, **{"add": add, "wback": wback, "index": index, "imm32": imm32, "t": rt.uint,
                                              "t2": t2, "n": rn.uint})

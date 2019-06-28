@@ -26,7 +26,7 @@ class StrRegisterA1(StrRegister, Opcode):
         shift_t, shift_n = decode_imm_shift(type_o, imm5)
         if rm.uint == 15 or (wback and (rn.uint == 15 or rn.uint == rt.uint)) or (
                             arch_version() < 6 and wback and rm.uint == rn.uint):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return StrRegisterA1(instr, **{"add": add, "wback": wback, "index": index, "m": rm.uint, "t": rt.uint,
                                            "n": rn.uint, "shift_t": shift_t, "shift_n": shift_n})

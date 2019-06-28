@@ -17,6 +17,6 @@ class LdrexA1(Ldrex, Opcode):
         rn = instr[12:16]
         imm32 = zeros(32)
         if rn.uint == 15 or rt.uint == 15:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return LdrexA1(instr, **{"imm32": imm32, "t": rt.uint, "n": rn.uint})

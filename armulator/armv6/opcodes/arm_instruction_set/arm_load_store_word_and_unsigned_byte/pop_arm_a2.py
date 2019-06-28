@@ -18,6 +18,6 @@ class PopArmA2(PopArm, Opcode):
         registers[15 - rt.uint] = True
         unaligned_allowed = True
         if rt.uint == 13:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return PopArmA2(instr, **{"registers": registers, "unaligned_allowed": unaligned_allowed})

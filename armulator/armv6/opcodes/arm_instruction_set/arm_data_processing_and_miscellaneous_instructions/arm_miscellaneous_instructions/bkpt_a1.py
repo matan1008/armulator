@@ -15,6 +15,6 @@ class BkptA1(Bkpt, Opcode):
     def from_bitarray(instr, processor):
         imm32 = BitArray(bin="0000000000000000" + instr.bin[12:24] + instr.bin[-4:])
         if instr.bin[0:4] != "1110":
-            print "unpredictable"
+            print("unpredictable")
         else:
             return BkptA1(instr)

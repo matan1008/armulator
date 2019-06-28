@@ -16,6 +16,6 @@ class BT1(B, Opcode):
         imm8 = instr[8:16]
         imm32 = sign_extend(imm8 + "0b0", 32)
         if processor.in_it_block():
-            print "unpredictable"
+            print("unpredictable")
         else:
             return BT1(instr, **{"imm32": imm32})

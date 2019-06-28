@@ -20,7 +20,7 @@ class AddRegisterThumbT2(AddRegisterThumb, Opcode):
         shift_n = 0
         if (rdn.uint == 15 and rm.uint == 15) or (
                             rdn.uint == 15 and processor.in_it_block() and not processor.last_in_it_block()):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return AddRegisterThumbT2(instr, **{"setflags": setflags, "m": rm.uint, "d": rdn.uint, "n": rdn.uint,
                                                 "shift_t": shift_t, "shift_n": shift_n})

@@ -18,6 +18,6 @@ class StrexdT1(Strexd, Opcode):
         rn = instr[12:16]
         if rd.uint in (13, 15) or rt.uint in (13, 15) or rt2.uint in (
                 13, 15) or rn.uint == 15 or rd.uint == rn.uint or rd.uint == rt.uint or rd.uint == rt2.uint:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return StrexdT1(instr, **{"t": rt.uint, "t2": rt2.uint, "d": rd.uint, "n": rn.uint})

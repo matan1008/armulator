@@ -16,6 +16,6 @@ class StrexhA1(Strexh, Opcode):
         rd = instr[16:20]
         rn = instr[12:16]
         if rd.uint == 15 or rn.uint == 15 or rt.uint == 15 or rn.uint == rd.uint or rd.uint == rt.uint:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return StrexhA1(instr, **{"t": rt.uint, "d": rd.uint, "n": rn.uint})

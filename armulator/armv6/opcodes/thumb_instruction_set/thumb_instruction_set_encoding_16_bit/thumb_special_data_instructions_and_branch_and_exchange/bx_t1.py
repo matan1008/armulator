@@ -14,6 +14,6 @@ class BxT1(Bx, Opcode):
     def from_bitarray(instr, processor):
         rm = instr[9:13]
         if processor.in_it_block() and not processor.last_in_it_block():
-            print "unpredictable"
+            print("unpredictable")
         else:
             return BxT1(instr, **{"m": rm.uint})

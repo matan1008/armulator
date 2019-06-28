@@ -19,7 +19,7 @@ class UmullT1(Umull, Opcode):
         rn = instr[12:16]
         if rm.uint in (13, 15) or rn.uint in (13, 15) or rd_hi.uint in (13, 15) or rd_lo.uint in (
                 13, 15) or rd_hi.uint == rd_lo.uint:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return UmullT1(instr, **{"setflags": setflags, "m": rm.uint, "d_hi": rd_hi.uint, "d_lo": rd_lo.uint,
                                      "n": rn.uint})

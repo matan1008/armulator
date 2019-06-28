@@ -21,6 +21,6 @@ class LdmdbT1(Ldmdb, Opcode):
         if rn.uint == 15 or registers.count(1) < 2 or (p == "0b1" and m == "0b1") or (
                         registers[0] and processor.in_it_block() and not processor.last_in_it_block()) or (
                     wback and registers[15 - rn.uint]):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return LdmdbT1(instr, **{"wback": wback, "registers": registers, "n": rn.uint})

@@ -17,13 +17,13 @@ class SrsArm(AbstractOpcode):
             if processor.registers.current_mode_is_hyp():
                 raise UndefinedInstructionException()
             elif processor.registers.current_mode_is_user_or_system():
-                print "unpredictable"
+                print("unpredictable")
             elif self.mode == "0b11010":
-                print "unpredictable"
+                print("unpredictable")
             else:
                 if not processor.registers.is_secure():
                     if self.mode == "0b10110" or (self.mode == "0b10001" and processor.registers.nsacr.get_rfr()):
-                        print "unpredictable"
+                        print("unpredictable")
                 base = processor.registers.get_rmode(13, self.mode)
                 address = base if self.increment else sub(base, BitArray(bin="1000"), 32)
                 if self.word_higher:

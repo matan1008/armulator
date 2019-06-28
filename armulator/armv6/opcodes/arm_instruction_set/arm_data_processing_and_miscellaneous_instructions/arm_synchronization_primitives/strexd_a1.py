@@ -18,6 +18,6 @@ class StrexdA1(Strexd, Opcode):
         t2 = rt.uint + 1
         if (rn.uint == 15 or rd.uint == 15 or rt[3] or rt.uint == 14 or
                 rn.uint == rd.uint or rt.uint == rd.uint or t2 == rd.uint):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return StrexdA1(instr, **{"t": rt.uint, "t2": t2, "d": rd.uint, "n": rn.uint})

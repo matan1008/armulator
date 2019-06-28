@@ -19,7 +19,7 @@ class EmuRunner(Thread):
         while not self.stop_called:
             time.sleep(1)
             self.emu.emulate_cycle()
-            print self.emu.registers.pc_store_value()
+            print(self.emu.registers.pc_store_value())
 
     def stop(self):
         self.stop_called = True
@@ -50,9 +50,9 @@ def main():
     # Assert that the eloop works
     assert arm.registers.pc_store_value().uint == ADDR
     # Send IRQ exception
-    print "Sending IRQ"
+    print("Sending IRQ")
     arm.registers.take_physical_irq_exception()
-    print "IRQ sent"
+    print("IRQ sent")
     # Assert jumping to IRQ vector and changing mode
     assert arm.registers.pc_store_value().uint == 0x18
     assert arm.registers.cpsr.get_m() == "0b10010"

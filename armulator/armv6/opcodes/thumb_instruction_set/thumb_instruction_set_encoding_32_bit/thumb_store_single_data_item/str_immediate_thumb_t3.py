@@ -24,7 +24,7 @@ class StrImmediateThumbT3(StrImmediateThumb, Opcode):
         if rn == "0b1111":
             raise UndefinedInstructionException()
         elif rt.uint == 15:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return StrImmediateThumbT3(instr, **{"add": add, "wback": wback, "index": index, "t": rt.uint,
                                                  "n": rn.uint, "imm32": imm32})

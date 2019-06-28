@@ -18,6 +18,6 @@ class RfeA1(Rfe, Opcode):
         word_higher = p == increment
         rn = instr[12:16]
         if rn.uint == 15:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return RfeA1(instr, **{"increment": increment, "word_higher": word_higher, "wback": wback, "n": rn.uint})

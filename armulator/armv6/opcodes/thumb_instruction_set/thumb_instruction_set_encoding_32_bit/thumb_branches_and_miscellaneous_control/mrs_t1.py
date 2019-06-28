@@ -15,6 +15,6 @@ class MrsT1(Mrs, Opcode):
         rd = instr[20:24]
         read_spsr = instr[11]
         if rd.uint in (13, 15):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return MrsT1(instr, **{"read_spsr": read_spsr, "d": rd.uint})

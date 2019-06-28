@@ -20,6 +20,6 @@ class AddSpPlusImmediateT4(AddSpPlusImmediate, Opcode):
         setflags = False
         imm32 = zero_extend(i + imm3 + imm8, 32)
         if rd.uint == 15:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return AddSpPlusImmediateT4(instr, **{"setflags": setflags, "d": rd.uint, "imm32": imm32})

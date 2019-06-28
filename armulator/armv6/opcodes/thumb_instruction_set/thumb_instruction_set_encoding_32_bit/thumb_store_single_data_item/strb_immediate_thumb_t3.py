@@ -23,7 +23,7 @@ class StrbImmediateThumbT3(StrbImmediateThumb, Opcode):
         if rn == "0b1111" or (not index and not wback):
             raise UndefinedInstructionException()
         elif rt.uint in (13, 15) or (wback and rn.uint == rt.uint):
-            print "unpredictable"
+            print("unpredictable")
         else:
             imm32 = zero_extend(imm8, 32)
             return StrbImmediateThumbT3(instr, **{"add": add, "wback": wback, "index": index, "t": rt.uint,

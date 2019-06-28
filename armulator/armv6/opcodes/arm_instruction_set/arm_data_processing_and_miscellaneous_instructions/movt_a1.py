@@ -17,6 +17,6 @@ class MovtA1(Movt, Opcode):
         imm4 = instr[12:16]
         imm16 = imm4 + imm12
         if rd.uint == 15:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return MovtA1(instr, **{"d": rd.uint, "imm16": imm16})

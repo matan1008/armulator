@@ -23,7 +23,7 @@ class StcA2(Stc, Opcode):
         if coproc[0:3] == "0b101":
             raise UndefinedInstructionException()
         elif rn.uint == 15 and wback:
-            print "unpredictable"
+            print("unpredictable")
         else:
             imm32 = sign_extend(imm8 + "0b00", 32)
             return StcA2(instr, **{"cp": coproc.uint, "n": rn.uint, "add": add, "imm32": imm32, "index": index,

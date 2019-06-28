@@ -16,6 +16,6 @@ class PopArmA1(PopArm, Opcode):
         register_list = instr[16:32]
         unaligned_allowed = False
         if register_list[2] and arch_version() >= 7:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return PopArmA1(instr, **{"registers": register_list, "unaligned_allowed": unaligned_allowed})

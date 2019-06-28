@@ -17,6 +17,6 @@ class MulT2(Mul, Opcode):
         rn = instr[12:16]
         setflags = False
         if rd.uint in (13, 15) or rn.uint in (13, 15) or rm.uint in (13, 15):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return MulT2(instr, **{"setflags": setflags, "m": rm.uint, "d": rd.uint, "n": rn.uint})

@@ -19,7 +19,7 @@ class Rfe(AbstractOpcode):
                 raise UndefinedInstructionException()
             elif (not processor.registers.current_mode_is_not_user() or
                   processor.registers.current_instr_set() == InstrSet.InstrSet_ThumbEE):
-                print "unpredictable"
+                print("unpredictable")
             else:
                 address = (processor.registers.get(self.n)
                            if self.increment
@@ -39,6 +39,6 @@ class Rfe(AbstractOpcode):
                 if (processor.registers.cpsr.get_m() == "0b11010" and
                         processor.registers.cpsr.get_j() and
                         processor.registers.cpsr.get_t()):
-                    print "unpredictable"
+                    print("unpredictable")
                 else:
                     processor.branch_write_pc(new_pc_value)

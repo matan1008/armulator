@@ -16,6 +16,6 @@ class SdivT1(Sdiv, Opcode):
         rd = instr[20:24]
         rn = instr[12:16]
         if rm.uint in (13, 15) or rn.uint in (13, 15) or rd.uint in (13, 15):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return SdivT1(instr, **{"m": rm.uint, "d": rd.uint, "n": rn.uint})

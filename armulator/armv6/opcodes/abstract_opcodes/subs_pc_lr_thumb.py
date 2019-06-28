@@ -13,13 +13,13 @@ class SubsPcLrThumb(AbstractOpcode):
         if processor.condition_passed():
             if (processor.registers.current_mode_is_user_or_system() or
                     processor.registers.current_instr_set() == InstrSet.InstrSet_ThumbEE):
-                print "unpredictable"
+                print("unpredictable")
             else:
                 operand2 = self.imm32
                 result = add_with_carry(processor.registers.get(self.n), ~operand2, "1")[0]
                 if (processor.registers.cpsr.get_m() == "0b11010" and
                         processor.registers.cpsr.get_j() and
                         processor.registers.cpsr.get_t()):
-                    print "unpredictable"
+                    print("unpredictable")
                 else:
                     processor.branch_write_pc(result)

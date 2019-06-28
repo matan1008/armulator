@@ -15,6 +15,6 @@ class ClzA1(Clz, Opcode):
         rm = instr[-4:]
         rd = instr[16:20]
         if rm.uint == 15 or rd.uint == 15:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return ClzA1(instr, **{"m": rm.uint, "d": rd.uint})

@@ -28,6 +28,6 @@ class BlImmediateT2(BlImmediate, Opcode):
         if processor.registers.current_instr_set() == InstrSet.InstrSet_ThumbEE or h:
             raise UndefinedInstructionException()
         elif processor.in_it_block() and not processor.last_in_it_block():
-            print "unpredictable"
+            print("unpredictable")
         else:
             return BlImmediateT2(instr, **{"target_instr_set": target_instr_set, "imm32": imm32})

@@ -18,6 +18,6 @@ class CmpRegisterT2(CmpRegister, Opcode):
         shift_t = SRType.SRType_LSL
         shift_n = 0
         if (rn.uint < 8 and rm.uint < 8) or rn.uint == 15 or rm.uint == 15:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return CmpRegisterT2(instr, **{"m": rm.uint, "n": rn.uint, "shift_t": shift_t, "shift_n": shift_n})

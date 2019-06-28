@@ -24,7 +24,7 @@ class LdrImmediateThumbT4(LdrImmediateThumb, Opcode):
             raise UndefinedInstructionException()
         elif (wback and rn.uint == rt.uint) or (
                     rt.uint == 15 and processor.in_it_block() and not processor.last_in_it_block()):
-            print "unpredictable"
+            print("unpredictable")
         else:
             imm32 = zero_extend(imm8, 32)
             return LdrImmediateThumbT4(instr, **{"add": add, "wback": wback, "index": index, "t": rt.uint,

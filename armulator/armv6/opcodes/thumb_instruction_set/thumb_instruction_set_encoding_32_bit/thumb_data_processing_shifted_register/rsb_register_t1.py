@@ -22,7 +22,7 @@ class RsbRegisterT1(RsbRegister, Opcode):
         setflags = instr[11]
         shift_t, shift_n = decode_imm_shift(type_o, imm3 + imm2)
         if rn.uint in (13, 15) or rm.uint in (13, 15) or rd.uint in (13, 15):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return RsbRegisterT1(instr, **{"setflags": setflags, "m": rm.uint, "d": rd.uint, "n": rn.uint,
                                            "shift_t": shift_t, "shift_n": shift_n})

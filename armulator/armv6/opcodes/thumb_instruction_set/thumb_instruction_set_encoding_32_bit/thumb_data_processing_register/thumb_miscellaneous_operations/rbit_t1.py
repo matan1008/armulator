@@ -16,6 +16,6 @@ class RbitT1(Rbit, Opcode):
         rd = instr[20:24]
         rm1 = instr[12:16]
         if rm.uint in (13, 15) or rd.uint in (13, 15) or rm != rm1:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return RbitT1(instr, **{"m": rm.uint, "d": rd.uint})

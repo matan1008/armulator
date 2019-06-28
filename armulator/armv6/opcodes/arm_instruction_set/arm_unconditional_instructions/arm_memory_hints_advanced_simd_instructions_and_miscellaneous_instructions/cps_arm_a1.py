@@ -21,7 +21,7 @@ class CpsArmA1(CpsArm, Opcode):
         if (mode != "0b00000" and not m) or (
                     (imod[0] and not (a or f or i)) or (not imod[0] and (a or f or i))) or (
                     (imod == "0b00" and not m) or imod == "0b01"):
-            print "unpredictable"
+            print("unpredictable")
         else:
             enable = imod == "0b10"
             disable = imod == "0b11"

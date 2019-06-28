@@ -14,6 +14,6 @@ class SetendT1(Setend, Opcode):
     def from_bitarray(instr, processor):
         set_bigend = instr[12]
         if processor.in_it_block():
-            print "unpredictable"
+            print("unpredictable")
         else:
             return SetendT1(instr, **{"set_bigend": set_bigend})

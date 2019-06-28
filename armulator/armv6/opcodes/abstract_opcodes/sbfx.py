@@ -17,4 +17,4 @@ class Sbfx(AbstractOpcode):
                 processor.registers.set(self.d, sign_extend(
                         processor.registers.get(self.n)[31 - msbit:32 - self.lsbit], 32))
             else:
-                print "unpredictable"
+                print("unpredictable")

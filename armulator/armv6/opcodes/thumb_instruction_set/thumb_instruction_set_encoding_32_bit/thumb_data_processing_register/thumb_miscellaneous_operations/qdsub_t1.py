@@ -16,6 +16,6 @@ class QdsubT1(Qdsub, Opcode):
         rd = instr[20:24]
         rn = instr[12:16]
         if rd.uint in (13, 15) or rn.uint in (13, 15) or rm.uint in (13, 15):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return QdsubT1(instr, **{"m": rm.uint, "d": rd.uint, "n": rn.uint})

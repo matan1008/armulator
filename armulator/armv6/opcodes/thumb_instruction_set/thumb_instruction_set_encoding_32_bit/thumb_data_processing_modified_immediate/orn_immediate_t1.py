@@ -21,7 +21,7 @@ class OrnImmediateT1(OrnImmediate, Opcode):
         i = instr[5:6]
         imm32, carry = thumb_expand_imm_c(i + imm3 + imm8, processor.registers.cpsr.get_c())
         if rd.uint in (13, 15) or rn.uint == 13:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return OrnImmediateT1(instr, **{"setflags": setflags, "d": rd.uint, "n": rn.uint, "imm32": imm32,
                                             "carry": carry})

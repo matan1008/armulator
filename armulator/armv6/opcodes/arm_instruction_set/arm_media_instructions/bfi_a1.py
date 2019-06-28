@@ -17,6 +17,6 @@ class BfiA1(Bfi, Opcode):
         rd = instr[16:20]
         msb = instr[11:16]
         if rd.uint == 15:
-            print "unpredictable"
+            print("unpredictable")
         else:
             return BfiA1(instr, **{"lsbit": lsb.uint, "msbit": msb.uint, "d": rd.uint, "n": rn.uint})

@@ -18,6 +18,6 @@ class SmulT1(Smul, Opcode):
         m_high = instr[27]
         n_high = instr[26]
         if rd.uint in (13, 15) or rn.uint in (13, 15) or rm.uint in (13, 15):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return SmulT1(instr, **{"m_high": m_high, "n_high": n_high, "m": rm.uint, "d": rd.uint, "n": rn.uint})

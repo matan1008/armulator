@@ -11,7 +11,7 @@ class Eret(AbstractOpcode):
         if processor.condition_passed():
             if (processor.registers.current_mode_is_user_or_system() or
                     processor.registers.current_instr_set() == InstrSet.InstrSet_ThumbEE):
-                print "unpredictable"
+                print("unpredictable")
             else:
                 new_pc_value = (processor.registers.elr_hyp
                                 if processor.registers.current_mode_is_hyp()
@@ -20,6 +20,6 @@ class Eret(AbstractOpcode):
                 if (processor.registers.cpsr.get_m() == "0b11010" and
                         processor.registers.cpsr.get_j() and
                         processor.registers.cpsr.get_t()):
-                    print "unpredictable"
+                    print("unpredictable")
                 else:
                     processor.branch_write_pc(new_pc_value)

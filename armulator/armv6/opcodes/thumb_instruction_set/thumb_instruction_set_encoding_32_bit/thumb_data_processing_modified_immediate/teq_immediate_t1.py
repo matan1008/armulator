@@ -19,6 +19,6 @@ class TeqImmediateT1(TeqImmediate, Opcode):
         i = instr[5:6]
         imm32, carry = thumb_expand_imm_c(i + imm3 + imm8, processor.registers.cpsr.get_c())
         if rn.uint in (13, 15):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return TeqImmediateT1(instr, **{"n": rn.uint, "imm32": imm32, "carry": carry})

@@ -25,7 +25,7 @@ class LdrhRegisterA1(LdrhRegister, Opcode):
         shift_n = 0
         if rt.uint == 15 or rm.uint == 15 or (wback and (rn.uint == 15 or rn.uint == rt.uint)) or (
                             arch_version() < 6 and wback and rm.uint == rn.uint):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return LdrhRegisterA1(instr, **{"add": add, "wback": wback, "index": p, "m": rm.uint, "t": rt.uint,
                                             "n": rn.uint, "shift_t": shift_t, "shift_n": shift_n})

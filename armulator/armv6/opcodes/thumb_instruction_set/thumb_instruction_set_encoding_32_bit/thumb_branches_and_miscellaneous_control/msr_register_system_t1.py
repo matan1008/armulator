@@ -16,6 +16,6 @@ class MsrRegisterSystemT1(MsrRegisterSystem, Opcode):
         rn = instr[12:16]
         write_spsr = instr[11]
         if mask == "0b0000" or rn.uint in (13, 15):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return MsrRegisterSystemT1(instr, **{"write_spsr": write_spsr, "mask": mask, "n": rn.uint})

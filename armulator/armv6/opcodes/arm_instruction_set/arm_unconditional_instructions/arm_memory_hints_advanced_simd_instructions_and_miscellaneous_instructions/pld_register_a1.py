@@ -21,7 +21,7 @@ class PldRegisterA1(PldRegister, Opcode):
         add = instr[8]
         shift_t, shift_n = decode_imm_shift(type_o, imm5)
         if rm.uint == 15 or (rn.uint == 15 and is_pldw):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return PldRegisterA1(instr, **{"add": add, "is_pldw": is_pldw, "m": rm.uint, "n": rn.uint,
                                            "shift_t": shift_t, "shift_n": shift_n})

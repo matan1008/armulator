@@ -16,4 +16,4 @@ class Bfc(AbstractOpcode):
                 temp_rd[31 - self.msbit:32 - self.lsbit] = replicate("0", self.msbit - self.lsbit + 1)
                 processor.registers.set(self.d, temp_rd)
             else:
-                print "unpredictable"
+                print("unpredictable")

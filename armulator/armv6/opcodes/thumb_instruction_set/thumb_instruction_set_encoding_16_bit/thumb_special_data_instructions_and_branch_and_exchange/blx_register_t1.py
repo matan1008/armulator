@@ -14,6 +14,6 @@ class BlxRegisterT1(BlxRegister, Opcode):
     def from_bitarray(instr, processor):
         rm = instr[9:13]
         if rm.uint == 15 or (processor.in_it_block() and not processor.last_in_it_block()):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return BlxRegisterT1(instr, **{"m": rm.uint})

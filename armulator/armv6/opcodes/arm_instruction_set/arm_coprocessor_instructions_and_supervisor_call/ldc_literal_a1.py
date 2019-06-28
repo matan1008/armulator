@@ -23,7 +23,7 @@ class LdcLiteralA1(LdcLiteral, Opcode):
         if not index and not add and not d and not w:
             raise UndefinedInstructionException()
         elif w:
-            print "unpredictable"
+            print("unpredictable")
         else:
             imm32 = zero_extend(imm8 + "0b00", 32)
             return LdcLiteralA1(instr, **{"cp": coproc.uint, "add": add, "imm32": imm32, "index": index})

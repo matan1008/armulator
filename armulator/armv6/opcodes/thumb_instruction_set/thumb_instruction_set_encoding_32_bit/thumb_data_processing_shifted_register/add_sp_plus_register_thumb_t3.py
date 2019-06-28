@@ -22,7 +22,7 @@ class AddSpPlusRegisterThumbT3(AddSpPlusRegisterThumb, Opcode):
         shift_t, shift_n = decode_imm_shift(type_, imm3 + imm2)
         if rd.uint == 13 and (shift_t != SRType.SRType_LSL or shift_n > 3) or (
                         rd.uint == 15 and not setflags) or rm.uint in (13, 15):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return AddSpPlusRegisterThumbT3(instr, **{"setflags": setflags, "m": rm.uint,
                                                       "d": rd.uint, "shift_t": shift_t, "shift_n": shift_n})

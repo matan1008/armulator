@@ -17,6 +17,6 @@ class LsrRegisterT2(LsrRegister, Opcode):
         rn = instr[12:16]
         setflags = instr[11]
         if rd.uint in (13, 15) or rn.uint in (13, 15) or rm.uint in (13, 15):
-            print "unpredictable"
+            print("unpredictable")
         else:
             return LsrRegisterT2(instr, **{"setflags": setflags, "m": rm.uint, "d": rd.uint, "n": rn.uint})
