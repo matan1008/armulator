@@ -1,5 +1,5 @@
-from memory_attributes import MemoryAttributes
-from full_address import FullAddress
+from armulator.armv6.memory_attributes import MemoryAttributes
+from armulator.armv6.full_address import FullAddress
 
 
 class AddressDescriptor(object):

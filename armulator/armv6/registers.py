@@ -1,9 +1,9 @@
 from bitstring import BitArray
 from enum import Enum
 from configurations import *
-import shift
-import bits_ops
-from enums import *
+import armulator.armv6.shift as shift
+import armulator.armv6.bits_ops as bits_ops
+from armulator.armv6.enums import *
 from armulator.armv6.all_registers.sunavcr import SUNAVCR
 from armulator.armv6.all_registers.pmcr import PMCR
 from armulator.armv6.all_registers.jmcr import JMCR

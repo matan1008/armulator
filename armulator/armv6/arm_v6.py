@@ -1,14 +1,14 @@
 from os import path
 from bitstring import BitArray
-from configurations import *
+from armulator.armv6.configurations import *
 from armulator.armv6 import bits_ops
-from arm_exceptions import *
-from memory_attributes import MemoryAttributes, MemType
-from address_descriptor import AddressDescriptor
-from tlb_record import TLBRecord
-from memory_controller_hub import MemoryControllerHub
-from permissions import Permissions
-from enums import *
+from armulator.armv6.arm_exceptions import *
+from armulator.armv6.memory_attributes import MemoryAttributes, MemType
+from armulator.armv6.address_descriptor import AddressDescriptor
+from armulator.armv6.tlb_record import TLBRecord
+from armulator.armv6.memory_controller_hub import MemoryControllerHub
+from armulator.armv6.permissions import Permissions
+from armulator.armv6.enums import *
 import armulator.armv6.opcodes
 from armulator.armv6.registers import Registers
 from armulator.armv6.opcodes.abstract_opcodes.ldrt import Ldrt
