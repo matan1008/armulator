@@ -1,11 +1,12 @@
-from strht_a1 import StrhtA1
-from strht_a2 import StrhtA2
-from ldrht_a1 import LdrhtA1
-from ldrht_a2 import LdrhtA2
-from ldrsbt_a1 import LdrsbtA1
-from ldrsbt_a2 import LdrsbtA2
-from ldrsht_a1 import LdrshtA1
-from ldrsht_a2 import LdrshtA2
+from __future__ import absolute_import
+from .strht_a1 import StrhtA1
+from .strht_a2 import StrhtA2
+from .ldrht_a1 import LdrhtA1
+from .ldrht_a2 import LdrhtA2
+from .ldrsbt_a1 import LdrsbtA1
+from .ldrsbt_a2 import LdrsbtA2
+from .ldrsht_a1 import LdrshtA1
+from .ldrsht_a2 import LdrshtA2
 
 
 def decode_instruction(instr):

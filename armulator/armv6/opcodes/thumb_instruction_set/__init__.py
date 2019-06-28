@@ -1,5 +1,6 @@
-import thumb_instruction_set_encoding_16_bit
-import thumb_instruction_set_encoding_32_bit
+from __future__ import absolute_import
+from . import thumb_instruction_set_encoding_16_bit
+from . import thumb_instruction_set_encoding_32_bit
 
 
 def decode_instruction(instr):

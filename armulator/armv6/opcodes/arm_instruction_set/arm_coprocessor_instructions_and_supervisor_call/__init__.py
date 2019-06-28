@@ -1,13 +1,14 @@
+from __future__ import absolute_import
 from armulator.armv6.arm_exceptions import UndefinedInstructionException
-from svc_a1 import SvcA1
-from stc_a1 import StcA1
-from ldc_immediate_a1 import LdcImmediateA1
-from ldc_literal_a1 import LdcLiteralA1
-from mcrr_a1 import McrrA1
-from mrrc_a1 import MrrcA1
-from cdp_a1 import CdpA1
-from mcr_a1 import McrA1
-from mrc_a1 import MrcA1
+from .svc_a1 import SvcA1
+from .stc_a1 import StcA1
+from .ldc_immediate_a1 import LdcImmediateA1
+from .ldc_literal_a1 import LdcLiteralA1
+from .mcrr_a1 import McrrA1
+from .mrrc_a1 import MrrcA1
+from .cdp_a1 import CdpA1
+from .mcr_a1 import McrA1
+from .mrc_a1 import MrcA1
 
 
 def decode_instruction(instr):

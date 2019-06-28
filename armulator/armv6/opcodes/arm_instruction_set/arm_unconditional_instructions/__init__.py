@@ -1,15 +1,16 @@
-import arm_memory_hints_advanced_simd_instructions_and_miscellaneous_instructions
-from srs_arm_a1 import SrsArmA1
-from rfe_a1 import RfeA1
-from bl_immediate_a2 import BlImmediateA2
-from stc_a2 import StcA2
-from ldc_immediate_a2 import LdcImmediateA2
-from ldc_literal_a2 import LdcLiteralA2
-from mcrr_a2 import McrrA2
-from mrrc_a2 import MrrcA2
-from cdp_a2 import CdpA2
-from mcr_a2 import McrA2
-from mrc_a2 import MrcA2
+from __future__ import absolute_import
+from . import arm_memory_hints_advanced_simd_instructions_and_miscellaneous_instructions
+from .srs_arm_a1 import SrsArmA1
+from .rfe_a1 import RfeA1
+from .bl_immediate_a2 import BlImmediateA2
+from .stc_a2 import StcA2
+from .ldc_immediate_a2 import LdcImmediateA2
+from .ldc_literal_a2 import LdcLiteralA2
+from .mcrr_a2 import McrrA2
+from .mrrc_a2 import MrrcA2
+from .cdp_a2 import CdpA2
+from .mcr_a2 import McrA2
+from .mrc_a2 import MrcA2
 
 
 def decode_instruction(instr):

@@ -1,13 +1,14 @@
-from mrs_a1 import MrsA1
-from msr_register_application_a1 import MsrRegisterApplicationA1
-from msr_register_system_a1 import MsrRegisterSystemA1
-from bx_a1 import BxA1
-from clz_a1 import ClzA1
-from bxj_a1 import BxjA1
-from blx_register_a1 import BlxRegisterA1
-import arm_saturating_addition_and_subtraction
-from bkpt_a1 import BkptA1
-from smc_a1 import SmcA1
+from __future__ import absolute_import
+from .mrs_a1 import MrsA1
+from .msr_register_application_a1 import MsrRegisterApplicationA1
+from .msr_register_system_a1 import MsrRegisterSystemA1
+from .bx_a1 import BxA1
+from .clz_a1 import ClzA1
+from .bxj_a1 import BxjA1
+from .blx_register_a1 import BlxRegisterA1
+from . import arm_saturating_addition_and_subtraction
+from .bkpt_a1 import BkptA1
+from .smc_a1 import SmcA1
 
 
 def decode_instruction(instr):

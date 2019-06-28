@@ -1,9 +1,10 @@
-from ldr_register_thumb_t2 import LdrRegisterThumbT2
-from pop_thumb_t3 import PopThumbT3
-from ldr_immediate_thumb_t4 import LdrImmediateThumbT4
-from ldr_immediate_thumb_t3 import LdrImmediateThumbT3
-from ldrt_t1 import LdrtT1
-from ldr_literal_t2 import LdrLiteralT2
+from __future__ import absolute_import
+from .ldr_register_thumb_t2 import LdrRegisterThumbT2
+from .pop_thumb_t3 import PopThumbT3
+from .ldr_immediate_thumb_t4 import LdrImmediateThumbT4
+from .ldr_immediate_thumb_t3 import LdrImmediateThumbT3
+from .ldrt_t1 import LdrtT1
+from .ldr_literal_t2 import LdrLiteralT2
 
 
 def decode_instruction(instr):

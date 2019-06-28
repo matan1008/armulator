@@ -1,18 +1,19 @@
-from b_t3 import BT3
-from msr_register_application_t1 import MsrRegisterApplicationT1
-from msr_register_system_t1 import MsrRegisterSystemT1
-import thumb_change_processor_state_and_hints
-import thumb_miscellaneous_control_instructions
-from bxj_t1 import BxjT1
-from eret_t1 import EretT1
-from subs_pc_lr_thumb_t1 import SubsPcLrThumbT1
-from mrs_application_t1 import MrsApplicationT1
-from mrs_t1 import MrsT1
-from smc_t1 import SmcT1
-from b_t4 import BT4
-from udf_t2 import UdfT2
-from bl_immediate_t2 import BlImmediateT2
-from bl_immediate_t1 import BlImmediateT1
+from __future__ import absolute_import
+from .b_t3 import BT3
+from .msr_register_application_t1 import MsrRegisterApplicationT1
+from .msr_register_system_t1 import MsrRegisterSystemT1
+from . import thumb_change_processor_state_and_hints
+from . import thumb_miscellaneous_control_instructions
+from .bxj_t1 import BxjT1
+from .eret_t1 import EretT1
+from .subs_pc_lr_thumb_t1 import SubsPcLrThumbT1
+from .mrs_application_t1 import MrsApplicationT1
+from .mrs_t1 import MrsT1
+from .smc_t1 import SmcT1
+from .b_t4 import BT4
+from .udf_t2 import UdfT2
+from .bl_immediate_t2 import BlImmediateT2
+from .bl_immediate_t1 import BlImmediateT1
 
 
 def decode_instruction(instr):

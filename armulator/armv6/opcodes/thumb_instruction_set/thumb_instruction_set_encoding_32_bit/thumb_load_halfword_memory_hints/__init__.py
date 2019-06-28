@@ -1,17 +1,18 @@
-from ldrh_literal_t1 import LdrhLiteralT1
-from pld_literal_t1 import PldLiteralT1
-from ldrh_immediate_thumb_t3 import LdrhImmediateThumbT3
-from ldrh_immediate_thumb_t2 import LdrhImmediateThumbT2
-from ldrh_register_t2 import LdrhRegisterT2
-from ldrht_t1 import LdrhtT1
-from pld_register_t1 import PldRegisterT1
-from pld_immediate_t2 import PldImmediateT2
-from pld_immediate_t1 import PldImmediateT1
-from ldrsh_immediate_t2 import LdrshImmediateT2
-from ldrsh_immediate_t1 import LdrshImmediateT1
-from ldrsh_literal_t1 import LdrshLiteralT1
-from ldrsh_register_t2 import LdrshRegisterT2
-from ldrsht_t1 import LdrshtT1
+from __future__ import absolute_import
+from .ldrh_literal_t1 import LdrhLiteralT1
+from .pld_literal_t1 import PldLiteralT1
+from .ldrh_immediate_thumb_t3 import LdrhImmediateThumbT3
+from .ldrh_immediate_thumb_t2 import LdrhImmediateThumbT2
+from .ldrh_register_t2 import LdrhRegisterT2
+from .ldrht_t1 import LdrhtT1
+from .pld_register_t1 import PldRegisterT1
+from .pld_immediate_t2 import PldImmediateT2
+from .pld_immediate_t1 import PldImmediateT1
+from .ldrsh_immediate_t2 import LdrshImmediateT2
+from .ldrsh_immediate_t1 import LdrshImmediateT1
+from .ldrsh_literal_t1 import LdrshLiteralT1
+from .ldrsh_register_t2 import LdrshRegisterT2
+from .ldrsht_t1 import LdrshtT1
 
 
 def decode_instruction(instr):

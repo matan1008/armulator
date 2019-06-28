@@ -1,6 +1,7 @@
+from __future__ import absolute_import
 from bitstring import BitArray
 from enum import Enum
-import armulator.armv6.bits_ops as bits_ops
+from . import bits_ops
 
 SRType = Enum("SRType", "SRType_LSL SRType_LSR SRType_ASR SRType_ROR SRType_RRX")
 

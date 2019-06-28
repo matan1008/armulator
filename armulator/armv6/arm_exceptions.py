@@ -1,4 +1,5 @@
-from armulator.armv6.enums import DAbort
+from __future__ import absolute_import
+from .enums import DAbort
 
 
 class EndOfInstruction(Exception):

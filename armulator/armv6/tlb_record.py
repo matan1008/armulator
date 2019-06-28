@@ -1,5 +1,6 @@
-from armulator.armv6.permissions import Permissions
-from armulator.armv6.address_descriptor import AddressDescriptor
+from __future__ import absolute_import
+from .permissions import Permissions
+from .address_descriptor import AddressDescriptor
 from bitstring import BitArray
 from enum import Enum
 

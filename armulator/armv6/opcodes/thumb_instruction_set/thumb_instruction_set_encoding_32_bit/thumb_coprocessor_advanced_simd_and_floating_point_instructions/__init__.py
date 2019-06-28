@@ -1,20 +1,21 @@
+from __future__ import absolute_import
 from armulator.armv6.arm_exceptions import UndefinedInstructionException
-from stc_t1 import StcT1
-from stc_t2 import StcT2
-from ldc_immediate_t1 import LdcImmediateT1
-from ldc_immediate_t2 import LdcImmediateT2
-from ldc_literal_t1 import LdcLiteralT1
-from ldc_literal_t2 import LdcLiteralT2
-from mcrr_t1 import McrrT1
-from mcrr_t2 import McrrT2
-from mrrc_t1 import MrrcT1
-from mrrc_t2 import MrrcT2
-from cdp_t1 import CdpT1
-from cdp_t2 import CdpT2
-from mcr_t1 import McrT1
-from mcr_t2 import McrT2
-from mrc_t1 import MrcT1
-from mrc_t2 import MrcT2
+from .stc_t1 import StcT1
+from .stc_t2 import StcT2
+from .ldc_immediate_t1 import LdcImmediateT1
+from .ldc_immediate_t2 import LdcImmediateT2
+from .ldc_literal_t1 import LdcLiteralT1
+from .ldc_literal_t2 import LdcLiteralT2
+from .mcrr_t1 import McrrT1
+from .mcrr_t2 import McrrT2
+from .mrrc_t1 import MrrcT1
+from .mrrc_t2 import MrrcT2
+from .cdp_t1 import CdpT1
+from .cdp_t2 import CdpT2
+from .mcr_t1 import McrT1
+from .mcr_t2 import McrT2
+from .mrc_t1 import MrcT1
+from .mrc_t2 import MrcT2
 
 
 def decode_instruction(instr):

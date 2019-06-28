@@ -1,14 +1,15 @@
-from smlad_a1 import SmladA1
-from smuad_a1 import SmuadA1
-from smlsd_a1 import SmlsdA1
-from smusd_a1 import SmusdA1
-from sdiv_a1 import SdivA1
-from udiv_a1 import UdivA1
-from smlald_a1 import SmlaldA1
-from smlsld_a1 import SmlsldA1
-from smmla_a1 import SmmlaA1
-from smmul_a1 import SmmulA1
-from smmls_a1 import SmmlsA1
+from __future__ import absolute_import
+from .smlad_a1 import SmladA1
+from .smuad_a1 import SmuadA1
+from .smlsd_a1 import SmlsdA1
+from .smusd_a1 import SmusdA1
+from .sdiv_a1 import SdivA1
+from .udiv_a1 import UdivA1
+from .smlald_a1 import SmlaldA1
+from .smlsld_a1 import SmlsldA1
+from .smmla_a1 import SmmlaA1
+from .smmul_a1 import SmmulA1
+from .smmls_a1 import SmmlsA1
 
 
 def decode_instruction(instr):

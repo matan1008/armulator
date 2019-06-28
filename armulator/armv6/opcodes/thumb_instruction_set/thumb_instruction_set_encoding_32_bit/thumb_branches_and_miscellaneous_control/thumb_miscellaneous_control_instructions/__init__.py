@@ -1,7 +1,8 @@
-from enterx_t1 import EnterxT1
-from clrex_t1 import ClrexT1
-from dsb_t1 import DsbT1
-from isb_t1 import IsbT1
+from __future__ import absolute_import
+from .enterx_t1 import EnterxT1
+from .clrex_t1 import ClrexT1
+from .dsb_t1 import DsbT1
+from .isb_t1 import IsbT1
 
 
 def decode_instruction(instr):

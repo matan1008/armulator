@@ -1,5 +1,6 @@
+from __future__ import absolute_import
 import json
-from armulator.armv6.enums import *
+from .enums import *
 
 
 class Configurations(object):

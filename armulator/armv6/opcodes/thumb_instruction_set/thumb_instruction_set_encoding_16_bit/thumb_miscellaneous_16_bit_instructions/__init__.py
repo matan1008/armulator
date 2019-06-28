@@ -1,19 +1,20 @@
-from add_sp_plus_immediate_t2 import AddSpPlusImmediateT2
-from sub_sp_minus_immediate_t1 import SubSpMinusImmediateT1
-from cbz_t1 import CbzT1
-from sxth_t1 import SxthT1
-from sxtb_t1 import SxtbT1
-from uxth_t1 import UxthT1
-from uxtb_t1 import UxtbT1
-from push_t1 import PushT1
-from setend_t1 import SetendT1
-from cps_thumb_t1 import CpsThumbT1
-from rev_t1 import RevT1
-from rev16_t1 import Rev16T1
-from revsh_t1 import RevshT1
-from pop_thumb_t1 import PopThumbT1
-from bkpt_t1 import BkptT1
-import thumb_if_then_and_hints
+from __future__ import absolute_import
+from .add_sp_plus_immediate_t2 import AddSpPlusImmediateT2
+from .sub_sp_minus_immediate_t1 import SubSpMinusImmediateT1
+from .cbz_t1 import CbzT1
+from .sxth_t1 import SxthT1
+from .sxtb_t1 import SxtbT1
+from .uxth_t1 import UxthT1
+from .uxtb_t1 import UxtbT1
+from .push_t1 import PushT1
+from .setend_t1 import SetendT1
+from .cps_thumb_t1 import CpsThumbT1
+from .rev_t1 import RevT1
+from .rev16_t1 import Rev16T1
+from .revsh_t1 import RevshT1
+from .pop_thumb_t1 import PopThumbT1
+from .bkpt_t1 import BkptT1
+from . import thumb_if_then_and_hints
 
 
 def decode_instruction(instr):

@@ -1,5 +1,6 @@
+from __future__ import absolute_import
 from bitstring import BitArray
-from armulator.armv6.memory_types import MEMORY_TYPE_DICT
+from .memory_types import MEMORY_TYPE_DICT
 
 
 class MemoryController(object):
@@ -37,13 +38,14 @@ class MemoryControllerHub(object):
             if memory.beginning <= address < memory.end:
                 return memory
 
-    def __getitem__(self, (memaddrdesc, size)):
+    def __getitem__(self, memaddrdesc_size):
         """
         Reads memory as a little endian
         :memaddrdesc: AddressDescriptor object
         :size: Size in bytes to read
         :return: BitArray of data
         """
+        (memaddrdesc, size) = memaddrdesc_size
         assert size == 1 or size == 2 or size == 4 or size == 8
         mc = self.get_memory_by_address(memaddrdesc.paddress.physicaladdress.uint)
         if mc is not None:

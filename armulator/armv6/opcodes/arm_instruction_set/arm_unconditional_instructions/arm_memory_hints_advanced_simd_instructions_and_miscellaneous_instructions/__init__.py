@@ -1,12 +1,13 @@
+from __future__ import absolute_import
 from armulator.armv6.arm_exceptions import UndefinedInstructionException
-from cps_arm_a1 import CpsArmA1
-from setend_a1 import SetendA1
-from pld_immediate_a1 import PldImmediateA1
-from pld_literal_a1 import PldLiteralA1
-from clrex_a1 import ClrexA1
-from dsb_a1 import DsbA1
-from isb_a1 import IsbA1
-from pld_register_a1 import PldRegisterA1
+from .cps_arm_a1 import CpsArmA1
+from .setend_a1 import SetendA1
+from .pld_immediate_a1 import PldImmediateA1
+from .pld_literal_a1 import PldLiteralA1
+from .clrex_a1 import ClrexA1
+from .dsb_a1 import DsbA1
+from .isb_a1 import IsbA1
+from .pld_register_a1 import PldRegisterA1
 
 
 def decode_instruction(instr):

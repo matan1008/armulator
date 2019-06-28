@@ -1,22 +1,23 @@
-from lsl_register_t2 import LslRegisterT2
-from lsr_register_t2 import LsrRegisterT2
-from asr_register_t2 import AsrRegisterT2
-from ror_register_t2 import RorRegisterT2
-from sxtah_t1 import SxtahT1
-from sxth_t2 import SxthT2
-from uxtah_t1 import UxtahT1
-from uxth_t2 import UxthT2
-from sxtab16_t1 import Sxtab16T1
-from sxtb16_t1 import Sxtb16T1
-from uxtab16_t1 import Uxtab16T1
-from uxtb16_t1 import Uxtb16T1
-from sxtab_t1 import SxtabT1
-from sxtb_t2 import SxtbT2
-from uxtab_t1 import UxtabT1
-from uxtb_t2 import UxtbT2
-import thumb_parallel_addition_and_subtraction_signed
-import thumb_parallel_addition_and_subtraction_unsigned
-import thumb_miscellaneous_operations
+from __future__ import absolute_import
+from .lsl_register_t2 import LslRegisterT2
+from .lsr_register_t2 import LsrRegisterT2
+from .asr_register_t2 import AsrRegisterT2
+from .ror_register_t2 import RorRegisterT2
+from .sxtah_t1 import SxtahT1
+from .sxth_t2 import SxthT2
+from .uxtah_t1 import UxtahT1
+from .uxth_t2 import UxthT2
+from .sxtab16_t1 import Sxtab16T1
+from .sxtb16_t1 import Sxtb16T1
+from .uxtab16_t1 import Uxtab16T1
+from .uxtb16_t1 import Uxtb16T1
+from .sxtab_t1 import SxtabT1
+from .sxtb_t2 import SxtbT2
+from .uxtab_t1 import UxtabT1
+from .uxtb_t2 import UxtbT2
+from . import thumb_parallel_addition_and_subtraction_signed
+from . import thumb_parallel_addition_and_subtraction_unsigned
+from . import thumb_miscellaneous_operations
 
 
 def decode_instruction(instr):

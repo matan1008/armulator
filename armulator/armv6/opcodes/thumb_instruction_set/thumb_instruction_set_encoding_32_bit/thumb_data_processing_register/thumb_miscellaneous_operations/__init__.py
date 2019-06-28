@@ -1,13 +1,14 @@
-from qadd_t1 import QaddT1
-from qdadd_t1 import QdaddT1
-from qsub_t1 import QsubT1
-from qdsub_t1 import QdsubT1
-from rev_t2 import RevT2
-from rev16_t2 import Rev16T2
-from rbit_t1 import RbitT1
-from revsh_t2 import RevshT2
-from sel_t1 import SelT1
-from clz_t1 import ClzT1
+from __future__ import absolute_import
+from .qadd_t1 import QaddT1
+from .qdadd_t1 import QdaddT1
+from .qsub_t1 import QsubT1
+from .qdsub_t1 import QdsubT1
+from .rev_t2 import RevT2
+from .rev16_t2 import Rev16T2
+from .rbit_t1 import RbitT1
+from .revsh_t2 import RevshT2
+from .sel_t1 import SelT1
+from .clz_t1 import ClzT1
 
 
 def decode_instruction(instr):

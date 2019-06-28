@@ -1,10 +1,11 @@
-from nop_a1 import NopA1
-from yield_a1 import YieldA1
-from wfe_a1 import WfeA1
-from wfi_a1 import WfiA1
-from sev_a1 import SevA1
-from msr_immediate_application_a1 import MsrImmediateApplicationA1
-from msr_immediate_system_a1 import MsrImmediateSystemA1
+from __future__ import absolute_import
+from .nop_a1 import NopA1
+from .yield_a1 import YieldA1
+from .wfe_a1 import WfeA1
+from .wfi_a1 import WfiA1
+from .sev_a1 import SevA1
+from .msr_immediate_application_a1 import MsrImmediateApplicationA1
+from .msr_immediate_system_a1 import MsrImmediateSystemA1
 
 
 def decode_instruction(instr):

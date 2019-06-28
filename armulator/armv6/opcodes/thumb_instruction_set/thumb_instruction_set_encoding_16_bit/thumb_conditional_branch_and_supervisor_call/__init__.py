@@ -1,6 +1,7 @@
-from b_t1 import BT1
-from udf_t1 import UdfT1
-from svc_t1 import SvcT1
+from __future__ import absolute_import
+from .b_t1 import BT1
+from .udf_t1 import UdfT1
+from .svc_t1 import SvcT1
 
 
 def decode_instruction(instr):

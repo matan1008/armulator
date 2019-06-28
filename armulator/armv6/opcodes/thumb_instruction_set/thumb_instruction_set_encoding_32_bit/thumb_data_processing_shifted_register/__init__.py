@@ -1,22 +1,23 @@
-from and_register_t2 import AndRegisterT2
-from tst_register_t2 import TstRegisterT2
-from bic_register_t2 import BicRegisterT2
-from orr_register_t2 import OrrRegisterT2
-import thumb_move_register_and_immediate_shifts
-from orn_register_t1 import OrnRegisterT1
-from mvn_register_t2 import MvnRegisterT2
-from eor_register_t2 import EorRegisterT2
-from teq_register_t1 import TeqRegisterT1
-from pkhbt_t1 import PkhbtT1
-from add_register_thumb_t3 import AddRegisterThumbT3
-from add_sp_plus_register_thumb_t3 import AddSpPlusRegisterThumbT3
-from cmn_register_t2 import CmnRegisterT2
-from adc_register_t2 import AdcRegisterT2
-from sbc_register_t2 import SbcRegisterT2
-from sub_register_t2 import SubRegisterT2
-from sub_sp_minus_register_t1 import SubSpMinusRegisterT1
-from cmp_register_t3 import CmpRegisterT3
-from rsb_register_t1 import RsbRegisterT1
+from __future__ import absolute_import
+from .and_register_t2 import AndRegisterT2
+from .tst_register_t2 import TstRegisterT2
+from .bic_register_t2 import BicRegisterT2
+from .orr_register_t2 import OrrRegisterT2
+from . import thumb_move_register_and_immediate_shifts
+from .orn_register_t1 import OrnRegisterT1
+from .mvn_register_t2 import MvnRegisterT2
+from .eor_register_t2 import EorRegisterT2
+from .teq_register_t1 import TeqRegisterT1
+from .pkhbt_t1 import PkhbtT1
+from .add_register_thumb_t3 import AddRegisterThumbT3
+from .add_sp_plus_register_thumb_t3 import AddSpPlusRegisterThumbT3
+from .cmn_register_t2 import CmnRegisterT2
+from .adc_register_t2 import AdcRegisterT2
+from .sbc_register_t2 import SbcRegisterT2
+from .sub_register_t2 import SubRegisterT2
+from .sub_sp_minus_register_t1 import SubSpMinusRegisterT1
+from .cmp_register_t3 import CmpRegisterT3
+from .rsb_register_t1 import RsbRegisterT1
 
 
 def decode_instruction(instr):

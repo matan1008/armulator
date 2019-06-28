@@ -1,19 +1,20 @@
-from str_register_t1 import StrRegisterT1
-from strh_register_t1 import StrhRegisterT1
-from strb_register_t1 import StrbRegisterT1
-from ldrsb_register_t1 import LdrsbRegisterT1
-from ldr_register_thumb_t1 import LdrRegisterThumbT1
-from ldrh_register_t1 import LdrhRegisterT1
-from ldrb_register_t1 import LdrbRegisterT1
-from ldrsh_register_t1 import LdrshRegisterT1
-from str_immediate_thumb_t1 import StrImmediateThumbT1
-from ldr_immediate_thumb_t1 import LdrImmediateThumbT1
-from strb_immediate_thumb_t1 import StrbImmediateThumbT1
-from ldrb_immediate_thumb_t1 import LdrbImmediateThumbT1
-from strh_immediate_thumb_t1 import StrhImmediateThumbT1
-from ldrh_immediate_thumb_t1 import LdrhImmediateThumbT1
-from str_immediate_thumb_t2 import StrImmediateThumbT2
-from ldr_immediate_thumb_t2 import LdrImmediateThumbT2
+from __future__ import absolute_import
+from .str_register_t1 import StrRegisterT1
+from .strh_register_t1 import StrhRegisterT1
+from .strb_register_t1 import StrbRegisterT1
+from .ldrsb_register_t1 import LdrsbRegisterT1
+from .ldr_register_thumb_t1 import LdrRegisterThumbT1
+from .ldrh_register_t1 import LdrhRegisterT1
+from .ldrb_register_t1 import LdrbRegisterT1
+from .ldrsh_register_t1 import LdrshRegisterT1
+from .str_immediate_thumb_t1 import StrImmediateThumbT1
+from .ldr_immediate_thumb_t1 import LdrImmediateThumbT1
+from .strb_immediate_thumb_t1 import StrbImmediateThumbT1
+from .ldrb_immediate_thumb_t1 import LdrbImmediateThumbT1
+from .strh_immediate_thumb_t1 import StrhImmediateThumbT1
+from .ldrh_immediate_thumb_t1 import LdrhImmediateThumbT1
+from .str_immediate_thumb_t2 import StrImmediateThumbT2
+from .ldr_immediate_thumb_t2 import LdrImmediateThumbT2
 
 
 def decode_instruction(instr):

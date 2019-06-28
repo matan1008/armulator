@@ -1,18 +1,19 @@
-from stmda_a1 import StmdaA1
-from ldmda_a1 import LdmdaA1
-from stm_a1 import StmA1
-from ldm_arm_a1 import LdmArmA1
-from pop_arm_a1 import PopArmA1
-from stmdb_a1 import StmdbA1
-from push_a1 import PushA1
-from ldmdb_a1 import LdmdbA1
-from stmib_a1 import StmibA1
-from ldmib_a1 import LdmibA1
-from stm_user_registers_a1 import StmUserRegistersA1
-from ldm_user_registers_a1 import LdmUserRegistersA1
-from ldm_exception_return_a1 import LdmExceptionReturnA1
-from b_a1 import BA1
-from bl_immediate_a1 import BlImmediateA1
+from __future__ import absolute_import
+from .stmda_a1 import StmdaA1
+from .ldmda_a1 import LdmdaA1
+from .stm_a1 import StmA1
+from .ldm_arm_a1 import LdmArmA1
+from .pop_arm_a1 import PopArmA1
+from .stmdb_a1 import StmdbA1
+from .push_a1 import PushA1
+from .ldmdb_a1 import LdmdbA1
+from .stmib_a1 import StmibA1
+from .ldmib_a1 import LdmibA1
+from .stm_user_registers_a1 import StmUserRegistersA1
+from .ldm_user_registers_a1 import LdmUserRegistersA1
+from .ldm_exception_return_a1 import LdmExceptionReturnA1
+from .b_a1 import BA1
+from .bl_immediate_a1 import BlImmediateA1
 
 
 def decode_instruction(instr):

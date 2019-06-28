@@ -1,19 +1,20 @@
-from and_register_t1 import AndRegisterT1
-from eor_register_t1 import EorRegisterT1
-from lsl_register_t1 import LslRegisterT1
-from lsr_register_t1 import LsrRegisterT1
-from asr_register_t1 import AsrRegisterT1
-from adc_register_t1 import AdcRegisterT1
-from sbc_register_t1 import SbcRegisterT1
-from ror_register_t1 import RorRegisterT1
-from tst_register_t1 import TstRegisterT1
-from rsb_immediate_t1 import RsbImmediateT1
-from cmp_register_t1 import CmpRegisterT1
-from cmn_register_t1 import CmnRegisterT1
-from orr_register_t1 import OrrRegisterT1
-from mul_t1 import MulT1
-from bic_register_t1 import BicRegisterT1
-from mvn_register_t1 import MvnRegisterT1
+from __future__ import absolute_import
+from .and_register_t1 import AndRegisterT1
+from .eor_register_t1 import EorRegisterT1
+from .lsl_register_t1 import LslRegisterT1
+from .lsr_register_t1 import LsrRegisterT1
+from .asr_register_t1 import AsrRegisterT1
+from .adc_register_t1 import AdcRegisterT1
+from .sbc_register_t1 import SbcRegisterT1
+from .ror_register_t1 import RorRegisterT1
+from .tst_register_t1 import TstRegisterT1
+from .rsb_immediate_t1 import RsbImmediateT1
+from .cmp_register_t1 import CmpRegisterT1
+from .cmn_register_t1 import CmnRegisterT1
+from .orr_register_t1 import OrrRegisterT1
+from .mul_t1 import MulT1
+from .bic_register_t1 import BicRegisterT1
+from .mvn_register_t1 import MvnRegisterT1
 
 
 def decode_instruction(instr):

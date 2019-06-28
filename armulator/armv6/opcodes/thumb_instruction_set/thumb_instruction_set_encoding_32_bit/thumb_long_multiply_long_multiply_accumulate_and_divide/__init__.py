@@ -1,13 +1,14 @@
-from smull_t1 import SmullT1
-from sdiv_t1 import SdivT1
-from umull_t1 import UmullT1
-from udiv_t1 import UdivT1
-from smlal_t1 import SmlalT1
-from smlalxy_t1 import SmlalxyT1
-from smlald_t1 import SmlaldT1
-from smlsld_t1 import SmlsldT1
-from umlal_t1 import UmlalT1
-from umaal_t1 import UmaalT1
+from __future__ import absolute_import
+from .smull_t1 import SmullT1
+from .sdiv_t1 import SdivT1
+from .umull_t1 import UmullT1
+from .udiv_t1 import UdivT1
+from .smlal_t1 import SmlalT1
+from .smlalxy_t1 import SmlalxyT1
+from .smlald_t1 import SmlaldT1
+from .smlsld_t1 import SmlsldT1
+from .umlal_t1 import UmlalT1
+from .umaal_t1 import UmaalT1
 
 
 def decode_instruction(instr):

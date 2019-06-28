@@ -1,15 +1,16 @@
-import thumb_shift_immediate_add_subtract_move_and_compare
-import thumb_data_processing
-import thumb_special_data_instructions_and_branch_and_exchange
-from ldr_literal_t1 import LdrLiteralT1
-import thumb_load_store_single_data_item
-from adr_t1 import AdrT1
-from add_sp_plus_immediate_t1 import AddSpPlusImmediateT1
-import thumb_miscellaneous_16_bit_instructions
-from stm_t1 import StmT1
-from ldm_thumb_t1 import LdmThumbT1
-import thumb_conditional_branch_and_supervisor_call
-from b_t2 import BT2
+from __future__ import absolute_import
+from . import thumb_shift_immediate_add_subtract_move_and_compare
+from . import thumb_data_processing
+from . import thumb_special_data_instructions_and_branch_and_exchange
+from .ldr_literal_t1 import LdrLiteralT1
+from . import thumb_load_store_single_data_item
+from .adr_t1 import AdrT1
+from .add_sp_plus_immediate_t1 import AddSpPlusImmediateT1
+from . import thumb_miscellaneous_16_bit_instructions
+from .stm_t1 import StmT1
+from .ldm_thumb_t1 import LdmThumbT1
+from . import thumb_conditional_branch_and_supervisor_call
+from .b_t2 import BT2
 
 
 def decode_instruction(instr):

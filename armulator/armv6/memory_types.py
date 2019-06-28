@@ -8,7 +8,8 @@ class MemoryType(object):
     def __init__(self, size):
         self.size = size
 
-    def __getitem__(self, (address, size)):
+    def __getitem__(self, address_size):
+        (address, size) = address_size
         return self.read(address, size)
 
     def __setitem__(self, address_size, value):

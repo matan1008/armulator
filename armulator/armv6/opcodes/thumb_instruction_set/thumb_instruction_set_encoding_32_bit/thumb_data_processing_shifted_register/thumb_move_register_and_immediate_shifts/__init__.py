@@ -1,9 +1,10 @@
-from mov_register_thumb_t3 import MovRegisterThumbT3
-from lsl_immediate_t2 import LslImmediateT2
-from lsr_immediate_t2 import LsrImmediateT2
-from asr_immediate_t2 import AsrImmediateT2
-from rrx_t1 import RrxT1
-from ror_immediate_t1 import RorImmediateT1
+from __future__ import absolute_import
+from .mov_register_thumb_t3 import MovRegisterThumbT3
+from .lsl_immediate_t2 import LslImmediateT2
+from .lsr_immediate_t2 import LsrImmediateT2
+from .asr_immediate_t2 import AsrImmediateT2
+from .rrx_t1 import RrxT1
+from .ror_immediate_t1 import RorImmediateT1
 
 
 def decode_instruction(instr):

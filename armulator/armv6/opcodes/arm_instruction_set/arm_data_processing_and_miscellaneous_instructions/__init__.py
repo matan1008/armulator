@@ -1,15 +1,16 @@
-import arm_data_processing_register
-import arm_data_processing_register_shifted_register
-import arm_miscellaneous_instructions
-import arm_halfword_multiply_and_multiply_accumulate
-import arm_multiply_and_multiply_accumulate
-import arm_synchronization_primitives
-import arm_extra_load_store_instructions
-import arm_extra_load_store_instructions_unprivileged
-import arm_data_processing_immediate
-from mov_immediate_a2 import MovImmediateA2
-from movt_a1 import MovtA1
-import arm_msr_immediate_and_hints
+from __future__ import absolute_import
+from . import arm_data_processing_register
+from . import arm_data_processing_register_shifted_register
+from . import arm_miscellaneous_instructions
+from . import arm_halfword_multiply_and_multiply_accumulate
+from . import arm_multiply_and_multiply_accumulate
+from . import arm_synchronization_primitives
+from . import arm_extra_load_store_instructions
+from . import arm_extra_load_store_instructions_unprivileged
+from . import arm_data_processing_immediate
+from .mov_immediate_a2 import MovImmediateA2
+from .movt_a1 import MovtA1
+from . import arm_msr_immediate_and_hints
 
 
 def decode_instruction(instr):

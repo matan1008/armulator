@@ -1,19 +1,20 @@
-from strh_register_a1 import StrhRegisterA1
-from ldrh_register_a1 import LdrhRegisterA1
-from strh_immediate_arm_a1 import StrhImmediateArmA1
-from ldrh_immediate_arm_a1 import LdrhImmediateArmA1
-from ldrh_literal_a1 import LdrhLiteralA1
-from ldrd_register_a1 import LdrdRegisterA1
-from ldrsb_register_a1 import LdrsbRegisterA1
-from ldrd_immediate_a1 import LdrdImmediateA1
-from ldrd_literal_a1 import LdrdLiteralA1
-from ldrsb_immediate_a1 import LdrsbImmediateA1
-from ldrsb_literal_a1 import LdrsbLiteralA1
-from strd_register_a1 import StrdRegisterA1
-from ldrsh_register_a1 import LdrshRegisterA1
-from strd_immediate_a1 import StrdImmediateA1
-from ldrsh_immediate_a1 import LdrshImmediateA1
-from ldrsh_literal_a1 import LdrshLiteralA1
+from __future__ import absolute_import
+from .strh_register_a1 import StrhRegisterA1
+from .ldrh_register_a1 import LdrhRegisterA1
+from .strh_immediate_arm_a1 import StrhImmediateArmA1
+from .ldrh_immediate_arm_a1 import LdrhImmediateArmA1
+from .ldrh_literal_a1 import LdrhLiteralA1
+from .ldrd_register_a1 import LdrdRegisterA1
+from .ldrsb_register_a1 import LdrsbRegisterA1
+from .ldrd_immediate_a1 import LdrdImmediateA1
+from .ldrd_literal_a1 import LdrdLiteralA1
+from .ldrsb_immediate_a1 import LdrsbImmediateA1
+from .ldrsb_literal_a1 import LdrsbLiteralA1
+from .strd_register_a1 import StrdRegisterA1
+from .ldrsh_register_a1 import LdrshRegisterA1
+from .strd_immediate_a1 import StrdImmediateA1
+from .ldrsh_immediate_a1 import LdrshImmediateA1
+from .ldrsh_literal_a1 import LdrshLiteralA1
 
 
 def decode_instruction(instr):

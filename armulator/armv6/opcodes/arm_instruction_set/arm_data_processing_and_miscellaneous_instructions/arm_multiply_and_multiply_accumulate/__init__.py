@@ -1,12 +1,13 @@
+from __future__ import absolute_import
 from armulator.armv6.arm_exceptions import UndefinedInstructionException
-from mul_a1 import MulA1
-from mla_a1 import MlaA1
-from umaal_a1 import UmaalA1
-from mls_a1 import MlsA1
-from umull_a1 import UmullA1
-from umlal_a1 import UmlalA1
-from smull_a1 import SmullA1
-from smlal_a1 import SmlalA1
+from .mul_a1 import MulA1
+from .mla_a1 import MlaA1
+from .umaal_a1 import UmaalA1
+from .mls_a1 import MlsA1
+from .umull_a1 import UmullA1
+from .umlal_a1 import UmlalA1
+from .smull_a1 import SmullA1
+from .smlal_a1 import SmlalA1
 
 
 def decode_instruction(instr):

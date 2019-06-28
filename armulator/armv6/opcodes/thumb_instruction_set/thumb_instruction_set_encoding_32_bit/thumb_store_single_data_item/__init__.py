@@ -1,16 +1,17 @@
-from strb_immediate_thumb_t3 import StrbImmediateThumbT3
-from strb_immediate_thumb_t2 import StrbImmediateThumbT2
-from strb_register_t2 import StrbRegisterT2
-from strbt_t1 import StrbtT1
-from strh_immediate_thumb_t3 import StrhImmediateThumbT3
-from strh_immediate_thumb_t2 import StrhImmediateThumbT2
-from strh_register_t2 import StrhRegisterT2
-from strht_t1 import StrhtT1
-from push_t3 import PushT3
-from str_immediate_thumb_t4 import StrImmediateThumbT4
-from str_immediate_thumb_t3 import StrImmediateThumbT3
-from str_register_t2 import StrRegisterT2
-from strt_t1 import StrtT1
+from __future__ import absolute_import
+from .strb_immediate_thumb_t3 import StrbImmediateThumbT3
+from .strb_immediate_thumb_t2 import StrbImmediateThumbT2
+from .strb_register_t2 import StrbRegisterT2
+from .strbt_t1 import StrbtT1
+from .strh_immediate_thumb_t3 import StrhImmediateThumbT3
+from .strh_immediate_thumb_t2 import StrhImmediateThumbT2
+from .strh_register_t2 import StrhRegisterT2
+from .strht_t1 import StrhtT1
+from .push_t3 import PushT3
+from .str_immediate_thumb_t4 import StrImmediateThumbT4
+from .str_immediate_thumb_t3 import StrImmediateThumbT3
+from .str_register_t2 import StrRegisterT2
+from .strt_t1 import StrtT1
 
 
 def decode_instruction(instr):

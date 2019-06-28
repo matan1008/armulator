@@ -1,8 +1,9 @@
-from smla_a1 import SmlaA1
-from smlaw_a1 import SmlawA1
-from smulw_a1 import SmulwA1
-from smlalxy_a1 import SmlalxyA1
-from smul_a1 import SmulA1
+from __future__ import absolute_import
+from .smla_a1 import SmlaA1
+from .smlaw_a1 import SmlawA1
+from .smulw_a1 import SmulwA1
+from .smlalxy_a1 import SmlalxyA1
+from .smul_a1 import SmulA1
 
 
 def decode_instruction(instr):

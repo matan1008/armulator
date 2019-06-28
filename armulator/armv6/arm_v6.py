@@ -1,24 +1,26 @@
+from __future__ import absolute_import
 from os import path
 from bitstring import BitArray
-from armulator.armv6.configurations import *
-from armulator.armv6 import bits_ops
-from armulator.armv6.arm_exceptions import *
-from armulator.armv6.memory_attributes import MemoryAttributes, MemType
-from armulator.armv6.address_descriptor import AddressDescriptor
-from armulator.armv6.tlb_record import TLBRecord
-from armulator.armv6.memory_controller_hub import MemoryControllerHub
-from armulator.armv6.permissions import Permissions
-from armulator.armv6.enums import *
-import armulator.armv6.opcodes
-from armulator.armv6.registers import Registers
-from armulator.armv6.opcodes.abstract_opcodes.ldrt import Ldrt
-from armulator.armv6.opcodes.abstract_opcodes.ldrbt import Ldrbt
-from armulator.armv6.opcodes.abstract_opcodes.ldrht import Ldrht
-from armulator.armv6.opcodes.abstract_opcodes.ldrsht import Ldrsht
-from armulator.armv6.opcodes.abstract_opcodes.ldrsbt import Ldrsbt
-from armulator.armv6.opcodes.abstract_opcodes.strt import Strt
-from armulator.armv6.opcodes.abstract_opcodes.strht import Strht
-from armulator.armv6.opcodes.abstract_opcodes.strbt import Strbt
+from .configurations import *
+from . import bits_ops
+from .arm_exceptions import *
+from .memory_attributes import MemoryAttributes, MemType
+from .address_descriptor import AddressDescriptor
+from .tlb_record import TLBRecord
+from .memory_controller_hub import MemoryControllerHub
+from .permissions import Permissions
+from .enums import *
+from .opcodes.decode_instruction import decode_instruction as \
+    op_decode_instruction
+from .registers import Registers
+from .opcodes.abstract_opcodes.ldrt import Ldrt
+from .opcodes.abstract_opcodes.ldrbt import Ldrbt
+from .opcodes.abstract_opcodes.ldrht import Ldrht
+from .opcodes.abstract_opcodes.ldrsht import Ldrsht
+from .opcodes.abstract_opcodes.ldrsbt import Ldrsbt
+from .opcodes.abstract_opcodes.strt import Strt
+from .opcodes.abstract_opcodes.strht import Strht
+from .opcodes.abstract_opcodes.strbt import Strbt
 
 
 class ArmV6:
@@ -1910,7 +1912,7 @@ class ArmV6:
         return self.opcode
 
     def decode_instruction(self, instr):
-        return armulator.armv6.opcodes.decode_instruction(instr, self)
+        return op_decode_instruction(instr, self)
 
     def execute_instruction(self, opcode):
         self.registers.changed_registers = [False] * 16

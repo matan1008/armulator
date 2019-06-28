@@ -1,13 +1,14 @@
-from srs_thumb_t1 import SrsThumbT1
-from rfe_t1 import RfeT1
-from stm_t2 import StmT2
-from ldm_thumb_t2 import LdmThumbT2
-from pop_thumb_t2 import PopThumbT2
-from stmdb_t1 import StmdbT1
-from push_t2 import PushT2
-from ldmdb_t1 import LdmdbT1
-from srs_thumb_t2 import SrsThumbT2
-from rfe_t2 import RfeT2
+from __future__ import absolute_import
+from .srs_thumb_t1 import SrsThumbT1
+from .rfe_t1 import RfeT1
+from .stm_t2 import StmT2
+from .ldm_thumb_t2 import LdmThumbT2
+from .pop_thumb_t2 import PopThumbT2
+from .stmdb_t1 import StmdbT1
+from .push_t2 import PushT2
+from .ldmdb_t1 import LdmdbT1
+from .srs_thumb_t2 import SrsThumbT2
+from .rfe_t2 import RfeT2
 
 
 def decode_instruction(instr):

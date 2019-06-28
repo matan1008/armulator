@@ -1,9 +1,10 @@
-import arm_data_processing_and_miscellaneous_instructions
-import arm_load_store_word_and_unsigned_byte
-import arm_media_instructions
-import arm_branch_branch_with_link_and_block_data_transfer
-import arm_coprocessor_instructions_and_supervisor_call
-import arm_unconditional_instructions
+from __future__ import absolute_import
+from . import arm_data_processing_and_miscellaneous_instructions
+from . import arm_load_store_word_and_unsigned_byte
+from . import arm_media_instructions
+from . import arm_branch_branch_with_link_and_block_data_transfer
+from . import arm_coprocessor_instructions_and_supervisor_call
+from . import arm_unconditional_instructions
 
 
 def decode_instruction(instr, processor):

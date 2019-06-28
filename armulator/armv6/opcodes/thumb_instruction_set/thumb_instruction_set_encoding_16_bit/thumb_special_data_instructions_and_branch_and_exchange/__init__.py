@@ -1,10 +1,11 @@
-from add_sp_plus_register_thumb_t1 import AddSpPlusRegisterThumbT1
-from add_sp_plus_register_thumb_t2 import AddSpPlusRegisterThumbT2
-from add_register_thumb_t2 import AddRegisterThumbT2
-from cmp_register_t2 import CmpRegisterT2
-from mov_register_thumb_t1 import MovRegisterThumbT1
-from bx_t1 import BxT1
-from blx_register_t1 import BlxRegisterT1
+from __future__ import absolute_import
+from .add_sp_plus_register_thumb_t1 import AddSpPlusRegisterThumbT1
+from .add_sp_plus_register_thumb_t2 import AddSpPlusRegisterThumbT2
+from .add_register_thumb_t2 import AddRegisterThumbT2
+from .cmp_register_t2 import CmpRegisterT2
+from .mov_register_thumb_t1 import MovRegisterThumbT1
+from .bx_t1 import BxT1
+from .blx_register_t1 import BlxRegisterT1
 
 
 def decode_instruction(instr):

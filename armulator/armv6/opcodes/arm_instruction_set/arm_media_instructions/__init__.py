@@ -1,14 +1,15 @@
-import arm_parallel_addition_and_subtraction_signed
-import arm_parallel_addition_and_subtraction_unsigned
-import arm_packing_unpacking_saturation_and_reversal
-import arm_signed_multiply_signed_and_unsigned_divide
-from usad8_a1 import Usad8A1
-from usada8_a1 import Usada8A1
-from sbfx_a1 import SbfxA1
-from bfc_a1 import BfcA1
-from bfi_a1 import BfiA1
-from ubfx_a1 import UbfxA1
-from udf_a1 import UdfA1
+from __future__ import absolute_import
+from . import arm_parallel_addition_and_subtraction_signed
+from . import arm_parallel_addition_and_subtraction_unsigned
+from . import arm_packing_unpacking_saturation_and_reversal
+from . import arm_signed_multiply_signed_and_unsigned_divide
+from .usad8_a1 import Usad8A1
+from .usada8_a1 import Usada8A1
+from .sbfx_a1 import SbfxA1
+from .bfc_a1 import BfcA1
+from .bfi_a1 import BfiA1
+from .ubfx_a1 import UbfxA1
+from .udf_a1 import UdfA1
 
 
 def decode_instruction(instr):

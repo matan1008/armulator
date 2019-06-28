@@ -1,11 +1,12 @@
-from strex_a1 import StrexA1
-from ldrex_a1 import LdrexA1
-from strexd_a1 import StrexdA1
-from ldrexd_a1 import LdrexdA1
-from strexb_a1 import StrexbA1
-from ldrexb_a1 import LdrexbA1
-from strexh_a1 import StrexhA1
-from ldrexh_a1 import LdrexhA1
+from __future__ import absolute_import
+from .strex_a1 import StrexA1
+from .ldrex_a1 import LdrexA1
+from .strexd_a1 import StrexdA1
+from .ldrexd_a1 import LdrexdA1
+from .strexb_a1 import StrexbA1
+from .ldrexb_a1 import LdrexbA1
+from .strexh_a1 import StrexhA1
+from .ldrexh_a1 import LdrexhA1
 
 
 def decode_instruction(instr):

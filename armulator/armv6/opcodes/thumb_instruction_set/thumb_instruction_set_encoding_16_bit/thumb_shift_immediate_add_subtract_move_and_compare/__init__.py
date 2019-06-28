@@ -1,15 +1,16 @@
-from mov_register_thumb_t2 import MovRegisterThumbT2
-from lsl_immediate_t1 import LslImmediateT1
-from lsr_immediate_t1 import LsrImmediateT1
-from asr_immediate_t1 import AsrImmediateT1
-from add_register_thumb_t1 import AddRegisterThumbT1
-from sub_register_t1 import SubRegisterT1
-from add_immediate_thumb_t1 import AddImmediateThumbT1
-from sub_immediate_thumb_t1 import SubImmediateThumbT1
-from mov_immediate_t1 import MovImmediateT1
-from cmp_immediate_t1 import CmpImmediateT1
-from add_immediate_thumb_t2 import AddImmediateThumbT2
-from sub_immediate_thumb_t2 import SubImmediateThumbT2
+from __future__ import absolute_import
+from .mov_register_thumb_t2 import MovRegisterThumbT2
+from .lsl_immediate_t1 import LslImmediateT1
+from .lsr_immediate_t1 import LsrImmediateT1
+from .asr_immediate_t1 import AsrImmediateT1
+from .add_register_thumb_t1 import AddRegisterThumbT1
+from .sub_register_t1 import SubRegisterT1
+from .add_immediate_thumb_t1 import AddImmediateThumbT1
+from .sub_immediate_thumb_t1 import SubImmediateThumbT1
+from .mov_immediate_t1 import MovImmediateT1
+from .cmp_immediate_t1 import CmpImmediateT1
+from .add_immediate_thumb_t2 import AddImmediateThumbT2
+from .sub_immediate_thumb_t2 import SubImmediateThumbT2
 
 
 def decode_instruction(instr):

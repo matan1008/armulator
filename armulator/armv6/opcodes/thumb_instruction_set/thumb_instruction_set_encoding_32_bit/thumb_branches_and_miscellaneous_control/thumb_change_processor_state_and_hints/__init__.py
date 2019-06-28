@@ -1,9 +1,10 @@
-from cps_thumb_t2 import CpsThumbT2
-from nop_t2 import NopT2
-from yield_t2 import YieldT2
-from wfe_t2 import WfeT2
-from wfi_t2 import WfiT2
-from sev_t2 import SevT2
+from __future__ import absolute_import
+from .cps_thumb_t2 import CpsThumbT2
+from .nop_t2 import NopT2
+from .yield_t2 import YieldT2
+from .wfe_t2 import WfeT2
+from .wfi_t2 import WfiT2
+from .sev_t2 import SevT2
 
 
 def decode_instruction(instr):

@@ -1,15 +1,16 @@
-from strex_t1 import StrexT1
-from ldrex_t1 import LdrexT1
-from strd_immediate_t1 import StrdImmediateT1
-from ldrd_immediate_t1 import LdrdImmediateT1
-from ldrd_literal_t1 import LdrdLiteralT1
-from strexb_t1 import StrexbT1
-from strexh_t1 import StrexhT1
-from strexd_t1 import StrexdT1
-from tbb_t1 import TbbT1
-from ldrexb_t1 import LdrexbT1
-from ldrexh_t1 import LdrexhT1
-from ldrexd_t1 import LdrexdT1
+from __future__ import absolute_import
+from .strex_t1 import StrexT1
+from .ldrex_t1 import LdrexT1
+from .strd_immediate_t1 import StrdImmediateT1
+from .ldrd_immediate_t1 import LdrdImmediateT1
+from .ldrd_literal_t1 import LdrdLiteralT1
+from .strexb_t1 import StrexbT1
+from .strexh_t1 import StrexhT1
+from .strexd_t1 import StrexdT1
+from .tbb_t1 import TbbT1
+from .ldrexb_t1 import LdrexbT1
+from .ldrexh_t1 import LdrexhT1
+from .ldrexd_t1 import LdrexdT1
 
 
 def decode_instruction(instr):
