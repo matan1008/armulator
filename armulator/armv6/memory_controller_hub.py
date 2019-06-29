@@ -67,7 +67,7 @@ class MemoryControllerHub(object):
         if mc is not None:
             value = value.copy()
             value.byteswap()
-            mc.mem[memaddrdesc.paddress.physicaladdress.uint - mc.beginning, size] = value.hex.decode("hex")
+            mc.mem[memaddrdesc.paddress.physicaladdress.uint - mc.beginning, size] = value.bytes
 
     def set_bits(self, memaddrdesc, size, ind, amount, bits):
         # mock
