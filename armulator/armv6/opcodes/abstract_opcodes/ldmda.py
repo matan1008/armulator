@@ -1,3 +1,4 @@
+from builtins import range
 from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
 from armulator.armv6.bits_ops import add, sub
 from bitstring import BitArray
@@ -14,7 +15,7 @@ class Ldmda(AbstractOpcode):
         if processor.condition_passed():
             address = sub(processor.registers.get(self.n),
                           BitArray(uint=(4 * self.registers.count(1) - 4), length=32), 32)
-            for i in xrange(15):
+            for i in range(15):
                 if self.registers[15 - i]:
                     processor.registers.set(i, processor.mem_a_get(address, 4))
                     address = add(address, BitArray(bin="100"), 32)

@@ -1,4 +1,5 @@
 from bitstring import BitArray
+from builtins import range
 
 
 def top_bit(value):
@@ -112,6 +113,6 @@ def lowest_set_bit_ref(x):
     if x.all(False):
         return x.len
     else:
-        for i in xrange(x.find("0b1")[0], x.len):
+        for i in range(x.find("0b1")[0], x.len):
             if x.uint % (2 ** i) == 0:
                 return i

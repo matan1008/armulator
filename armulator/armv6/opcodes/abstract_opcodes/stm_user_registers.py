@@ -1,3 +1,4 @@
+from builtins import range
 from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
 from armulator.armv6.bits_ops import add, sub
 from bitstring import BitArray
@@ -25,7 +26,7 @@ class StmUserRegisters(AbstractOpcode):
                         BitArray(uint=length, length=32), 32)
                 if self.word_higher:
                     address = add(address, BitArray(bin="100"), 32)
-                for i in xrange(15):
+                for i in range(15):
                     if self.registers[15 - i]:
                         processor.mem_a_set(address, 4, processor.registers.get_rmode(i, BitArray(bin="10000")))
                         address = add(address, BitArray(bin="100"), 32)

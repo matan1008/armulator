@@ -1,3 +1,4 @@
+from builtins import range
 from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
 from armulator.armv6.bits_ops import add, sub, lowest_set_bit_ref
 from bitstring import BitArray
@@ -15,7 +16,7 @@ class Stmda(AbstractOpcode):
             address = sub(processor.registers.get(self.n),
                           BitArray(uint=(4 * self.registers.count(1) - 4), length=32),
                           32)
-            for i in xrange(15):
+            for i in range(15):
                 if self.registers[15 - i]:
                     if i == self.n and self.wback and i != lowest_set_bit_ref(self.registers):
                         processor.mem_a_set(address, 4, BitArray(length=32))  # unknown

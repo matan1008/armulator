@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 from os import path
 from bitstring import BitArray
+from builtins import range
 from .configurations import *
 from . import bits_ops
 from .arm_exceptions import *
@@ -1402,7 +1403,7 @@ class ArmV6:
             region_found = False
             texcb = BitArray(length=5)  # unknown
             s = False  # unknown
-            for r in xrange(self.registers.mpuir.get_dregion().uint):
+            for r in range(self.registers.mpuir.get_dregion().uint):
                 size_enable = self.registers.drsrs[r]
                 base_address = self.registers.drbars[r]
                 access_control = self.registers.dracrs[r]
@@ -1544,7 +1545,7 @@ class ArmV6:
         else:
             if self.registers.cpsr.get_e():
                 value = self.big_endian_reverse(value, size)
-            for i in xrange(size):
+            for i in range(size):
                 self.mem_a_with_priv_set(BitArray(uint=address.uint + i, length=32), 1, privileged, False,
                                          value[value.len - 8 - 8 * i:value.len - 8 * i])
 
@@ -1562,7 +1563,7 @@ class ArmV6:
         elif not self.registers.current_mode_is_hyp() and self.registers.sctlr.get_a():
             self.alignment_fault(address, False)
         else:
-            for i in xrange(size):
+            for i in range(size):
                 value[value.len - 8 - 8 * i:value.len - 8 * i] = self.mem_a_with_priv_get(
                     BitArray(uint=address.uint + i, length=32), 1, privileged, False)
             if self.registers.cpsr.get_e():

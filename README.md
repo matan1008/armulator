@@ -88,6 +88,7 @@ More tests will be added soon.
 ## Built With
 
 * [bitstring](http://scott-griffiths.github.io/bitstring/) - Used for bits operations
+* [future](https://pypi.org/project/future/) - Used for python 2 3 compatibility
 
 ## Authors
 

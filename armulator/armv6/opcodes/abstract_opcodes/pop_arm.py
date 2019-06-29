@@ -1,3 +1,4 @@
+from builtins import range
 from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
 from armulator.armv6.bits_ops import add
 from bitstring import BitArray
@@ -18,7 +19,7 @@ class PopArm(AbstractOpcode):
                 pass
             else:
                 address = processor.registers.get_sp()
-                for i in xrange(15):
+                for i in range(15):
                     if self.registers[15 - i]:
                         processor.registers.set(
                                 i,
