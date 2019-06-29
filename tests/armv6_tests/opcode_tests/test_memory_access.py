@@ -22,7 +22,7 @@ def test_ldr_register_thumb():
     arm.registers.mpuir.set_iregion("0x01")  # declaring the region
     arm.registers.mpuir.set_dregion("0x01")  # declaring the region
     ram_memory = RAM(0x100)
-    ram_memory.write(0x4, 4, "ECIN")
+    ram_memory.write(0x4, 4, b"ECIN")
     mc = MemoryController(ram_memory, 0x0F000000, 0x0F000100)
     arm.mem.memories.append(mc)
     opcode = arm.decode_instruction(instr)
@@ -35,7 +35,7 @@ def test_ldr_register_thumb():
     assert opcode.shift_t == SRType.SRType_LSL
     arm.registers.set(opcode.n, BitArray(hex="0x0F000004"))
     arm.execute_instruction(opcode)
-    assert arm.registers.get(opcode.t).bytes == "NICE"
+    assert arm.registers.get(opcode.t).bytes == b"NICE"
 
 
 def test_stm_thumb():
@@ -61,7 +61,7 @@ def test_stm_thumb():
     arm.registers.set(2, BitArray(bytes=b"YREV"))
     arm.registers.set(5, BitArray(bytes=b"ECIN"))
     arm.execute_instruction(opcode)
-    assert ram_memory[4, 8] == "VERYNICE"
+    assert ram_memory[4, 8] == b"VERYNICE"
     assert arm.registers.get(opcode.n) == "0x0F00000C"
 
 
@@ -94,5 +94,5 @@ def test_strd_immediate_arm():
     arm.registers.set(opcode.t, BitArray(bytes=b"YREV"))
     arm.registers.set(opcode.t2, BitArray(bytes=b"ECIN"))
     arm.execute_instruction(opcode)
-    assert ram_memory[4, 8] == "VERYNICE"
+    assert ram_memory[4, 8] == b"VERYNICE"
     assert arm.registers.get(opcode.n) == "0x0F000004"

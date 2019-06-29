@@ -5,7 +5,7 @@ from armulator.armv6.arm_v6 import ArmV6
 from armulator.armv6.memory_types import RAM
 from armulator.armv6.memory_controller_hub import MemoryController
 
-ELOOP = "\xfe\xe7"
+ELOOP = b"\xfe\xe7"
 ADDR = 0x1000
 
 

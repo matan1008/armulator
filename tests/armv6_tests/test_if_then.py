@@ -11,9 +11,9 @@ def test_if_then():
     arm.registers.sctlr.set_m(False)
     arm.registers.branch_to(prev_pc)
     ram_memory = RAM(0x100)
-    ram_memory[0, 2] = "\x0c\xbf"
-    ram_memory[2, 2] = "\x41\x1c"
-    ram_memory[4, 2] = "\x41\x1e"
+    ram_memory[0, 2] = b"\x0c\xbf"
+    ram_memory[2, 2] = b"\x41\x1c"
+    ram_memory[4, 2] = b"\x41\x1e"
     mc = MemoryController(ram_memory, 0x0F000000, 0x0F000100)
     arm.mem.memories.append(mc)
     arm.registers.set(0, BitArray(hex="0x00000012"))
