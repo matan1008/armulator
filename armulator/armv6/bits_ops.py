@@ -101,7 +101,7 @@ def sat(i, n, unsigned):
 
 
 def align_int(x, y):
-    return y * (x / y)
+    return y * (x // y)
 
 
 def align(x, y):

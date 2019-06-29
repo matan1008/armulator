@@ -21,7 +21,7 @@ class Opcode(object):
 
     def bytes_len(self):
         """ Length in Bytes """
-        return self.instruction_length() / 8
+        return self.instruction_length() // 8
 
     @staticmethod
     def from_bitarray(instr, processor):

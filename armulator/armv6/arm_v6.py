@@ -1878,7 +1878,7 @@ class ArmV6:
 
     def increment_pc_if_needed(self):
         if not self.registers.changed_registers[15]:
-            self.registers.increment_pc(self.this_instr_length() / 8)
+            self.registers.increment_pc(self.this_instr_length() // 8)
 
     def emulate_cycle(self):
         try:
