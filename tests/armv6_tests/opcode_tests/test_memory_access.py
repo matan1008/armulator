@@ -58,8 +58,8 @@ def test_stm_thumb():
     assert opcode.n == 1
     assert opcode.registers == "0b0000000000100100"
     arm.registers.set(opcode.n, BitArray(hex="0x0F000004"))
-    arm.registers.set(2, BitArray(bytes="YREV"))
-    arm.registers.set(5, BitArray(bytes="ECIN"))
+    arm.registers.set(2, BitArray(bytes=b"YREV"))
+    arm.registers.set(5, BitArray(bytes=b"ECIN"))
     arm.execute_instruction(opcode)
     assert ram_memory[4, 8] == "VERYNICE"
     assert arm.registers.get(opcode.n) == "0x0F00000C"
@@ -91,8 +91,8 @@ def test_strd_immediate_arm():
     assert opcode.t == 0
     assert opcode.t2 == 1
     arm.registers.set(opcode.n, BitArray(hex="0x0F000004"))
-    arm.registers.set(opcode.t, BitArray(bytes="YREV"))
-    arm.registers.set(opcode.t2, BitArray(bytes="ECIN"))
+    arm.registers.set(opcode.t, BitArray(bytes=b"YREV"))
+    arm.registers.set(opcode.t2, BitArray(bytes=b"ECIN"))
     arm.execute_instruction(opcode)
     assert ram_memory[4, 8] == "VERYNICE"
     assert arm.registers.get(opcode.n) == "0x0F000004"
