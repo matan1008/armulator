@@ -1,9 +1,9 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class MsrRegisterSystem(AbstractOpcode):
-    def __init__(self, write_spsr, mask, n):
-        super(MsrRegisterSystem, self).__init__()
+class MsrRegisterSystem(Opcode):
+    def __init__(self, instruction, write_spsr, mask, n):
+        super().__init__(instruction)
         self.write_spsr = write_spsr
         self.mask = mask
         self.n = n
@@ -14,6 +14,5 @@ class MsrRegisterSystem(AbstractOpcode):
                 processor.registers.spsr_write_by_instr(processor.registers.get(self.n), self.mask)
             else:
                 processor.registers.cpsr_write_by_instr(processor.registers.get(self.n), self.mask, False)
-                if (processor.registers.cpsr.get_m() == "0b11010" and
-                        processor.registers.cpsr.get_j() and processor.registers.cpsr.get_t()):
-                    print("unpredictable")
+                if processor.registers.cpsr.m == 0b11010 and processor.registers.cpsr.j and processor.registers.cpsr.t:
+                    print('unpredictable')

@@ -6,31 +6,34 @@ class CPACR(AbstractRegister):
     Coprocessor Access Control Register
     """
 
-    def __init__(self):
-        super(CPACR, self).__init__()
+    def get_cp_n(self, n):
+        assert n < 14
+        return self[1 + (2 * n): 2 * n]
 
     def set_cp_n(self, n, cp):
         assert n < 14
-        self.value[30 - (2 * n):32 - (2 * n)] = cp
+        self[1 + (2 * n):2 * n] = cp
 
-    def get_cp_n(self, n):
-        assert n < 14
-        return self.value[30 - (2 * n):32 - (2 * n)]
+    @property
+    def trcdis(self):
+        return self[28]
 
-    def set_trcdis(self, flag):
-        self.value[3] = flag
+    @trcdis.setter
+    def trcdis(self, flag):
+        self[28] = flag
 
-    def get_trcdis(self):
-        return self.value[3]
+    @property
+    def d32dis(self):
+        return self[30]
 
-    def set_d32dis(self, flag):
-        self.value[1] = flag
+    @d32dis.setter
+    def d32dis(self, flag):
+        self[30] = flag
 
-    def get_d32dis(self):
-        return self.value[1]
+    @property
+    def asedis(self):
+        return self[31]
 
-    def set_asedis(self, flag):
-        self.value[0] = flag
-
-    def get_asedis(self):
-        return self.value[0]
+    @asedis.setter
+    def asedis(self, flag):
+        self[31] = flag

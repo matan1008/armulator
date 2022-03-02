@@ -11,7 +11,7 @@ class RGNR(AbstractRegister):
         self.n = number_of_regions.bit_length()
 
     def set_region(self, region):
-        self.value[32 - self.n:32] = region
+        self[self.n - 1:0] = region
 
     def get_region(self):
-        return self.value[32 - self.n:32]
+        return self[self.n - 1:0]

@@ -1,9 +1,9 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class Nop(AbstractOpcode):
-    def __init__(self):
-        super(Nop, self).__init__()
+class Nop(Opcode):
+    def __init__(self, instruction):
+        super().__init__(instruction)
 
     def execute(self, processor):
         if processor.condition_passed():

@@ -1,11 +1,11 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
+from armulator.armv6.bits_ops import add, sign_extend, lower_chunk
+from armulator.armv6.opcodes.opcode import Opcode
 from armulator.armv6.shift import ror
-from armulator.armv6.bits_ops import add, sign_extend
 
 
-class Sxtah(AbstractOpcode):
-    def __init__(self, m, d, n, rotation):
-        super(Sxtah, self).__init__()
+class Sxtah(Opcode):
+    def __init__(self, instruction, m, d, n, rotation):
+        super().__init__(instruction)
         self.m = m
         self.d = d
         self.n = n
@@ -13,5 +13,6 @@ class Sxtah(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            rotated = ror(processor.registers.get(self.m), self.rotation)
-            processor.registers.set(self.d, add(processor.registers.get(self.n), sign_extend(rotated[16:32], 32), 32))
+            rotated = ror(processor.registers.get(self.m), 32, self.rotation)
+            extended = sign_extend(lower_chunk(rotated, 16), 16, 32)
+            processor.registers.set(self.d, add(processor.registers.get(self.n), extended, 32))

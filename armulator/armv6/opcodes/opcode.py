@@ -1,28 +1,22 @@
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 
 
-class Opcode(object):
+class Opcode(ABC):
     """
      Abstract Opcode class
     """
-    __metaclass__ = ABCMeta
 
     def __init__(self, instruction):
         self.instruction = instruction
 
-    @abstractmethod
-    def is_pc_changing_opcode(self):
-        """ For knowin whether to increment PC or not """
-        pass
-
-    def instruction_length(self):
-        """ Length in Bits"""
-        return self.instruction.len
-
-    def bytes_len(self):
-        """ Length in Bytes """
-        return self.instruction_length() // 8
-
     @staticmethod
     def from_bitarray(instr, processor):
-        raise NotImplementedError()
+        pass
+
+    @abstractmethod
+    def execute(self, processor):
+        """
+        Execute the opcode on the given processor
+        :param processor: Processor to run opcode on.
+        """
+        pass

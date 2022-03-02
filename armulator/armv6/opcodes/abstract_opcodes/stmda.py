@@ -1,32 +1,26 @@
-from builtins import range
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
-from armulator.armv6.bits_ops import add, sub, lowest_set_bit_ref
-from bitstring import BitArray
+from armulator.armv6.bits_ops import sub, lowest_set_bit_ref, bit_at, bit_count
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class Stmda(AbstractOpcode):
-    def __init__(self, wback, registers, n):
-        super(Stmda, self).__init__()
+class Stmda(Opcode):
+    def __init__(self, instruction, wback, registers, n):
+        super().__init__(instruction)
         self.wback = wback
         self.registers = registers
         self.n = n
 
     def execute(self, processor):
+        register_count = bit_count(self.registers, 1, 16)
         if processor.condition_passed():
-            address = sub(processor.registers.get(self.n),
-                          BitArray(uint=(4 * self.registers.count(1) - 4), length=32),
-                          32)
+            address = sub(processor.registers.get(self.n), (4 * register_count), 32) + 4
             for i in range(15):
-                if self.registers[15 - i]:
+                if bit_at(self.registers, i):
                     if i == self.n and self.wback and i != lowest_set_bit_ref(self.registers):
-                        processor.mem_a_set(address, 4, BitArray(length=32))  # unknown
+                        processor.mem_a_set(address, 4, 0x00000000)  # unknown
                     else:
                         processor.mem_a_set(address, 4, processor.registers.get(i))
-                    address = add(address, BitArray(bin="100"), 32)
-            if self.registers[0]:
+                    address = address + 4
+            if bit_at(self.registers, 15):
                 processor.mem_a_set(address, 4, processor.registers.pc_store_value())
             if self.wback:
-                processor.registers.set(
-                    self.n,
-                    sub(processor.registers.get(self.n), BitArray(uint=(4 * self.registers.count(1)), length=32), 32)
-                )
+                processor.registers.set(self.n, sub(processor.registers.get(self.n), 4 * register_count, 32))

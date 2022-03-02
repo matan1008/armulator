@@ -6,41 +6,46 @@ class PRRR(AbstractRegister):
     Primary Region Remap Register
     """
 
-    def __init__(self):
-        super(PRRR, self).__init__()
+    def get_tr_n(self, n):
+        return self[(2 * n) + 1:2 * n]
 
     def set_tr_n(self, n, tr):
-        self.value[30 - (2 * n):32 - (2 * n)] = tr
-
-    def get_tr_n(self, n):
-        return self.value[30 - (2 * n):32 - (2 * n)]
-
-    def set_nos_n(self, n, flag):
-        self.value[7 - n] = flag
+        self[(2 * n) + 1:2 * n] = tr
 
     def get_nos_n(self, n):
-        return self.value[7 - n]
+        return self[n + 24]
 
-    def set_ns1(self, flag):
-        self.value[12] = flag
+    def set_nos_n(self, n, flag):
+        self[n + 24] = flag
 
-    def get_ns1(self):
-        return self.value[12]
+    @property
+    def ns1(self):
+        return self[19]
 
-    def set_ns0(self, flag):
-        self.value[13] = flag
+    @ns1.setter
+    def ns1(self, flag):
+        self[19] = flag
 
-    def get_ns0(self):
-        return self.value[13]
+    @property
+    def ns0(self):
+        return self[18]
 
-    def set_ds1(self, flag):
-        self.value[14] = flag
+    @ns0.setter
+    def ns0(self, flag):
+        self[18] = flag
 
-    def get_ds1(self):
-        return self.value[14]
+    @property
+    def ds1(self):
+        return self[17]
 
-    def set_ds0(self, flag):
-        self.value[15] = flag
+    @ds1.setter
+    def ds1(self, flag):
+        self[17] = flag
 
-    def get_ds0(self):
-        return self.value[15]
+    @property
+    def ds0(self):
+        return self[16]
+
+    @ds0.setter
+    def ds0(self, flag):
+        self[16] = flag

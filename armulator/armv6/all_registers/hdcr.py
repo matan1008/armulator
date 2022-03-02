@@ -6,53 +6,66 @@ class HDCR(AbstractRegister):
     Hyp Debug Configuration Register
     """
 
-    def __init__(self):
-        super(HDCR, self).__init__()
+    @property
+    def tdra(self):
+        return self[11]
 
-    def set_tdra(self, flag):
-        self.value[20] = flag
+    @tdra.setter
+    def tdra(self, flag):
+        self[11] = flag
 
-    def get_tdra(self):
-        return self.value[20]
+    @property
+    def tdosa(self):
+        return self[10]
 
-    def set_tdosa(self, flag):
-        self.value[21] = flag
+    @tdosa.setter
+    def tdosa(self, flag):
+        self[10] = flag
 
-    def get_tdosa(self):
-        return self.value[21]
+    @property
+    def tda(self):
+        return self[9]
 
-    def set_tda(self, flag):
-        self.value[22] = flag
+    @tda.setter
+    def tda(self, flag):
+        self[9] = flag
 
-    def get_tda(self):
-        return self.value[22]
+    @property
+    def tde(self):
+        return self[8]
 
-    def set_tde(self, flag):
-        self.value[23] = flag
+    @tde.setter
+    def tde(self, flag):
+        self[8] = flag
 
-    def get_tde(self):
-        return self.value[23]
+    @property
+    def hpme(self):
+        return self[7]
 
-    def set_hpme(self, flag):
-        self.value[24] = flag
+    @hpme.setter
+    def hpme(self, flag):
+        self[7] = flag
 
-    def get_hpme(self):
-        return self.value[24]
+    @property
+    def tpm(self):
+        return self[6]
 
-    def set_tpm(self, flag):
-        self.value[25] = flag
+    @tpm.setter
+    def tpm(self, flag):
+        self[6] = flag
 
-    def get_tpm(self):
-        return self.value[25]
+    @property
+    def tpmcr(self):
+        return self[5]
 
-    def set_tpmcr(self, flag):
-        self.value[26] = flag
+    @tpmcr.setter
+    def tpmcr(self, flag):
+        self[5] = flag
 
-    def get_tpmcr(self):
-        return self.value[26]
+    @property
+    def hpmn(self):
+        return self[4:0]
 
-    def set_hpmn(self, hpmn):
-        self.value[27:32] = hpmn
-
-    def get_hpmn(self):
-        return self.value[27:32]
+    @hpmn.setter
+    def hpmn(self, hpmn):
+        self[4:0] = hpmn

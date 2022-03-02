@@ -1,16 +1,20 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
-from armulator.armv6.bits_ops import unsigned_sat
+from armulator.armv6.bits_ops import unsigned_sat, substring, set_substring
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class Uqsax(AbstractOpcode):
-    def __init__(self, m, d, n):
-        super(Uqsax, self).__init__()
+class Uqsax(Opcode):
+    def __init__(self, instruction, m, d, n):
+        super().__init__(instruction)
         self.m = m
         self.d = d
         self.n = n
 
     def execute(self, processor):
         if processor.condition_passed():
-            sum_ = processor.registers.get(self.n)[16:32].uint + processor.registers.get(self.m)[0:16].uint
-            diff = processor.registers.get(self.n)[0:16].uint - processor.registers.get(self.m)[16:32].uint
-            processor.registers.set(self.d, unsigned_sat(diff, 16) + unsigned_sat(sum_, 16))
+            n = processor.registers.get(self.n)
+            m = processor.registers.get(self.m)
+            sum_ = substring(n, 15, 0) + substring(m, 31, 16)
+            diff = substring(n, 31, 16) - substring(m, 15, 0)
+            d = set_substring(0, 15, 0, unsigned_sat(sum_, 16))
+            d = set_substring(d, 31, 16, unsigned_sat(diff, 16))
+            processor.registers.set(self.d, d)

@@ -1,5 +1,5 @@
-from bitstring import BitArray
 from armulator.armv6.all_registers.abstract_register import AbstractRegister
+from armulator.armv6.bits_ops import chain, bit_at, substring
 
 
 class CPSR(AbstractRegister):
@@ -7,110 +7,128 @@ class CPSR(AbstractRegister):
     Current Program Status Register
     """
 
-    def __init__(self):
-        super(CPSR, self).__init__()
+    @property
+    def n(self):
+        return self[31]
 
-    def set_n(self, flag):
-        if type(flag) is not bool:
-            flag = flag == "1"
-        self.value[0] = flag
+    @n.setter
+    def n(self, flag):
+        self[31] = flag
 
-    def get_n(self):
-        return self.value[0]
+    @property
+    def z(self):
+        return self[30]
 
-    def set_z(self, flag):
-        if type(flag) is not bool:
-            flag = flag == "1"
-        self.value[1] = flag
+    @z.setter
+    def z(self, flag):
+        self[30] = flag
 
-    def get_z(self):
-        return self.value[1]
+    @property
+    def c(self):
+        return self[29]
 
-    def set_c(self, flag):
-        if type(flag) is not bool:
-            flag = flag == "1"
-        self.value[2] = flag
+    @c.setter
+    def c(self, flag):
+        self[29] = flag
 
-    def get_c(self):
-        return self.value[2]
+    @property
+    def v(self):
+        return self[28]
 
-    def set_v(self, flag):
-        if type(flag) is not bool:
-            flag = flag == "1"
-        self.value[3] = flag
+    @v.setter
+    def v(self, flag):
+        self[28] = flag
 
-    def get_v(self):
-        return self.value[3]
+    @property
+    def q(self):
+        return self[27]
 
-    def set_q(self, flag):
-        if type(flag) is not bool:
-            flag = flag == "1"
-        self.value[4] = flag
+    @q.setter
+    def q(self, flag):
+        self[27] = flag
 
-    def get_q(self):
-        return self.value[4]
+    @property
+    def j(self):
+        return self[24]
 
-    def set_j(self, flag):
-        self.value[7] = flag
+    @j.setter
+    def j(self, flag):
+        self[24] = flag
 
-    def get_j(self):
-        return self.value[7]
+    @property
+    def ge(self):
+        return self[19:16]
 
-    def set_ge(self, ge):
-        self.value[12:16] = ge
+    @ge.setter
+    def ge(self, ge):
+        self[19:16] = ge
 
-    def get_ge(self):
-        return self.value[12:16]
+    @property
+    def it(self):
+        return chain(self[15:10], self[26:25], 2)
 
-    def set_it(self, it):
-        self.value[16:22] = it[0:6]
-        self.value[5:7] = it[6:8]
+    @it.setter
+    def it(self, it):
+        self[15:10] = substring(it, 7, 2)
+        self[26:25] = substring(it, 1, 0)
 
-    def get_it(self):
-        return self.value[16:22] + self.value[5:7]
+    @property
+    def e(self):
+        return self[9]
 
-    def set_e(self, flag):
-        self.value[22] = flag
+    @e.setter
+    def e(self, flag):
+        self[9] = flag
 
-    def get_e(self):
-        return self.value[22]
+    @property
+    def a(self):
+        return self[8]
 
-    def set_a(self, flag):
-        self.value[23] = flag
+    @a.setter
+    def a(self, flag):
+        self[8] = flag
 
-    def get_a(self):
-        return self.value[23]
+    @property
+    def i(self):
+        return self[7]
 
-    def set_i(self, flag):
-        self.value[24] = flag
+    @i.setter
+    def i(self, flag):
+        self[7] = flag
 
-    def get_i(self):
-        return self.value[24]
+    @property
+    def f(self):
+        return self[6]
 
-    def set_f(self, flag):
-        self.value[25] = flag
+    @f.setter
+    def f(self, flag):
+        self[6] = flag
 
-    def get_f(self):
-        return self.value[25]
+    @property
+    def t(self):
+        return self[5]
 
-    def set_t(self, flag):
-        self.value[26] = flag
+    @t.setter
+    def t(self, flag):
+        self[5] = flag
 
-    def get_t(self):
-        return self.value[26]
+    @property
+    def m(self):
+        return self[4:0]
 
-    def set_m(self, mode):
-        self.value[27:32] = mode
+    @m.setter
+    def m(self, mode):
+        self[4:0] = mode
 
-    def get_m(self):
-        return self.value[27:32]
+    @property
+    def isetstate(self):
+        return chain(self[24], self[5], 1)
 
-    def set_isetstate(self, isetstate):
-        self.value[7] = isetstate[0]
-        self.value[26] = isetstate[1]
+    @isetstate.setter
+    def isetstate(self, isetstate):
+        self[24] = bit_at(isetstate, 1)
+        self[5] = bit_at(isetstate, 0)
 
-    def get_isetstate(self):
-        return BitArray(bool=self.value[7]) + BitArray(bool=self.value[26])
-
-    def get_apsr(self):
-        return self.value & "0xF80F0000"
+    @property
+    def apsr(self):
+        return self.value & 0xF80F0000

@@ -1,9 +1,6 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class Bkpt(AbstractOpcode):
-    def __init__(self):
-        super(Bkpt, self).__init__()
-
+class Bkpt(Opcode):
     def execute(self, processor):
         processor.bkpt_instr_debug_event()

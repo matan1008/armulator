@@ -1,10 +1,7 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class Yield(AbstractOpcode):
-    def __init__(self):
-        super(Yield, self).__init__()
-
+class Yield(Opcode):
     def execute(self, processor):
         if processor.condition_passed():
             processor.hint_yield()

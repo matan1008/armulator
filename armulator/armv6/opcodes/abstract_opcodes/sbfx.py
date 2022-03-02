@@ -1,10 +1,10 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
-from armulator.armv6.bits_ops import sign_extend
+from armulator.armv6.bits_ops import sign_extend, substring
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class Sbfx(AbstractOpcode):
-    def __init__(self, lsbit, widthminus1, d, n):
-        super(Sbfx, self).__init__()
+class Sbfx(Opcode):
+    def __init__(self, instruction, lsbit, widthminus1, d, n):
+        super().__init__(instruction)
         self.lsbit = lsbit
         self.widthminus1 = widthminus1
         self.d = d
@@ -14,7 +14,9 @@ class Sbfx(AbstractOpcode):
         if processor.condition_passed():
             msbit = self.lsbit + self.widthminus1
             if msbit <= 31:
-                processor.registers.set(self.d, sign_extend(
-                        processor.registers.get(self.n)[31 - msbit:32 - self.lsbit], 32))
+                processor.registers.set(
+                    self.d,
+                    sign_extend(substring(processor.registers.get(self.n), msbit, self.lsbit), self.widthminus1 + 1, 32)
+                )
             else:
-                print("unpredictable")
+                print('unpredictable')

@@ -1,11 +1,11 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
+from armulator.armv6.bits_ops import add, lower_chunk
+from armulator.armv6.opcodes.opcode import Opcode
 from armulator.armv6.shift import ror
-from armulator.armv6.bits_ops import add, zero_extend
 
 
-class Uxtab(AbstractOpcode):
-    def __init__(self, m, d, n, rotation):
-        super(Uxtab, self).__init__()
+class Uxtab(Opcode):
+    def __init__(self, instruction, m, d, n, rotation):
+        super().__init__(instruction)
         self.m = m
         self.d = d
         self.n = n
@@ -13,5 +13,5 @@ class Uxtab(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            rotated = ror(processor.registers.get(self.m), self.rotation)
-            processor.registers.set(self.d, add(processor.registers.get(self.n), zero_extend(rotated[24:32], 32), 32))
+            rotated = ror(processor.registers.get(self.m), 32, self.rotation)
+            processor.registers.set(self.d, add(processor.registers.get(self.n), lower_chunk(rotated, 8), 32))

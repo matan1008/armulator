@@ -1,7 +1,6 @@
-from bitstring import BitArray
 from armulator.armv6.arm_v6 import ArmV6
-from armulator.armv6.memory_types import RAM
 from armulator.armv6.memory_controller_hub import MemoryController
+from armulator.armv6.memory_types import RAM
 
 STRNCAT_IMPL = (  # R0 - destination, R1 - source, R2 - num
     b"\x10\xb4"  # PUSH {R4}
@@ -34,16 +33,16 @@ def call_function_without_stack(proc, function_binary, register_params):
     proc.mem.memories.append(mc)
     for register_index in register_params:
         proc.registers.set(register_index, register_params[register_index])
-    curr_pc = BitArray(hex="0xF0000000")
+    curr_pc = 0xF0000000
     proc.registers.branch_to(curr_pc)
-    while proc.registers.pc_store_value().uint != 0:
+    while proc.registers.pc_store_value() != 0:
         proc.emulate_cycle()
 
 
 def strncat(destination, source, num):
     arm = ArmV6()
     arm.take_reset()
-    arm.registers.sctlr.set_m(False)
+    arm.registers.sctlr.m = 0
     strings = RAM((len(destination) + len(source)) * 2)
     strings[0, len(destination)] = destination
     source_offset = len(destination) + len(source)
@@ -52,13 +51,13 @@ def strncat(destination, source, num):
     mc = MemoryController(strings, strings_base, strings_base + strings.size)
     arm.mem.memories.append(mc)
     call_function_without_stack(arm, STRNCAT_IMPL, {
-        0: BitArray(uint=strings_base, length=32),  # Address of destination string
-        1: BitArray(uint=strings_base + source_offset, length=32),  # Address of destination string
-        2: BitArray(uint=num, length=32)  # Address of destination string
+        0: strings_base,  # Address of destination string
+        1: strings_base + source_offset,  # Address of destination string
+        2: num,  # Address of destination string
     })
     return strings.read(0, min(len(destination) + len(source) - 1, num))
 
 
 if __name__ == "__main__":
-    assert strncat(b"hey \x00", b"I just met you\x00", 100) == b"hey I just met you\x00"
-    assert strncat(b"hey \x00", b"I just met you\x00", 8) == b"hey I ju"
+    assert strncat(b'hey \x00', b'I just met you\x00', 100) == b'hey I just met you\x00'
+    assert strncat(b'hey \x00', b'I just met you\x00', 8) == b'hey I ju'

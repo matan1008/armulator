@@ -1,10 +1,10 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
-from bitstring import BitArray
+from armulator.armv6.bits_ops import to_unsigned, substring, to_signed
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class Smlaw(AbstractOpcode):
-    def __init__(self, m_high, m, a, d, n):
-        super(Smlaw, self).__init__()
+class Smlaw(Opcode):
+    def __init__(self, instruction, m_high, m, a, d, n):
+        super().__init__(instruction)
         self.m_high = m_high
         self.m = m
         self.a = a
@@ -13,11 +13,11 @@ class Smlaw(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            operand2 = (processor.registers.get(self.m)[0:16]
-                        if self.m_high
-                        else processor.registers.get(self.m)[16:])
-            result = processor.registers.get(self.n).int * operand2.int + (
-                processor.registers.get(self.a).int << 16)
-            processor.registers.set(self.d, BitArray(int=result, length=48)[0:32])
-            if (result >> 16) != processor.registers.get(self.d).int:
-                processor.registers.cpsr.set_q(True)
+            m = processor.registers.get(self.m)
+            operand2 = substring(m, 31, 16) if self.m_high else substring(m, 15, 0)
+            result = (to_signed(processor.registers.get(self.n), 32) * to_signed(operand2, 16) +
+                      (to_signed(processor.registers.get(self.a), 32) << 16))
+            output = substring(to_unsigned(result, 48), 47, 16)
+            processor.registers.set(self.d, output)
+            if (result >> 16) != to_signed(output, 32):
+                processor.registers.cpsr.q = 1

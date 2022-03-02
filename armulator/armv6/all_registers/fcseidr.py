@@ -6,11 +6,10 @@ class FCSEIDR(AbstractRegister):
     FCSE Process ID Register
     """
 
-    def __init__(self):
-        super(FCSEIDR, self).__init__()
+    @property
+    def pid(self):
+        return self[31:25]
 
-    def set_pid(self, pid):
-        self.value[0:7] = pid
-
-    def get_pid(self):
-        return self.value[0:7]
+    @pid.setter
+    def pid(self, pid):
+        self[31:25] = pid

@@ -1,22 +1,21 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
-from bitstring import BitArray
+from armulator.armv6.bits_ops import lower_chunk
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class Udiv(AbstractOpcode):
-    def __init__(self, m, d, n):
-        super(Udiv, self).__init__()
+class Udiv(Opcode):
+    def __init__(self, instruction, m, d, n):
+        super().__init__(instruction)
         self.m = m
         self.d = d
         self.n = n
 
     def execute(self, processor):
         if processor.condition_passed():
-            if processor.registers.get(self.m).uint == 0:
+            if processor.registers.get(self.m) == 0:
                 if processor.integer_zero_divide_trapping_enabled():
                     processor.generate_integer_zero_divide()
                 else:
                     result = 0
             else:
-                result = int(
-                    float(processor.registers.get(self.n).uint) / float(processor.registers.get(self.m).uint))
-            processor.registers.set(self.d, BitArray(int=result, length=32))
+                result = int(processor.registers.get(self.n) / processor.registers.get(self.m))
+            processor.registers.set(self.d, lower_chunk(result, 32))

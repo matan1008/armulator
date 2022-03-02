@@ -1,11 +1,11 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
+from armulator.armv6.bits_ops import add, lower_chunk
+from armulator.armv6.opcodes.opcode import Opcode
 from armulator.armv6.shift import ror
-from armulator.armv6.bits_ops import add, zero_extend
 
 
-class Uxtah(AbstractOpcode):
-    def __init__(self, m, d, n, rotation):
-        super(Uxtah, self).__init__()
+class Uxtah(Opcode):
+    def __init__(self, instruction, m, d, n, rotation):
+        super().__init__(instruction)
         self.m = m
         self.d = d
         self.n = n
@@ -13,5 +13,5 @@ class Uxtah(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            rotated = ror(processor.registers.get(self.m), self.rotation)
-            processor.registers.set(self.d, add(processor.registers.get(self.n), zero_extend(rotated[16:32], 32), 32))
+            rotated = ror(processor.registers.get(self.m), 32, self.rotation)
+            processor.registers.set(self.d, add(processor.registers.get(self.n), lower_chunk(rotated, 16), 32))

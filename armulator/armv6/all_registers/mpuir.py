@@ -6,23 +6,26 @@ class MPUIR(AbstractRegister):
     MPU Type Register
     """
 
-    def __init__(self):
-        super(MPUIR, self).__init__()
+    @property
+    def nu(self):
+        return self[0]
 
-    def set_nu(self, flag):
-        self.value[31] = flag
+    @nu.setter
+    def nu(self, flag):
+        self[0] = flag
 
-    def get_nu(self):
-        return self.value[31]
+    @property
+    def iregion(self):
+        return self[23:16]
 
-    def set_iregion(self, iregion):
-        self.value[8:16] = iregion
+    @iregion.setter
+    def iregion(self, iregion):
+        self[23:16] = iregion
 
-    def get_iregion(self):
-        return self.value[8:16]
+    @property
+    def dregion(self):
+        return self[15:8]
 
-    def set_dregion(self, dregion):
-        self.value[16:24] = dregion
-
-    def get_dregion(self):
-        return self.value[16:24]
+    @dregion.setter
+    def dregion(self, dregion):
+        self[15:8] = dregion

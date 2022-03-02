@@ -1,9 +1,24 @@
-from __future__ import absolute_import
-from bitstring import BitArray
-from .memory_types import MEMORY_TYPE_DICT
+import struct
+
+from armulator.armv6.memory_types import MEMORY_TYPE_DICT
+
+LENGTH_FORMATS = {
+    1: 'B',
+    2: '<H',
+    4: '<I',
+    8: '<Q',
+}
 
 
-class MemoryController(object):
+def to_int(bytes_: bytes, length: int) -> int:
+    return struct.unpack(LENGTH_FORMATS[length], bytes_)[0]
+
+
+def from_int(int_: int, length: int) -> bytes:
+    return struct.pack(LENGTH_FORMATS[length], int_)
+
+
+class MemoryController:
     """
     One memory or i/o device
     """
@@ -14,7 +29,7 @@ class MemoryController(object):
         self.end = end
 
 
-class MemoryControllerHub(object):
+class MemoryControllerHub:
     """
     Provides the CPU and memory and input/output devices to interact
     """
@@ -47,12 +62,11 @@ class MemoryControllerHub(object):
         """
         (memaddrdesc, size) = memaddrdesc_size
         assert size == 1 or size == 2 or size == 4 or size == 8
-        mc = self.get_memory_by_address(memaddrdesc.paddress.physicaladdress.uint)
+        mc = self.get_memory_by_address(memaddrdesc.paddress.physicaladdress)
         if mc is not None:
-            data = BitArray(bytes=mc.mem[memaddrdesc.paddress.physicaladdress.uint - mc.beginning, size])
-            data.byteswap()
-            return data
-        return BitArray(length=size * 8)
+            data = mc.mem[memaddrdesc.paddress.physicaladdress - mc.beginning, size]
+            return to_int(data, size)
+        return 0
 
     def __setitem__(self, memaddrdesc_size, value):
         """
@@ -63,11 +77,9 @@ class MemoryControllerHub(object):
         memaddrdesc = memaddrdesc_size[0]
         size = memaddrdesc_size[1]
         assert size == 1 or size == 2 or size == 4 or size == 8
-        mc = self.get_memory_by_address(memaddrdesc.paddress.physicaladdress.uint)
+        mc = self.get_memory_by_address(memaddrdesc.paddress.physicaladdress)
         if mc is not None:
-            value = value.copy()
-            value.byteswap()
-            mc.mem[memaddrdesc.paddress.physicaladdress.uint - mc.beginning, size] = value.bytes
+            mc.mem[memaddrdesc.paddress.physicaladdress - mc.beginning, size] = from_int(value, size)
 
     def set_bits(self, memaddrdesc, size, ind, amount, bits):
         # mock

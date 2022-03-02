@@ -6,70 +6,77 @@ class IdPfr1(AbstractRegister):
     Processor Feature Register 1
     """
 
-    def __init__(self):
-        super(IdPfr1, self).__init__()
+    @property
+    def gt(self):
+        """
+        Generic Timer Extension
+        """
+        return self[19:16]
 
-    def set_gt(self, gt):
+    @gt.setter
+    def gt(self, gt):
         """
         Generic Timer Extension
         :param gt:
         """
-        self.value[12:16] = gt
+        self[19:16] = gt
 
-    def get_gt(self):
+    @property
+    def ve(self):
         """
-        Generic Timer Extension
+        Virtualization Extensions
         """
-        return self.value[12:16]
+        return self[15:12]
 
-    def set_ve(self, ve):
+    @ve.setter
+    def ve(self, ve):
         """
         Virtualization Extensions
         :param ve:
         """
-        self.value[16:20] = ve
+        self[15:12] = ve
 
-    def get_ve(self):
+    @property
+    def m_profile(self):
         """
-        Virtualization Extensions
+        M profile programmers' model
         """
-        return self.value[16:20]
+        return self[11:8]
 
-    def set_m_profile(self, m_profile):
+    @m_profile.setter
+    def m_profile(self, m_profile):
         """
         M profile programmers' model
         :param m_profile:
         """
-        self.value[20:24] = m_profile
+        self[11:8] = m_profile
 
-    def get_m_profile(self):
+    @property
+    def se(self):
         """
-        M profile programmers' model
+        Security Extensions
         """
-        return self.value[20:24]
+        return self[7:4]
 
-    def set_se(self, se):
+    @se.setter
+    def se(self, se):
         """
         Security Extensions
         :param se:
         """
-        self.value[24:28] = se
+        self[7:4] = se
 
-    def get_se(self):
+    @property
+    def pm(self):
         """
-        Security Extensions
+        Programmers' model
         """
-        return self.value[24:28]
+        return self[3:0]
 
-    def set_pm(self, pm):
+    @pm.setter
+    def pm(self, pm):
         """
         Programmers' model
         :param pm:
         """
-        self.value[28:32] = pm
-
-    def get_pm(self):
-        """
-        Programmers' model
-        """
-        return self.value[28:32]
+        self[3:0] = pm

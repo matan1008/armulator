@@ -1,21 +1,21 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
+from armulator.armv6.bits_ops import substring, bit_at
+from armulator.armv6.opcodes.opcode import Opcode
 from armulator.armv6.shift import shift_c, SRType
 
 
-class LsrRegister(AbstractOpcode):
-    def __init__(self, setflags, m, d, n):
-        super(LsrRegister, self).__init__()
+class LsrRegister(Opcode):
+    def __init__(self, instruction, setflags, m, d, n):
+        super().__init__(instruction)
         self.setflags = setflags
         self.m = m
         self.d = d
         self.n = n
 
     def execute(self, processor):
-        shift_n = processor.registers.get(self.m)[24:32].uint
-        result, carry = shift_c(processor.registers.get(self.n), SRType.SRType_LSR, shift_n,
-                                processor.registers.cpsr.get_c())
+        shift_n = substring(processor.registers.get(self.m), 7, 0)
+        result, carry = shift_c(processor.registers.get(self.n), 32, SRType.LSR, shift_n, processor.registers.cpsr.c)
         processor.registers.set(self.d, result)
         if self.setflags:
-            processor.registers.cpsr.set_n(result[0])
-            processor.registers.cpsr.set_z(not result.any(True))
-            processor.registers.cpsr.set_c(carry)
+            processor.registers.cpsr.n = bit_at(result, 31)
+            processor.registers.cpsr.z = 0 if result else 1
+            processor.registers.cpsr.c = carry

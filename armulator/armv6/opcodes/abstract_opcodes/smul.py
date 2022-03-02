@@ -1,10 +1,10 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
-from bitstring import BitArray
+from armulator.armv6.bits_ops import to_signed, to_unsigned, substring
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class Smul(AbstractOpcode):
-    def __init__(self, m_high, n_high, m, d, n):
-        super(Smul, self).__init__()
+class Smul(Opcode):
+    def __init__(self, instruction, m_high, n_high, m, d, n):
+        super().__init__(instruction)
         self.m_high = m_high
         self.n_high = n_high
         self.m = m
@@ -13,9 +13,9 @@ class Smul(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            operand1 = processor.registers.get(self.n)[0:16] if self.n_high else processor.registers.get(
-                self.n)[16:]
-            operand2 = processor.registers.get(self.m)[0:16] if self.m_high else processor.registers.get(
-                self.m)[16:]
-            result = operand1.int * operand2.int
-            processor.registers.set(self.d, BitArray(int=result, length=32))
+            n = processor.registers.get(self.n)
+            operand1 = substring(n, 31, 16) if self.n_high else substring(n, 15, 0)
+            m = processor.registers.get(self.m)
+            operand2 = substring(m, 31, 16) if self.m_high else substring(m, 15, 0)
+            result = to_signed(operand1, 16) * to_signed(operand2, 16)
+            processor.registers.set(self.d, to_unsigned(result, 32))

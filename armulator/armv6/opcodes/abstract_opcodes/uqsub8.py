@@ -1,21 +1,24 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
-from armulator.armv6.bits_ops import unsigned_sat
+from armulator.armv6.bits_ops import unsigned_sat, set_substring, substring
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class Uqsub8(AbstractOpcode):
-    def __init__(self, m, d, n):
-        super(Uqsub8, self).__init__()
+class Uqsub8(Opcode):
+    def __init__(self, instruction, m, d, n):
+        super().__init__(instruction)
         self.m = m
         self.d = d
         self.n = n
 
     def execute(self, processor):
         if processor.condition_passed():
-            diff1 = processor.registers.get(self.n)[24:32].uint - processor.registers.get(self.m)[24:32].uint
-            diff2 = processor.registers.get(self.n)[16:24].uint - processor.registers.get(self.m)[16:24].uint
-            diff3 = processor.registers.get(self.n)[8:16].uint - processor.registers.get(self.m)[8:16].uint
-            diff4 = processor.registers.get(self.n)[0:8].uint - processor.registers.get(self.m)[0:8].uint
-            processor.registers.set(
-                    self.d,
-                    unsigned_sat(diff4, 8) + unsigned_sat(diff3, 8) + unsigned_sat(diff2, 8) + unsigned_sat(diff1, 8)
-            )
+            n = processor.registers.get(self.n)
+            m = processor.registers.get(self.m)
+            diff1 = substring(n, 7, 0) - substring(m, 7, 0)
+            diff2 = substring(n, 15, 8) - substring(m, 15, 8)
+            diff3 = substring(n, 23, 16) - substring(m, 23, 16)
+            diff4 = substring(n, 31, 24) - substring(m, 31, 24)
+            d = set_substring(0, 7, 0, unsigned_sat(diff1, 8))
+            d = set_substring(d, 15, 8, unsigned_sat(diff2, 8))
+            d = set_substring(d, 23, 16, unsigned_sat(diff3, 8))
+            d = set_substring(d, 31, 24, unsigned_sat(diff4, 8))
+            processor.registers.set(self.d, d)

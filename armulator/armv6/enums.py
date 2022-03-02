@@ -1,13 +1,48 @@
-from enum import Enum
+from enum import Enum, auto
 
-MemArch = Enum("MemArch", "MemArch_VMSA MemArch_PMSA")
-MBReqDomain = Enum(
-        "MBReqDomain",
-        "MBReqDomain_FullSystem MBReqDomain_OuterShareable MBReqDomain_InnerShareable MBReqDomain_Nonshareable"
-)
-MBReqTypes = Enum("MBReqTypes", "MBReqTypes_All MBReqTypes_Writes")
-InstrSet = Enum("InstrSet", "InstrSet_ARM InstrSet_Thumb InstrSet_Jazelle InstrSet_ThumbEE")
-DAbort = Enum("DAbort", ("DAbort_AccessFlag DAbort_Alignment DAbort_Background DAbort_Domain DAbort_Permission "
-                         "DAbort_Translation DAbort_SyncExternal DAbort_SyncExternalonWalk DAbort_SyncParity "
-                         "DAbort_SyncParityonWalk DAbort_AsyncParity DAbort_AsyncExternal DAbort_SyncWatchpoint "
-                         "DAbort_AsyncWatchpoint DAbort_TLBConflict DAbort_Lockdown DAbort_Coproc DAbort_ICacheMaint"))
+__all__ = ['MemArch', 'MBReqDomain', 'MBReqTypes', 'InstrSet', 'DAbort']
+
+
+class MemArch(Enum):
+    VMSA = auto()
+    PMSA = auto()
+
+
+class MBReqDomain(Enum):
+    FULL_SYSTEM = auto()
+    OUTER_SHAREABLE = auto()
+    INNER_SHAREABLE = auto()
+    NONSHAREABLE = auto()
+
+
+class MBReqTypes(Enum):
+    ALL = auto()
+    WRITES = auto()
+
+
+class InstrSet(Enum):
+    ARM = 0b00
+    THUMB = 0b01
+    JAZELLE = 0b10
+    THUMB_EE = 0b11
+
+
+class DAbort(Enum):
+    ACCESS_FLAG = auto()
+    ALIGNMENT = auto()
+    BACKGROUND = auto()
+    DOMAIN = auto()
+    PERMISSION = auto()
+    TRANSLATION = auto()
+    SYNC_EXTERNAL = auto()
+    SYNC_EXTERNAL_ON_WALK = auto()
+    SYNC_PARITY = auto()
+    SYNC_PARITY_ON_WALK = auto()
+    ASYNC_PARITY = auto()
+    ASYNC_EXTERNAL = auto()
+    SYNC_WATCHPOINT = auto()
+    ASYNC_WATCHPOINT = auto()
+    TLB_CONFLICT = auto()
+    LOCKDOWN = auto()
+    COPROC = auto()
+    ICACHE_MAINT = auto()

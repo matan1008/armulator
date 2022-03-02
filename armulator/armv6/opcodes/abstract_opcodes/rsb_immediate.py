@@ -1,10 +1,10 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
-from armulator.armv6.bits_ops import add_with_carry
+from armulator.armv6.bits_ops import add_with_carry, bit_at, bit_not
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class RsbImmediate(AbstractOpcode):
-    def __init__(self, setflags, d, n, imm32):
-        super(RsbImmediate, self).__init__()
+class RsbImmediate(Opcode):
+    def __init__(self, instruction, setflags, d, n, imm32):
+        super().__init__(instruction)
         self.setflags = setflags
         self.d = d
         self.n = n
@@ -12,13 +12,13 @@ class RsbImmediate(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            result, carry, overflow = add_with_carry(~processor.registers.get(self.n), self.imm32, "1")
+            result, carry, overflow = add_with_carry(bit_not(processor.registers.get(self.n), 32), self.imm32, 1)
             if self.d == 15:
                 processor.alu_write_pc(result)
             else:
                 processor.registers.set(self.d, result)
                 if self.setflags:
-                    processor.registers.cpsr.set_n(result[0])
-                    processor.registers.cpsr.set_z(result.all(False))
-                    processor.registers.cpsr.set_c(carry)
-                    processor.registers.cpsr.set_v(overflow)
+                    processor.registers.cpsr.n = bit_at(result, 31)
+                    processor.registers.cpsr.z = 0 if result else 1
+                    processor.registers.cpsr.c = carry
+                    processor.registers.cpsr.v = overflow

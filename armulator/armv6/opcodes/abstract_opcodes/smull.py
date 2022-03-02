@@ -1,11 +1,11 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
-from bitstring import BitArray
+from armulator.armv6.bits_ops import to_signed, to_unsigned, substring, bit_at
 from armulator.armv6.configurations import arch_version
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class Smull(AbstractOpcode):
-    def __init__(self, setflags, m, d_hi, d_lo, n):
-        super(Smull, self).__init__()
+class Smull(Opcode):
+    def __init__(self, instruction, setflags, m, d_hi, d_lo, n):
+        super().__init__(instruction)
         self.setflags = setflags
         self.m = m
         self.d_hi = d_hi
@@ -14,13 +14,13 @@ class Smull(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            result = processor.registers.get(self.n).int * processor.registers.get(self.m).int
-            f_result = BitArray(int=result, length=64)
-            processor.registers.set(self.d_hi, f_result[0:32])
-            processor.registers.set(self.d_lo, f_result[32:])
+            result = to_signed(processor.registers.get(self.n), 32) * to_signed(processor.registers.get(self.m), 32)
+            f_result = to_unsigned(result, 64)
+            processor.registers.set(self.d_hi, substring(f_result, 63, 32))
+            processor.registers.set(self.d_lo, substring(f_result, 31, 0))
             if self.setflags:
-                processor.registers.cpsr.set_n(f_result[0])
-                processor.registers.cpsr.set_z(not f_result.any(True))
+                processor.registers.cpsr.n = bit_at(f_result, 63)
+                processor.registers.cpsr.z = 0 if f_result else 1
                 if arch_version() == 4:
-                    processor.registers.cpsr.set_c(False)  # uknown
-                    processor.registers.cpsr.set_v(False)  # uknown
+                    processor.registers.cpsr.c = 0  # unknown
+                    processor.registers.cpsr.v = 0  # unknown

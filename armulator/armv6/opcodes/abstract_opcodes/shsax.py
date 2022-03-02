@@ -1,16 +1,20 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
-from bitstring import BitArray
+from armulator.armv6.bits_ops import to_signed, substring, to_unsigned, set_substring
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class Shsax(AbstractOpcode):
-    def __init__(self, m, d, n):
-        super(Shsax, self).__init__()
+class Shsax(Opcode):
+    def __init__(self, instruction, m, d, n):
+        super().__init__(instruction)
         self.m = m
         self.d = d
         self.n = n
 
     def execute(self, processor):
         if processor.condition_passed():
-            sum_ = processor.registers.get(self.n)[16:32].int + processor.registers.get(self.m)[0:16].int
-            diff = processor.registers.get(self.n)[0:16].int - processor.registers.get(self.m)[16:32].int
-            processor.registers.set(self.d, BitArray(int=diff, length=17)[0:16] + BitArray(int=sum_, length=17)[0:16])
+            n = processor.registers.get(self.n)
+            m = processor.registers.get(self.m)
+            sum_ = to_signed(substring(n, 15, 0), 16) + to_signed(substring(m, 31, 16), 16)
+            diff = to_signed(substring(n, 31, 16), 16) - to_signed(substring(m, 15, 0), 16)
+            d = set_substring(0, 15, 0, to_unsigned(sum_, 17) >> 1)
+            d = set_substring(d, 31, 16, to_unsigned(diff, 17) >> 1)
+            processor.registers.set(self.d, d)

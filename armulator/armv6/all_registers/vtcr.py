@@ -6,41 +6,50 @@ class VTCR(AbstractRegister):
     Virtualization Translation Control Register
     """
 
-    def __init__(self):
-        super(VTCR, self).__init__()
+    @property
+    def sh0(self):
+        return self[13:12]
 
-    def set_sh0(self, sh0):
-        self.value[18:20] = sh0
+    @sh0.setter
+    def sh0(self, sh0):
+        self[13:12] = sh0
 
-    def get_sh0(self):
-        return self.value[18:20]
+    @property
+    def orgn0(self):
+        return self[11:10]
 
-    def set_orgn0(self, orgn0):
-        self.value[20:22] = orgn0
+    @orgn0.setter
+    def orgn0(self, orgn0):
+        self[11:10] = orgn0
 
-    def get_orgn0(self):
-        return self.value[20:22]
+    @property
+    def irgn0(self):
+        return self[9:8]
 
-    def set_irgn0(self, irgn0):
-        self.value[22:24] = irgn0
+    @irgn0.setter
+    def irgn0(self, irgn0):
+        self[9:8] = irgn0
 
-    def get_irgn0(self):
-        return self.value[22:24]
+    @property
+    def sl0(self):
+        return self[7:6]
 
-    def set_sl0(self, sl0):
-        self.value[24:26] = sl0
+    @sl0.setter
+    def sl0(self, sl0):
+        self[7:6] = sl0
 
-    def get_sl0(self):
-        return self.value[24:26]
+    @property
+    def s(self):
+        return self[4]
 
-    def set_s(self, flag):
-        self.value[27] = flag
+    @s.setter
+    def s(self, flag):
+        self[4] = flag
 
-    def get_s(self):
-        return self.value[27]
+    @property
+    def t0sz(self):
+        return self[3:0]
 
-    def set_t0sz(self, t0sz):
-        self.value[28:32] = t0sz
-
-    def get_t0sz(self):
-        return self.value[28:32]
+    @t0sz.setter
+    def t0sz(self, t0sz):
+        self[3:0] = t0sz

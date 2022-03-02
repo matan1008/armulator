@@ -1,11 +1,10 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
 from armulator.armv6.arm_exceptions import EndOfInstruction
-from armulator.armv6.bits_ops import zero_extend
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class Ldrexb(AbstractOpcode):
-    def __init__(self, t, n):
-        super(Ldrexb, self).__init__()
+class Ldrexb(Opcode):
+    def __init__(self, instruction, t, n):
+        super().__init__(instruction)
         self.t = t
         self.n = n
 
@@ -18,4 +17,4 @@ class Ldrexb(AbstractOpcode):
             else:
                 address = processor.registers.get(self.n)
                 processor.set_exclusive_monitors(address, 1)
-                processor.registers.set(self.t, zero_extend(processor.mem_a_get(address, 1), 32))
+                processor.registers.set(self.t, processor.mem_a_get(address, 1))

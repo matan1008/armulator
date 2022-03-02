@@ -1,5 +1,5 @@
-from bitstring import BitArray
 from armulator.armv6.all_registers.abstract_register import AbstractRegister
+from armulator.armv6.bits_ops import chain, bit_at, substring
 
 
 class DFSR(AbstractRegister):
@@ -7,48 +7,59 @@ class DFSR(AbstractRegister):
     Data Fault Status Register
     """
 
-    def __init__(self):
-        super(DFSR, self).__init__()
+    @property
+    def cm(self):
+        return self[13]
 
-    def set_cm(self, flag):
-        self.value[18] = flag
+    @cm.setter
+    def cm(self, flag):
+        self[13] = flag
 
-    def get_cm(self):
-        return self.value[18]
+    @property
+    def ext(self):
+        return self[12]
 
-    def set_ext(self, flag):
-        self.value[19] = flag
+    @ext.setter
+    def ext(self, flag):
+        self[12] = flag
 
-    def get_ext(self):
-        return self.value[19]
+    @property
+    def wnr(self):
+        return self[11]
 
-    def set_wnr(self, flag):
-        self.value[20] = flag
+    @wnr.setter
+    def wnr(self, flag):
+        self[11] = flag
 
-    def get_wnr(self):
-        return self.value[20]
+    @property
+    def fs(self):
+        return chain(self[10], self[3:0], 4)
 
-    def set_fs(self, fs):
-        self.value[21] = fs[0]
-        self.value[28:32] = fs[1:5]
+    @fs.setter
+    def fs(self, fs):
+        self[10] = bit_at(fs, 4)
+        self[3:0] = substring(fs, 3, 0)
 
-    def get_fs(self):
-        return BitArray(bool=self.value[21]) + self.value[28:32]
+    @property
+    def lpae(self):
+        return self[9]
 
-    def set_lpae(self, flag):
-        self.value[22] = flag
+    @lpae.setter
+    def lpae(self, flag):
+        self[9] = flag
 
-    def get_lpae(self):
-        return self.value[22]
+    @property
+    def domain(self):
+        return self[7:4]
 
-    def set_domain(self, domain):
-        self.value[24:28] = domain
+    @domain.setter
+    def domain(self, domain):
+        self[7:4] = domain
 
-    def get_domain(self):
-        return self.value[24:28]
+    @property
+    def status(self):
+        return self[5:0]
 
-    def set_status(self, status):
-        self.value[26:32] = status
-
-    def get_status(self):
-        return self.value[26:32]
+    @status.setter
+    def status(self, status):
+        self[5:0] = status

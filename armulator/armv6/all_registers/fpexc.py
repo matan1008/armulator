@@ -6,17 +6,18 @@ class FPEXC(AbstractRegister):
     Floating-Point Exception Control register
     """
 
-    def __init__(self):
-        super(FPEXC, self).__init__()
+    @property
+    def ex(self):
+        return self[31]
 
-    def set_ex(self, flag):
-        self.value[0] = flag
+    @ex.setter
+    def ex(self, flag):
+        self[31] = flag
 
-    def get_ex(self):
-        return self.value[0]
+    @property
+    def en(self):
+        return self[30]
 
-    def set_en(self, flag):
-        self.value[0] = flag
-
-    def get_en(self):
-        return self.value[0]
+    @en.setter
+    def en(self, flag):
+        self[30] = flag

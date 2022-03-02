@@ -6,44 +6,53 @@ class RACR(AbstractRegister):
     Region Access Control Register
     """
 
-    def __init__(self):
-        super(RACR, self).__init__()
+    @property
+    def xn(self):
+        return self[12]
 
-    def set_xn(self, flag):
-        self.value[19] = flag
+    @xn.setter
+    def xn(self, flag):
+        self[12] = flag
 
-    def get_xn(self):
-        return self.value[19]
+    @property
+    def ap(self):
+        return self[10:8]
 
-    def set_ap(self, ap):
-        self.value[21:24] = ap
+    @ap.setter
+    def ap(self, ap):
+        self[10:8] = ap
 
-    def get_ap(self):
-        return self.value[21:24]
+    @property
+    def tex(self):
+        return self[5:3]
 
-    def set_tex(self, tex):
-        self.value[26:29] = tex
+    @tex.setter
+    def tex(self, tex):
+        self[5:3] = tex
 
-    def get_tex(self):
-        return self.value[26:29]
+    @property
+    def s(self):
+        return self[2]
 
-    def set_s(self, flag):
-        self.value[29] = flag
+    @s.setter
+    def s(self, flag):
+        self[2] = flag
 
-    def get_s(self):
-        return self.value[29]
+    @property
+    def c(self):
+        return self[1]
 
-    def set_c(self, flag):
-        self.value[30] = flag
+    @c.setter
+    def c(self, flag):
+        self[1] = flag
 
-    def get_c(self):
-        return self.value[30]
+    @property
+    def b(self):
+        return self[0]
 
-    def set_b(self, flag):
-        self.value[31] = flag
-
-    def get_b(self):
-        return self.value[31]
+    @b.setter
+    def b(self, flag):
+        self[0] = flag
 
 
 class DRACR(RACR):

@@ -1,10 +1,10 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
+from armulator.armv6.opcodes.opcode import Opcode
 from armulator.armv6.bits_ops import add as bits_add, sub as bits_sub, align
 
 
-class Adr(AbstractOpcode):
-    def __init__(self, add, d, imm32):
-        super(Adr, self).__init__()
+class Adr(Opcode):
+    def __init__(self, instruction, add, d, imm32):
+        super().__init__(instruction)
         self.add = add
         self.d = d
         self.imm32 = imm32

@@ -1,16 +1,19 @@
-from bitstring import BitArray
-from enum import Enum
-
-MemType = Enum("MemType", "MemType_Normal MemType_Device MemType_StronglyOrdered")
+from enum import Enum, auto
 
 
-class MemoryAttributes(object):
+class MemType(Enum):
+    NORMAL = auto()
+    DEVICE = auto()
+    STRONGLY_ORDERED = auto()
+
+
+class MemoryAttributes:
     def __init__(self):
-        self.type = MemType.MemType_Normal
-        self.innerattrs = BitArray(length=2)
-        self.outerattrs = BitArray(length=2)
-        self.innerhints = BitArray(length=2)
-        self.outerhints = BitArray(length=2)
+        self.type = MemType.NORMAL
+        self.innerattrs = 0b00
+        self.outerattrs = 0b00
+        self.innerhints = 0b00
+        self.outerhints = 0b00
         self.innertransient = False
         self.outertransient = False
         self.shareable = False

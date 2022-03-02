@@ -6,11 +6,10 @@ class SUNAVCR(AbstractRegister):
     Secure User and non-secure Access Validation Control Register
     """
 
-    def __init__(self):
-        super(SUNAVCR, self).__init__()
+    @property
+    def v(self):
+        return self[0]
 
-    def set_v(self, flag):
-        self.value[31] = flag
-
-    def get_v(self):
-        return self.value[31]
+    @v.setter
+    def v(self, flag):
+        self[0] = flag

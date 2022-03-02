@@ -1,10 +1,10 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
-from bitstring import BitArray
+from armulator.armv6.bits_ops import substring
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class Usada8(AbstractOpcode):
-    def __init__(self, m, a, d, n):
-        super(Usada8, self).__init__()
+class Usada8(Opcode):
+    def __init__(self, instruction, m, a, d, n):
+        super().__init__(instruction)
         self.m = m
         self.a = a
         self.d = d
@@ -12,13 +12,11 @@ class Usada8(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            absdiff1 = abs(
-                processor.registers.get(self.n)[24:32].uint - processor.registers.get(self.m)[24:32].uint)
-            absdiff2 = abs(
-                processor.registers.get(self.n)[16:24].uint - processor.registers.get(self.m)[16:24].uint)
-            absdiff3 = abs(
-                processor.registers.get(self.n)[8:16].uint - processor.registers.get(self.m)[8:16].uint)
-            absdiff4 = abs(
-                processor.registers.get(self.n)[0:8].uint - processor.registers.get(self.m)[0:8].uint)
-            result = processor.registers.get(self.a).uint + absdiff1 + absdiff2 + absdiff3 + absdiff4
-            processor.registers.set(self.d, BitArray(uint=result, length=32))
+            n = processor.registers.get(self.n)
+            m = processor.registers.get(self.m)
+            absdiff1 = abs(substring(n, 7, 0) - substring(m, 7, 0))
+            absdiff2 = abs(substring(n, 15, 8) - substring(m, 15, 8))
+            absdiff3 = abs(substring(n, 23, 16) - substring(m, 23, 16))
+            absdiff4 = abs(substring(n, 31, 24) - substring(m, 31, 24))
+            result = processor.registers.get(self.a) + absdiff1 + absdiff2 + absdiff3 + absdiff4
+            processor.registers.set(self.d, substring(result, 31, 0))

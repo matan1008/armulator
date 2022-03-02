@@ -1,8 +1,5 @@
-from bitstring import BitArray
-
-
-class Permissions(object):
+class Permissions:
     def __init__(self):
-        self.ap = BitArray(length=3)
-        self.xn = False
-        self.pxn = False
+        self.ap = 0b000
+        self.xn = 0
+        self.pxn = 0

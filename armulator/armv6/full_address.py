@@ -1,7 +1,4 @@
-from bitstring import BitArray
-
-
-class FullAddress(object):
+class FullAddress:
     def __init__(self):
-        self.physicaladdress = BitArray(length=40)
-        self.ns = False
+        self.physicaladdress = 0b0000000000000000000000000000000000000000
+        self.ns = 0

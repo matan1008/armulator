@@ -1,10 +1,10 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
-from armulator.armv6.bits_ops import signed_sat_q
+from armulator.armv6.bits_ops import signed_sat_q, to_signed
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class Qsub(AbstractOpcode):
-    def __init__(self, m, d, n):
-        super(Qsub, self).__init__()
+class Qsub(Opcode):
+    def __init__(self, instruction, m, d, n):
+        super().__init__(instruction)
         self.m = m
         self.d = d
         self.n = n
@@ -12,7 +12,9 @@ class Qsub(AbstractOpcode):
     def execute(self, processor):
         if processor.condition_passed():
             result, sat = signed_sat_q(
-                    processor.registers.get(self.m).int - processor.registers.get(self.n).int, 32)
+                to_signed(processor.registers.get(self.m), 32) - to_signed(processor.registers.get(self.n), 32),
+                32
+            )
             processor.registers.set(self.d, result)
             if sat:
-                processor.registers.cpsr.set_q(True)
+                processor.registers.cpsr.q = 1
