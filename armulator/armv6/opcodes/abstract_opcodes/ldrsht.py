@@ -1,12 +1,11 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
-from armulator.armv6.bits_ops import add as bits_add, sub as bits_sub, sign_extend
-from bitstring import BitArray
 from armulator.armv6.arm_exceptions import EndOfInstruction
+from armulator.armv6.bits_ops import add as bits_add, sub as bits_sub, sign_extend, chain, bit_at
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class Ldrsht(AbstractOpcode):
-    def __init__(self, add, register_form, post_index, t, n, m="", imm32=""):
-        super(Ldrsht, self).__init__()
+class Ldrsht(Opcode):
+    def __init__(self, instruction, add, register_form, post_index, t, n, m=0, imm32=0):
+        super().__init__(instruction)
         self.add = add
         self.register_form = register_form
         self.post_index = post_index
@@ -18,7 +17,7 @@ class Ldrsht(AbstractOpcode):
     def execute(self, processor):
         if processor.condition_passed():
             if processor.registers.current_mode_is_hyp():
-                print "unpredictable"
+                print('unpredictable')
             else:
                 try:
                     processor.null_check_if_thumbee(self.n)
@@ -32,13 +31,13 @@ class Ldrsht(AbstractOpcode):
                     data = processor.mem_u_unpriv_get(address, 2)
                     if self.post_index:
                         processor.registers.set(self.n, offset_addr)
-                    if processor.unaligned_support() or not address[31]:
-                        processor.registers.set(self.t, sign_extend(data, 32))
+                    if processor.unaligned_support() or not bit_at(address, 0):
+                        processor.registers.set(self.t, sign_extend(data, 16, 32))
                     else:
-                        processor.registers.set(self.t, BitArray(length=32))  # unknown
+                        processor.registers.set(self.t, 0x00000000)  # unknown
 
     def instruction_syndrome(self):
         if self.t == 15:
-            return BitArray(length=9)
+            return 0b000000000
         else:
-            return BitArray(bin="10110") + BitArray(uint=self.t, length=4)
+            return chain(0b10110, self.t, 4)

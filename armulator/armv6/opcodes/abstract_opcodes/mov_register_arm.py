@@ -1,9 +1,10 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
+from armulator.armv6.bits_ops import bit_at
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class MovRegisterArm(AbstractOpcode):
-    def __init__(self, setflags, m, d):
-        super(MovRegisterArm, self).__init__()
+class MovRegisterArm(Opcode):
+    def __init__(self, instruction, setflags, m, d):
+        super().__init__(instruction)
         self.setflags = setflags
         self.m = m
         self.d = d
@@ -16,5 +17,5 @@ class MovRegisterArm(AbstractOpcode):
             else:
                 processor.registers.set(self.d, result)
                 if self.setflags:
-                    processor.registers.cpsr.set_n(result[0])
-                    processor.registers.cpsr.set_z(not result.any(True))
+                    processor.registers.cpsr.n = bit_at(result, 31)
+                    processor.registers.cpsr.z = 0 if result else 1

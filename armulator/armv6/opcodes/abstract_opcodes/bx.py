@@ -1,9 +1,9 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class Bx(AbstractOpcode):
-    def __init__(self, m):
-        super(Bx, self).__init__()
+class Bx(Opcode):
+    def __init__(self, instruction, m):
+        super().__init__(instruction)
         self.m = m
 
     def execute(self, processor):

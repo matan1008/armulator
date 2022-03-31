@@ -1,12 +1,8 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
-from bitstring import BitArray
 from armulator.armv6.configurations import have_virt_ext
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class Wfe(AbstractOpcode):
-    def __init__(self):
-        super(Wfe, self).__init__()
-
+class Wfe(Opcode):
     def execute(self, processor):
         if processor.condition_passed():
             if processor.event_registered():
@@ -14,10 +10,9 @@ class Wfe(AbstractOpcode):
             else:
                 if (have_virt_ext() and not processor.registers.is_secure() and
                         not processor.registers.current_mode_is_hyp() and
-                        processor.registers.hcr.get_twe()):
-                    hsr_string = BitArray(length=25)
-                    hsr_string[24] = True
-                    processor.write_hsr(BitArray(bin="000001"), hsr_string)
+                        processor.registers.hcr.twe):
+                    hsr_string = 0b0000000000000000000000001
+                    processor.write_hsr(0b000001, hsr_string)
                     processor.registers.take_hyp_trap_exception()
                 else:
                     processor.wait_for_event()

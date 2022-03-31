@@ -1,11 +1,11 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
-from bitstring import BitArray
+from armulator.armv6.bits_ops import set_substring, bit_at, substring
 from armulator.armv6.configurations import arch_version
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class Umlal(AbstractOpcode):
-    def __init__(self, setflags, m, d_hi, d_lo, n):
-        super(Umlal, self).__init__()
+class Umlal(Opcode):
+    def __init__(self, instruction, setflags, m, d_hi, d_lo, n):
+        super().__init__(instruction)
         self.setflags = setflags
         self.m = m
         self.d_hi = d_hi
@@ -14,14 +14,13 @@ class Umlal(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            result = processor.registers.get(self.n).uint * processor.registers.get(self.m).uint + (
-                processor.registers.get(self.d_hi) + processor.registers.get(self.d_lo)).uint
-            f_result = BitArray(uint=result, length=64)
-            processor.registers.set(self.d_hi, f_result[0:32])
-            processor.registers.set(self.d_lo, f_result[32:])
+            a = set_substring(processor.registers.get(self.d_lo), 63, 32, processor.registers.get(self.d_hi))
+            result = processor.registers.get(self.n) * processor.registers.get(self.m) + a
+            processor.registers.set(self.d_hi, substring(result, 63, 32))
+            processor.registers.set(self.d_lo, substring(result, 31, 0))
             if self.setflags:
-                processor.registers.cpsr.set_n(f_result[0])
-                processor.registers.cpsr.set_z(not f_result.any(True))
+                processor.registers.cpsr.n = bit_at(result, 63)
+                processor.registers.cpsr.z = 0 if result else 1
                 if arch_version() == 4:
-                    processor.registers.cpsr.set_c(False)  # unknown
-                    processor.registers.cpsr.set_v(False)  # unknown
+                    processor.registers.cpsr.c = 0  # unknown
+                    processor.registers.cpsr.v = 0  # unknown

@@ -1,13 +1,12 @@
-from armulator.armv6.shift import shift
-from armulator.armv6.bits_ops import add
-from bitstring import BitArray
 from armulator.armv6.arm_exceptions import EndOfInstruction
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
+from armulator.armv6.bits_ops import add, chain, lower_chunk
+from armulator.armv6.opcodes.opcode import Opcode
+from armulator.armv6.shift import shift
 
 
-class LdrRegisterThumb(AbstractOpcode):
-    def __init__(self, m, t, n, shift_t, shift_n):
-        super(LdrRegisterThumb, self).__init__()
+class LdrRegisterThumb(Opcode):
+    def __init__(self, instruction, m, t, n, shift_t, shift_n):
+        super().__init__(instruction)
         self.m = m
         self.t = t
         self.n = n
@@ -21,23 +20,22 @@ class LdrRegisterThumb(AbstractOpcode):
             except EndOfInstruction:
                 pass
             else:
-                offset = shift(processor.registers.get(self.m), self.shift_t, self.shift_n,
-                               processor.registers.cpsr.get_c())
-                offset_addr = add(processor.registers.get(self.n), offset, 32)
-                address = offset_addr
+                offset = shift(processor.registers.get(self.m), 32, self.shift_t, self.shift_n,
+                               processor.registers.cpsr.c)
+                address = add(processor.registers.get(self.n), offset, 32)
                 data = processor.mem_u_get(address, 4)
                 if self.t == 15:
-                    if address[30:32] == "0b00":
+                    if lower_chunk(address, 2) == 0b00:
                         processor.load_write_pc(address)
                     else:
-                        print "unpredictable"
-                elif processor.unaligned_support() or address[30:32] == "0b00":
+                        print('unpredictable')
+                elif processor.unaligned_support() or lower_chunk(address, 2) == 0b00:
                     processor.registers.set(self.t, data)
                 else:
-                    processor.registers.set(self.t, BitArray(length=32))  # unknown
+                    processor.registers.set(self.t, 0x00000000)  # unknown
 
     def instruction_syndrome(self):
         if self.t == 15:
-            return BitArray(length=9)
+            return 0b000000000
         else:
-            return BitArray(bin="11000") + BitArray(uint=self.t, length=4)
+            return chain(0b11000, self.t, 4)

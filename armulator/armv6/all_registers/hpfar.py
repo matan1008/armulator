@@ -6,11 +6,10 @@ class HPFAR(AbstractRegister):
     Hyp IPA Fault Address Register
     """
 
-    def __init__(self):
-        super(HPFAR, self).__init__()
+    @property
+    def fipa(self):
+        return self[31:4]
 
-    def set_fipa(self, fipa):
-        self.value[0:28] = fipa
-
-    def get_fipa(self):
-        return self.value[0:28]
+    @fipa.setter
+    def fipa(self, fipa):
+        self[31:4] = fipa

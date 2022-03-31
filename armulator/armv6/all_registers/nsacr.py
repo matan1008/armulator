@@ -6,37 +6,42 @@ class NSACR(AbstractRegister):
     Non-Secure Access Control Register
     """
 
-    def __init__(self):
-        super(NSACR, self).__init__()
-
     def set_cp_n(self, n, flag):
         assert n < 14
-        self.value[31 - n] = flag
+        self[n] = flag
 
     def get_cp_n(self, n):
         assert n < 14
-        return self.value[31 - n]
+        return self[n]
 
-    def set_nsd32dis(self, flag):
-        self.value[17] = flag
+    @property
+    def nsd32dis(self):
+        return self[14]
 
-    def get_nsd32dis(self):
-        return self.value[17]
+    @nsd32dis.setter
+    def nsd32dis(self, flag):
+        self[14] = flag
 
-    def set_nsasedis(self, flag):
-        self.value[16] = flag
+    @property
+    def nsasedis(self):
+        return self[15]
 
-    def get_nsasedis(self):
-        return self.value[16]
+    @nsasedis.setter
+    def nsasedis(self, flag):
+        self[15] = flag
 
-    def set_rfr(self, flag):
-        self.value[12] = flag
+    @property
+    def rfr(self):
+        return self[19]
 
-    def get_rfr(self):
-        return self.value[12]
+    @rfr.setter
+    def rfr(self, flag):
+        self[19] = flag
 
-    def set_nstrcdis(self, flag):
-        self.value[11] = flag
+    @property
+    def nstrcdis(self):
+        return self[20]
 
-    def get_nstrcdis(self):
-        return self.value[11]
+    @nstrcdis.setter
+    def nstrcdis(self, flag):
+        self[20] = flag

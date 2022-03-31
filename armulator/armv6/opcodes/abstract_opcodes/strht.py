@@ -1,12 +1,11 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
-from armulator.armv6.bits_ops import add as bits_add, sub as bits_sub
-from bitstring import BitArray
 from armulator.armv6.arm_exceptions import EndOfInstruction
+from armulator.armv6.bits_ops import add as bits_add, sub as bits_sub, chain, lower_chunk, bit_at
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class Strht(AbstractOpcode):
-    def __init__(self, add, register_form, post_index, t, n, m="", imm32=""):
-        super(Strht, self).__init__()
+class Strht(Opcode):
+    def __init__(self, instruction, add, register_form, post_index, t, n, m=0, imm32=0):
+        super().__init__(instruction)
         self.add = add
         self.register_form = register_form
         self.post_index = post_index
@@ -18,7 +17,7 @@ class Strht(AbstractOpcode):
     def execute(self, processor):
         if processor.condition_passed():
             if processor.registers.current_mode_is_hyp():
-                print "unpredictable"
+                print('unpredictable')
             else:
                 try:
                     processor.null_check_if_thumbee(self.n)
@@ -29,12 +28,12 @@ class Strht(AbstractOpcode):
                     offset_addr = bits_add(processor.registers.get(self.n), offset, 32) if self.add else bits_sub(
                         processor.registers.get(self.n), offset, 32)
                     address = processor.registers.get(self.n) if self.post_index else offset_addr
-                    if processor.unaligned_support() or not address[31]:
-                        processor.mem_u_unpriv_set(address, 2, processor.registers.get(self.t)[16:32])
+                    if processor.unaligned_support() or not bit_at(address, 0):
+                        processor.mem_u_unpriv_set(address, 2, lower_chunk(processor.registers.get(self.t), 16))
                     else:
-                        processor.mem_u_unpriv_set(address, 2, BitArray(length=16))  # unknown
+                        processor.mem_u_unpriv_set(address, 2, 0x0000)  # unknown
                     if self.post_index:
                         processor.registers.set(self.n, offset_addr)
 
     def instruction_syndrome(self):
-        return BitArray(bin="10100") + BitArray(uint=self.t, length=4)
+        return chain(0b10100, self.t, 4)

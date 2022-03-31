@@ -6,65 +6,82 @@ class DBGDIDR(AbstractRegister):
     Debug ID Register
     """
 
-    def __init__(self):
-        super(DBGDIDR, self).__init__()
+    @property
+    def wrps(self):
+        return self[31:28]
 
-    def set_wrps(self, wrps):
-        self.value[0:4] = wrps
+    @wrps.setter
+    def wrps(self, wrps):
+        self[31:28] = wrps
 
-    def get_wrps(self):
-        return self.value[0:4]
+    @property
+    def brps(self):
+        return self[27:24]
 
-    def set_brps(self, brps):
-        self.value[4:8] = brps
+    @brps.setter
+    def brps(self, brps):
+        self[27:24] = brps
 
-    def get_brps(self):
-        return self.value[4:8]
+    @property
+    def ctx_cmps(self):
+        return self[23:20]
 
-    def set_ctx_cmps(self, ctx_cmps):
-        self.value[8:12] = ctx_cmps
+    @ctx_cmps.setter
+    def ctx_cmps(self, ctx_cmps):
+        self[23:20] = ctx_cmps
 
-    def get_ctx_cmps(self):
-        return self.value[8:12]
+    @property
+    def version(self):
+        return self[19:16]
 
-    def set_version(self, version):
-        self.value[12:16] = version
+    @version.setter
+    def version(self, version):
+        self[19:16] = version
 
-    def get_version(self):
-        return self.value[12:16]
+    @property
+    def devid_imp(self):
+        return self[15]
 
-    def set_devid_imp(self, flag):
-        self.value[16] = flag
+    @devid_imp.setter
+    def devid_imp(self, flag):
+        self[15] = flag
 
-    def get_devid_imp(self):
-        return self.value[16]
+    @property
+    def nsuhd_imp(self):
+        return self[14]
 
-    def set_nsuhd_imp(self, flag):
-        self.value[17] = flag
+    @nsuhd_imp.setter
+    def nsuhd_imp(self, flag):
+        self[14] = flag
 
-    def get_nsuhd_imp(self):
-        return self.value[17]
+    @property
+    def pcsr_imp(self):
+        return self[13]
 
-    def set_pcsr_imp(self, flag):
-        self.value[18] = flag
+    @pcsr_imp.setter
+    def pcsr_imp(self, flag):
+        self[13] = flag
 
-    def get_pcsr_imp(self):
-        return self.value[18]
+    @property
+    def se_imp(self):
+        return self[12]
 
-    def set_se_imp(self, flag):
-        self.value[19] = flag
+    @se_imp.setter
+    def se_imp(self, flag):
+        self[12] = flag
 
-    def get_se_imp(self):
-        return self.value[19]
+    @property
+    def variant(self):
+        return self[7:4]
 
-    def set_variant(self, variant):
-        self.value[24:28] = variant
+    @variant.setter
+    def variant(self, variant):
+        self[7:4] = variant
 
-    def get_variant(self):
-        return self.value[24:28]
+    @property
+    def revision(self):
+        return self[3:0]
 
-    def set_revision(self, revision):
-        self.value[28:32] = revision
-
-    def get_revision(self):
-        return self.value[28:32]
+    @revision.setter
+    def revision(self, revision):
+        self[3:0] = revision

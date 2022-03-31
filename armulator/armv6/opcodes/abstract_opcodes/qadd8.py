@@ -1,19 +1,24 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
-from armulator.armv6.bits_ops import signed_sat
+from armulator.armv6.bits_ops import signed_sat, set_substring, to_signed, substring
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class Qadd8(AbstractOpcode):
-    def __init__(self, m, d, n):
-        super(Qadd8, self).__init__()
+class Qadd8(Opcode):
+    def __init__(self, instruction, m, d, n):
+        super().__init__(instruction)
         self.m = m
         self.d = d
         self.n = n
 
     def execute(self, processor):
         if processor.condition_passed():
-            sum1 = processor.registers.get(self.n)[24:32].int + processor.registers.get(self.m)[24:32].int
-            sum2 = processor.registers.get(self.n)[16:24].int + processor.registers.get(self.m)[16:24].int
-            sum3 = processor.registers.get(self.n)[8:16].int + processor.registers.get(self.m)[8:16].int
-            sum4 = processor.registers.get(self.n)[0:8].int + processor.registers.get(self.m)[0:8].int
-            signed_sum = signed_sat(sum4, 8) + signed_sat(sum3, 8) + signed_sat(sum2, 8) + signed_sat(sum1, 8)
-            processor.registers.set(self.d, signed_sum)
+            n = processor.registers.get(self.n)
+            m = processor.registers.get(self.m)
+            sum1 = to_signed(substring(n, 7, 0), 8) + to_signed(substring(m, 7, 0), 8)
+            sum2 = to_signed(substring(n, 15, 8), 8) + to_signed(substring(m, 15, 8), 8)
+            sum3 = to_signed(substring(n, 23, 16), 8) + to_signed(substring(m, 23, 16), 8)
+            sum4 = to_signed(substring(n, 31, 24), 8) + to_signed(substring(m, 31, 24), 8)
+            d = set_substring(0, 7, 0, signed_sat(sum1, 8))
+            d = set_substring(d, 15, 8, signed_sat(sum2, 8))
+            d = set_substring(d, 23, 16, signed_sat(sum3, 8))
+            d = set_substring(d, 31, 24, signed_sat(sum4, 8))
+            processor.registers.set(self.d, d)

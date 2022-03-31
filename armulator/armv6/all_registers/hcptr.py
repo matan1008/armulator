@@ -6,29 +6,32 @@ class HCPTR(AbstractRegister):
     Hyp Coprocessor Trap Register
     """
 
-    def __init__(self):
-        super(HCPTR, self).__init__()
+    @property
+    def tcpac(self):
+        return self[31]
 
-    def set_tcpac(self, flag):
-        self.value[0] = flag
+    @tcpac.setter
+    def tcpac(self, flag):
+        self[31] = flag
 
-    def get_tcpac(self):
-        return self.value[0]
+    @property
+    def tta(self):
+        return self[20]
 
-    def set_tta(self, flag):
-        self.value[11] = flag
+    @tta.setter
+    def tta(self, flag):
+        self[20] = flag
 
-    def get_tta(self):
-        return self.value[11]
+    @property
+    def tase(self):
+        return self[15]
 
-    def set_tase(self, flag):
-        self.value[16] = flag
-
-    def get_tase(self):
-        return self.value[16]
-
-    def set_tcp_n(self, n, flag):
-        self.value[31 - n] = flag
+    @tase.setter
+    def tase(self, flag):
+        self[15] = flag
 
     def get_tcp_n(self, n):
-        return self.value[31 - n]
+        return self[n]
+
+    def set_tcp_n(self, n, flag):
+        self[n] = flag

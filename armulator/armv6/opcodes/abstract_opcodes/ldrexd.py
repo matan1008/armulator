@@ -1,11 +1,11 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
-from bitstring import BitArray
 from armulator.armv6.arm_exceptions import EndOfInstruction
+from armulator.armv6.bits_ops import substring
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class Ldrexd(AbstractOpcode):
-    def __init__(self, t, t2, n):
-        super(Ldrexd, self).__init__()
+class Ldrexd(Opcode):
+    def __init__(self, instruction, t, t2, n):
+        super().__init__(instruction)
         self.t = t
         self.t2 = t2
         self.n = n
@@ -18,8 +18,13 @@ class Ldrexd(AbstractOpcode):
                 pass
             else:
                 address = processor.registers.get(self.n)
-                if address[29:32] != "0b000":
+                if substring(address, 2, 0) != 0b000:
                     processor.alignment_fault(address, False)
                 processor.set_exclusive_monitors(address, 8)
-                processor.registers.set(self.t, processor.mem_a_get(address, 4))
-                processor.registers.set(self.t2, processor.mem_a_get(BitArray(uint=address.uint + 4, length=32), 4))
+                value = processor.mem_a_get(address, 8)
+                if processor.big_endian():
+                    processor.registers.set(self.t, substring(value, 63, 32))
+                    processor.registers.set(self.t2, substring(value, 31, 0))
+                else:
+                    processor.registers.set(self.t, substring(value, 31, 0))
+                    processor.registers.set(self.t2, substring(value, 63, 32))

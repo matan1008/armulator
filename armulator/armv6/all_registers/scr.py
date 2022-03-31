@@ -6,65 +6,82 @@ class SCR(AbstractRegister):
     Secure Configuration Register
     """
 
-    def __init__(self):
-        super(SCR, self).__init__()
+    @property
+    def ns(self):
+        return self[0]
 
-    def set_ns(self, flag):
-        self.value[31] = flag
+    @ns.setter
+    def ns(self, flag):
+        self[0] = flag
 
-    def get_ns(self):
-        return self.value[31]
+    @property
+    def irq(self):
+        return self[1]
 
-    def set_irq(self, flag):
-        self.value[30] = flag
+    @irq.setter
+    def irq(self, flag):
+        self[1] = flag
 
-    def get_irq(self):
-        return self.value[30]
+    @property
+    def fiq(self):
+        return self[2]
 
-    def set_fiq(self, flag):
-        self.value[29] = flag
+    @fiq.setter
+    def fiq(self, flag):
+        self[2] = flag
 
-    def get_fiq(self):
-        return self.value[29]
+    @property
+    def ea(self):
+        return self[3]
 
-    def set_ea(self, flag):
-        self.value[28] = flag
+    @ea.setter
+    def ea(self, flag):
+        self[3] = flag
 
-    def get_ea(self):
-        return self.value[28]
+    @property
+    def fw(self):
+        return self[4]
 
-    def set_fw(self, flag):
-        self.value[27] = flag
+    @fw.setter
+    def fw(self, flag):
+        self[4] = flag
 
-    def get_fw(self):
-        return self.value[27]
+    @property
+    def aw(self):
+        return self[5]
 
-    def set_aw(self, flag):
-        self.value[26] = flag
+    @aw.setter
+    def aw(self, flag):
+        self[5] = flag
 
-    def get_aw(self):
-        return self.value[26]
+    @property
+    def net(self):
+        return self[6]
 
-    def set_net(self, flag):
-        self.value[25] = flag
+    @net.setter
+    def net(self, flag):
+        self[6] = flag
 
-    def get_net(self):
-        return self.value[25]
+    @property
+    def scd(self):
+        return self[7]
 
-    def set_scd(self, flag):
-        self.value[24] = flag
+    @scd.setter
+    def scd(self, flag):
+        self[7] = flag
 
-    def get_scd(self):
-        return self.value[24]
+    @property
+    def hce(self):
+        return self[8]
 
-    def set_hce(self, flag):
-        self.value[23] = flag
+    @hce.setter
+    def hce(self, flag):
+        self[8] = flag
 
-    def get_hce(self):
-        return self.value[23]
+    @property
+    def sif(self):
+        return self[9]
 
-    def set_sif(self, flag):
-        self.value[22] = flag
-
-    def get_sif(self):
-        return self.value[22]
+    @sif.setter
+    def sif(self, flag):
+        self[9] = flag

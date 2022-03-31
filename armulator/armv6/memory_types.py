@@ -1,14 +1,14 @@
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 
 
-class MemoryType(object):
-    __metaclass__ = ABCMeta
+class MemoryType(ABC):
 
     @abstractmethod
     def __init__(self, size):
         self.size = size
 
-    def __getitem__(self, (address, size)):
+    def __getitem__(self, address_size):
+        (address, size) = address_size
         return self.read(address, size)
 
     def __setitem__(self, address_size, value):
@@ -37,5 +37,5 @@ class RAM(MemoryType):
 
 
 MEMORY_TYPE_DICT = {
-    "RAM": RAM
+    'RAM': RAM
 }

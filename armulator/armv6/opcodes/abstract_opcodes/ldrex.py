@@ -1,11 +1,11 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
+from armulator.armv6.opcodes.opcode import Opcode
 from armulator.armv6.arm_exceptions import EndOfInstruction
 from armulator.armv6.bits_ops import add
 
 
-class Ldrex(AbstractOpcode):
-    def __init__(self, imm32, t, n):
-        super(Ldrex, self).__init__()
+class Ldrex(Opcode):
+    def __init__(self, instruction, imm32, t, n):
+        super().__init__(instruction)
         self.imm32 = imm32
         self.t = t
         self.n = n

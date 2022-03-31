@@ -6,35 +6,42 @@ class MIDR(AbstractRegister):
     Main ID Register
     """
 
-    def __init__(self):
-        super(MIDR, self).__init__()
+    @property
+    def implementer(self):
+        return self[31:24]
 
-    def set_implementer(self, implementer):
-        self.value[0:8] = implementer
+    @implementer.setter
+    def implementer(self, implementer):
+        self[31:24] = implementer
 
-    def get_implementer(self):
-        return self.value[0:8]
+    @property
+    def variant(self):
+        return self[23:20]
 
-    def set_variant(self, variant):
-        self.value[8:12] = variant
+    @variant.setter
+    def variant(self, variant):
+        self[23:20] = variant
 
-    def get_variant(self):
-        return self.value[8:12]
+    @property
+    def architecture(self):
+        return self[19:16]
 
-    def set_architecture(self, architecture):
-        self.value[12:16] = architecture
+    @architecture.setter
+    def architecture(self, architecture):
+        self[19:16] = architecture
 
-    def get_architecture(self):
-        return self.value[12:16]
+    @property
+    def primary_part_number(self):
+        return self[15:4]
 
-    def set_primary_part_number(self, number):
-        self.value[16:28] = number
+    @primary_part_number.setter
+    def primary_part_number(self, number):
+        self[15:4] = number
 
-    def get_primary_part_number(self):
-        return self.value[16:28]
+    @property
+    def revision(self):
+        return self[3:0]
 
-    def set_revision(self, revision):
-        self.value[28:32] = revision
-
-    def get_revision(self):
-        return self.value[28:32]
+    @revision.setter
+    def revision(self, revision):
+        self[3:0] = revision

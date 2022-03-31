@@ -6,29 +6,34 @@ class HTCR(AbstractRegister):
     Hyp Translation Control Register
     """
 
-    def __init__(self):
-        super(HTCR, self).__init__()
+    @property
+    def sh0(self) -> int:
+        return self[13:12]
 
-    def set_sh0(self, sh0):
-        self.value[18:20] = sh0
+    @sh0.setter
+    def sh0(self, sh0):
+        self[13:12] = sh0
 
-    def get_sh0(self):
-        return self.value[18:20]
+    @property
+    def orgn0(self):
+        return self[11:10]
 
-    def set_orgn0(self, orgn0):
-        self.value[20:22] = orgn0
+    @orgn0.setter
+    def orgn0(self, orgn0):
+        self[11:10] = orgn0
 
-    def get_orgn0(self):
-        return self.value[20:22]
+    @property
+    def irgn0(self):
+        return self[9:8]
 
-    def set_irgn0(self, irgn0):
-        self.value[22:24] = irgn0
+    @irgn0.setter
+    def irgn0(self, irgn0):
+        self[9:8] = irgn0
 
-    def get_irgn0(self):
-        return self.value[22:24]
+    @property
+    def t0sz(self):
+        return self[2:0]
 
-    def set_t0sz(self, t0sz):
-        self.value[29:32] = t0sz
-
-    def get_t0sz(self):
-        return self.value[29:32]
+    @t0sz.setter
+    def t0sz(self, t0sz):
+        self[2:0] = t0sz

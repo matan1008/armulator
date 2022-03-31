@@ -6,59 +6,74 @@ class HSCTLR(AbstractRegister):
     Hyp System Control Register
     """
 
-    def __init__(self):
-        super(HSCTLR, self).__init__()
+    @property
+    def te(self):
+        return self[30]
 
-    def set_te(self, flag):
-        self.value[1] = flag
+    @te.setter
+    def te(self, flag):
+        self[30] = flag
 
-    def get_te(self):
-        return self.value[1]
+    @property
+    def ee(self):
+        return self[25]
 
-    def set_ee(self, flag):
-        self.value[6] = flag
+    @ee.setter
+    def ee(self, flag):
+        self[25] = flag
 
-    def get_ee(self):
-        return self.value[6]
+    @property
+    def fi(self):
+        return self[21]
 
-    def set_fi(self, flag):
-        self.value[10] = flag
+    @fi.setter
+    def fi(self, flag):
+        self[21] = flag
 
-    def get_fi(self):
-        return self.value[10]
+    @property
+    def wxn(self):
+        return self[19]
 
-    def set_wxn(self, flag):
-        self.value[12] = flag
+    @wxn.setter
+    def wxn(self, flag):
+        self[19] = flag
 
-    def get_wxn(self):
-        return self.value[12]
+    @property
+    def i(self):
+        return self[12]
 
-    def set_i(self, flag):
-        self.value[19] = flag
+    @i.setter
+    def i(self, flag):
+        self[12] = flag
 
-    def get_i(self):
-        return self.value[19]
+    @property
+    def cp15ben(self):
+        return self[5]
 
-    def set_cp15ben(self, flag):
-        self.value[26] = flag
+    @cp15ben.setter
+    def cp15ben(self, flag):
+        self[5] = flag
 
-    def get_cp15ben(self):
-        return self.value[26]
+    @property
+    def c(self):
+        return self[2]
 
-    def set_c(self, flag):
-        self.value[29] = flag
+    @c.setter
+    def c(self, flag):
+        self[2] = flag
 
-    def get_c(self):
-        return self.value[29]
+    @property
+    def a(self):
+        return self[1]
 
-    def set_a(self, flag):
-        self.value[30] = flag
+    @a.setter
+    def a(self, flag):
+        self[1] = flag
 
-    def get_a(self):
-        return self.value[30]
+    @property
+    def m(self):
+        return self[0]
 
-    def set_m(self, flag):
-        self.value[31] = flag
-
-    def get_m(self):
-        return self.value[31]
+    @m.setter
+    def m(self, flag):
+        self[0] = flag

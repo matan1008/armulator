@@ -1,11 +1,11 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class MrsApplication(AbstractOpcode):
-    def __init__(self, d):
-        super(MrsApplication, self).__init__()
+class MrsApplication(Opcode):
+    def __init__(self, instruction, d):
+        super().__init__(instruction)
         self.d = d
 
     def execute(self, processor):
         if processor.condition_passed():
-            processor.registers.set(self.d, processor.registers.cpsr.get_apsr())
+            processor.registers.set(self.d, processor.registers.cpsr.apsr)

@@ -1,8 +1,14 @@
 import json
+
 from armulator.armv6.enums import *
 
+__all__ = ['configurations', 'number_of_mpu_regions', 'have_security_ext', 'have_virt_ext', 'arch_version',
+           'jazelle_accepts_execution', 'memory_system_architecture', 'have_lpae', 'have_mp_ext',
+           'have_adv_simd_or_vfp', 'have_thumbee', 'have_jazelle', 'implementation_supports_transient', 'processor_id',
+           'is_armv7r_profile', 'has_imp_def_reset_vector']
 
-class Configurations(object):
+
+class Configurations:
     def __init__(self):
         self.configs = {}
 
@@ -41,7 +47,7 @@ def jazelle_accepts_execution():
 
 
 def memory_system_architecture():
-    return {"PMSA": MemArch.MemArch_PMSA, "VMSA": MemArch.MemArch_VMSA}[configurations.memory_system_architecture]
+    return {'PMSA': MemArch.PMSA, 'VMSA': MemArch.VMSA}[configurations.memory_system_architecture]
 
 
 def have_lpae():

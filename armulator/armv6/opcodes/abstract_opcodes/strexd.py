@@ -1,11 +1,11 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
-from bitstring import BitArray
 from armulator.armv6.arm_exceptions import EndOfInstruction
+from armulator.armv6.bits_ops import chain
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class Strexd(AbstractOpcode):
-    def __init__(self, t, t2, d, n):
-        super(Strexd, self).__init__()
+class Strexd(Opcode):
+    def __init__(self, instruction, t, t2, d, n):
+        super().__init__(instruction)
         self.t = t
         self.t2 = t2
         self.d = d
@@ -19,11 +19,11 @@ class Strexd(AbstractOpcode):
                 pass
             else:
                 address = processor.registers.get(self.n)
-                value = processor.registers.get(self.t) + processor.registers.get(
-                        self.t2) if processor.big_endian() else processor.registers.get(
-                    self.t2) + processor.registers.get(self.t)
+                t = processor.registers.get(self.t)
+                t2 = processor.registers.get(self.t2)
+                value = chain(t, t2, 32) if processor.big_endian() else chain(t2, t, 32)
                 if processor.exclusive_monitors_pass(address, 4):
                     processor.mem_a_set(address, 8, value)
-                    processor.registers.set(self.d, BitArray(bin="00000000000000000000000000000000"))
+                    processor.registers.set(self.d, 0b00000000000000000000000000000000)
                 else:
-                    processor.registers.set(self.d, BitArray(bin="00000000000000000000000000000001"))
+                    processor.registers.set(self.d, 0b00000000000000000000000000000001)

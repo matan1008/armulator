@@ -6,95 +6,122 @@ class TTBCR(AbstractRegister):
     Translation Table Base Control Register
     """
 
-    def __init__(self):
-        super(TTBCR, self).__init__()
+    @property
+    def eae(self):
+        return self[31]
 
-    def set_eae(self, flag):
-        self.value[0] = flag
+    @eae.setter
+    def eae(self, flag):
+        self[31] = flag
 
-    def get_eae(self):
-        return self.value[0]
+    @property
+    def sh1(self):
+        return self[29:28]
 
-    def set_sh1(self, sh1):
-        self.value[2:4] = sh1
+    @sh1.setter
+    def sh1(self, sh1):
+        self[29:28] = sh1
 
-    def get_sh1(self):
-        return self.value[2:4]
+    @property
+    def orgn1(self):
+        return self[27:26]
 
-    def set_orgn1(self, orgn1):
-        self.value[4:6] = orgn1
+    @orgn1.setter
+    def orgn1(self, orgn1):
+        self[27:26] = orgn1
 
-    def get_orgn1(self):
-        return self.value[4:6]
+    @property
+    def irgn1(self):
+        return self[25:24]
 
-    def set_irgn1(self, irgn1):
-        self.value[6:8] = irgn1
+    @irgn1.setter
+    def irgn1(self, irgn1):
+        self[25:24] = irgn1
 
-    def get_irgn1(self):
-        return self.value[6:8]
+    @property
+    def epd1(self):
+        return self[23]
 
-    def set_epd1(self, flag):
-        self.value[8] = flag
+    @epd1.setter
+    def epd1(self, flag):
+        self[23] = flag
 
-    def get_epd1(self):
-        return self.value[8]
+    @property
+    def a1(self):
+        return self[22]
 
-    def set_a1(self, flag):
-        self.value[9] = flag
+    @a1.setter
+    def a1(self, flag):
+        self[22] = flag
 
-    def get_a1(self):
-        return self.value[9]
+    @property
+    def t1sz(self):
+        return self[18:16]
 
-    def set_t1sz(self, t1sz):
-        self.value[13:16] = t1sz
+    @t1sz.setter
+    def t1sz(self, t1sz):
+        self[18:16] = t1sz
 
-    def get_t1sz(self):
-        return self.value[13:16]
+    @property
+    def sh0(self):
+        return self[13:12]
 
-    def set_sh0(self, sh0):
-        self.value[18:20] = sh0
+    @sh0.setter
+    def sh0(self, sh0):
+        self[13:12] = sh0
 
-    def get_sh0(self):
-        return self.value[18:20]
+    @property
+    def orgn0(self):
+        return self[11:9]
 
-    def set_orgn0(self, orgn0):
-        self.value[20:22] = orgn0
+    @orgn0.setter
+    def orgn0(self, orgn0):
+        self[11:9] = orgn0
 
-    def get_orgn0(self):
-        return self.value[20:22]
+    @property
+    def irgn0(self):
+        return self[9:8]
 
-    def set_irgn0(self, irgn0):
-        self.value[22:24] = irgn0
+    @irgn0.setter
+    def irgn0(self, irgn0):
+        self[9:8] = irgn0
 
-    def get_irgn0(self):
-        return self.value[22:24]
+    @property
+    def epd0(self):
+        return self[7]
 
-    def set_epd0(self, flag):
-        self.value[24] = flag
+    @epd0.setter
+    def epd0(self, flag):
+        self[7] = flag
 
-    def get_epd0(self):
-        return self.value[24]
+    @property
+    def pd1(self):
+        return self[5]
 
-    def set_pd1(self, flag):
-        self.value[26] = flag
+    @pd1.setter
+    def pd1(self, flag):
+        self[5] = flag
 
-    def get_pd1(self):
-        return self.value[26]
+    @property
+    def pd0(self):
+        return self[4]
 
-    def set_pd0(self, flag):
-        self.value[27] = flag
+    @pd0.setter
+    def pd0(self, flag):
+        self[4] = flag
 
-    def get_pd0(self):
-        return self.value[27]
+    @property
+    def t0sz(self):
+        return self[2:0]
 
-    def set_t0sz(self, t0sz):
-        self.value[29:32] = t0sz
+    @t0sz.setter
+    def t0sz(self, t0sz):
+        self[2:0] = t0sz
 
-    def get_t0sz(self):
-        return self.value[29:32]
+    @property
+    def n(self):
+        return self[2:0]
 
-    def set_n(self, n):
-        self.value[29:32] = n
-
-    def get_n(self):
-        return self.value[29:32]
+    @n.setter
+    def n(self, n):
+        self[2:0] = n

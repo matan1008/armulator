@@ -6,149 +6,194 @@ class SCTLR(AbstractRegister):
     System Control Register
     """
 
-    def __init__(self):
-        super(SCTLR, self).__init__()
+    @property
+    def ie(self):
+        return self[31]
 
-    def set_ie(self, flag):
-        self.value[0] = flag
+    @ie.setter
+    def ie(self, flag):
+        self[31] = flag
 
-    def get_ie(self):
-        return self.value[0]
+    @property
+    def te(self):
+        return self[30]
 
-    def set_te(self, flag):
-        self.value[1] = flag
+    @te.setter
+    def te(self, flag):
+        self[30] = flag
 
-    def get_te(self):
-        return self.value[1]
+    @property
+    def afe(self):
+        return self[29]
 
-    def set_afe(self, flag):
-        self.value[2] = flag
+    @afe.setter
+    def afe(self, flag):
+        self[29] = flag
 
-    def get_afe(self):
-        return self.value[2]
+    @property
+    def tre(self):
+        return self[28]
 
-    def set_tre(self, flag):
-        self.value[3] = flag
+    @tre.setter
+    def tre(self, flag):
+        self[28] = flag
 
-    def get_tre(self):
-        return self.value[3]
+    @property
+    def nmfi(self):
+        return self[27]
 
-    def set_nmfi(self, flag):
-        self.value[4] = flag
+    @nmfi.setter
+    def nmfi(self, flag):
+        self[27] = flag
 
-    def get_nmfi(self):
-        return self.value[4]
+    @property
+    def ee(self):
+        return self[25]
 
-    def set_ee(self, flag):
-        self.value[6] = flag
+    @ee.setter
+    def ee(self, flag):
+        self[25] = flag
 
-    def get_ee(self):
-        return self.value[6]
+    @property
+    def ve(self):
+        return self[24]
 
-    def set_ve(self, flag):
-        self.value[7] = flag
+    @ve.setter
+    def ve(self, flag):
+        self[24] = flag
 
-    def get_ve(self):
-        return self.value[7]
+    @property
+    def u(self):
+        return self[22]
 
-    def set_u(self, flag):
-        self.value[9] = flag
+    @u.setter
+    def u(self, flag):
+        self[22] = flag
 
-    def get_u(self):
-        return self.value[9]
+    @property
+    def fi(self):
+        return self[21]
 
-    def set_fi(self, flag):
-        self.value[10] = flag
+    @fi.setter
+    def fi(self, flag):
+        self[21] = flag
 
-    def get_fi(self):
-        return self.value[10]
+    @property
+    def uwxn(self):
+        return self[20]
 
-    def set_uwxn(self, flag):
-        self.value[11] = flag
+    @uwxn.setter
+    def uwxn(self, flag):
+        self[20] = flag
 
-    def get_uwxn(self):
-        return self.value[11]
+    @property
+    def wxn(self):
+        return self[19]
 
-    def set_wxn(self, flag):
-        self.value[12] = flag
+    @wxn.setter
+    def wxn(self, flag):
+        self[19] = flag
 
-    def get_wxn(self):
-        return self.value[12]
+    @property
+    def dz(self):
+        return self[19]
 
-    def set_dz(self, flag):
-        self.value[12] = flag
+    @dz.setter
+    def dz(self, flag):
+        self[19] = flag
 
-    def get_dz(self):
-        return self.value[12]
+    @property
+    def ha(self):
+        return self[17]
 
-    def set_ha(self, flag):
-        self.value[14] = flag
+    @ha.setter
+    def ha(self, flag):
+        self[17] = flag
 
-    def get_ha(self):
-        return self.value[14]
+    @property
+    def br(self):
+        return self[17]
 
-    def set_br(self, flag):
-        self.value[14] = flag
+    @br.setter
+    def br(self, flag):
+        self[17] = flag
 
-    def get_br(self):
-        return self.value[14]
+    @property
+    def rr(self):
+        return self[14]
 
-    def set_rr(self, flag):
-        self.value[17] = flag
+    @rr.setter
+    def rr(self, flag):
+        self[14] = flag
 
-    def get_rr(self):
-        return self.value[17]
+    @property
+    def v(self):
+        return self[13]
 
-    def set_v(self, flag):
-        self.value[18] = flag
+    @v.setter
+    def v(self, flag):
+        self[13] = flag
 
-    def get_v(self):
-        return self.value[18]
+    @property
+    def i(self):
+        return self[12]
 
-    def set_i(self, flag):
-        self.value[19] = flag
+    @i.setter
+    def i(self, flag):
+        self[12] = flag
 
-    def get_i(self):
-        return self.value[19]
+    @property
+    def z(self):
+        return self[11]
 
-    def set_z(self, flag):
-        self.value[20] = flag
+    @z.setter
+    def z(self, flag):
+        self[11] = flag
 
-    def get_z(self):
-        return self.value[20]
+    @property
+    def sw(self):
+        return self[10]
 
-    def set_sw(self, flag):
-        self.value[21] = flag
+    @sw.setter
+    def sw(self, flag):
+        self[10] = flag
 
-    def get_sw(self):
-        return self.value[21]
+    @property
+    def b(self):
+        return self[7]
 
-    def set_b(self, flag):
-        self.value[24] = flag
+    @b.setter
+    def b(self, flag):
+        self[7] = flag
 
-    def get_b(self):
-        return self.value[24]
+    @property
+    def cp15ben(self):
+        return self[5]
 
-    def set_cp15ben(self, flag):
-        self.value[26] = flag
+    @cp15ben.setter
+    def cp15ben(self, flag):
+        self[5] = flag
 
-    def get_cp15ben(self):
-        return self.value[26]
+    @property
+    def c(self):
+        return self[2]
 
-    def set_c(self, flag):
-        self.value[29] = flag
+    @c.setter
+    def c(self, flag):
+        self[2] = flag
 
-    def get_c(self):
-        return self.value[29]
+    @property
+    def a(self):
+        return self[1]
 
-    def set_a(self, flag):
-        self.value[30] = flag
+    @a.setter
+    def a(self, flag):
+        self[1] = flag
 
-    def get_a(self):
-        return self.value[30]
+    @property
+    def m(self):
+        return self[0]
 
-    def set_m(self, flag):
-        self.value[31] = flag
-
-    def get_m(self):
-        return self.value[31]
+    @m.setter
+    def m(self, flag):
+        self[0] = flag

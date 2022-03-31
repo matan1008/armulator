@@ -1,11 +1,11 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
-from bitstring import BitArray
+from armulator.armv6.bits_ops import to_signed, bit_at, to_unsigned
 from armulator.armv6.configurations import arch_version
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class Mla(AbstractOpcode):
-    def __init__(self, setflags, m, a, d, n):
-        super(Mla, self).__init__()
+class Mla(Opcode):
+    def __init__(self, instruction, setflags, m, a, d, n):
+        super().__init__(instruction)
         self.setflags = setflags
         self.m = m
         self.a = a
@@ -14,14 +14,14 @@ class Mla(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            operand1 = processor.registers.get(self.n).int
-            operand2 = processor.registers.get(self.m).int
-            addend = processor.registers.get(self.a).int
+            operand1 = to_signed(processor.registers.get(self.n), 32)
+            operand2 = to_signed(processor.registers.get(self.m), 32)
+            addend = to_signed(processor.registers.get(self.a), 32)
             result = operand1 * operand2 + addend
-            f_result = BitArray(int=result, length=64)[32:]
-            processor.registers.set(self.d, f_result)
+            result = to_unsigned(result, 32)
+            processor.registers.set(self.d, result)
             if self.setflags:
-                processor.registers.cpsr.set_n(f_result[0])
-                processor.registers.cpsr.set_z(not f_result.any(True))
+                processor.registers.cpsr.n = bit_at(result, 31)
+                processor.registers.cpsr.z = 0 if result else 1
                 if arch_version() == 4:
-                    processor.registers.cpsr.set_c(False)  # uknown
+                    processor.registers.cpsr.c = 0  # unknown

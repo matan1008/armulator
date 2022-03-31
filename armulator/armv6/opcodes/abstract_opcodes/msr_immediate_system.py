@@ -1,9 +1,9 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class MsrImmediateSystem(AbstractOpcode):
-    def __init__(self, write_spsr, mask, imm32):
-        super(MsrImmediateSystem, self).__init__()
+class MsrImmediateSystem(Opcode):
+    def __init__(self, instruction, write_spsr, mask, imm32):
+        super().__init__(instruction)
         self.write_spsr = write_spsr
         self.mask = mask
         self.imm32 = imm32
@@ -14,7 +14,5 @@ class MsrImmediateSystem(AbstractOpcode):
                 processor.registers.spsr_write_by_instr(self.imm32, self.mask)
             else:
                 processor.registers.cpsr_write_by_instr(self.imm32, self.mask, False)
-                if (processor.registers.cpsr.get_m() == "0b11010" and
-                        processor.registers.cpsr.get_j() and
-                        processor.registers.cpsr.get_t()):
-                    print "unpredictable"
+                if processor.registers.cpsr.m == 0b11010 and processor.registers.cpsr.j and processor.registers.cpsr.t:
+                    print('unpredictable')

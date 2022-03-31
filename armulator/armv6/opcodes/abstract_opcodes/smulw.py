@@ -1,10 +1,10 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
-from bitstring import BitArray
+from armulator.armv6.bits_ops import to_unsigned, substring, to_signed
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class Smulw(AbstractOpcode):
-    def __init__(self, m_high, m, d, n):
-        super(Smulw, self).__init__()
+class Smulw(Opcode):
+    def __init__(self, instruction, m_high, m, d, n):
+        super().__init__(instruction)
         self.m_high = m_high
         self.m = m
         self.d = d
@@ -12,7 +12,8 @@ class Smulw(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            operand2 = processor.registers.get(self.m)[0:16] if self.m_high else processor.registers.get(
-                self.m)[16:]
-            product = processor.registers.get(self.n).int * operand2.int
-            processor.registers.set(self.d, BitArray(int=product, length=48)[0:32])
+            m = processor.registers.get(self.m)
+            operand2 = substring(m, 31, 16) if self.m_high else substring(m, 15, 0)
+            result = to_signed(processor.registers.get(self.n), 32) * to_signed(operand2, 16)
+            output = substring(to_unsigned(result, 48), 47, 16)
+            processor.registers.set(self.d, output)

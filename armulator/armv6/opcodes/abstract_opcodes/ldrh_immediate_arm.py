@@ -1,11 +1,10 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
-from armulator.armv6.bits_ops import add as bits_add, sub as bits_sub, zero_extend
-from bitstring import BitArray
+from armulator.armv6.bits_ops import add as bits_add, sub as bits_sub, chain, bit_at
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class LdrhImmediateArm(AbstractOpcode):
-    def __init__(self, add, wback, index, imm32, t, n):
-        super(LdrhImmediateArm, self).__init__()
+class LdrhImmediateArm(Opcode):
+    def __init__(self, instruction, add, wback, index, imm32, t, n):
+        super().__init__(instruction)
         self.add = add
         self.wback = wback
         self.index = index
@@ -21,13 +20,13 @@ class LdrhImmediateArm(AbstractOpcode):
             data = processor.mem_u_get(address, 2)
             if self.wback:
                 processor.registers.set(self.n, offset_addr)
-            if processor.unaligned_support() or not address[31]:
-                processor.registers.set(self.t, zero_extend(data, 32))
+            if processor.unaligned_support() or not bit_at(address, 0):
+                processor.registers.set(self.t, data)
             else:
-                processor.registers.set(self.t, BitArray(length=32))  # unknown
+                processor.registers.set(self.t, 0x00000000)  # unknown
 
     def instruction_syndrome(self):
         if self.t == 15 or self.wback:
-            return BitArray(length=9)
+            return 0b000000000
         else:
-            return BitArray(bin="10100") + BitArray(uint=self.t, length=4)
+            return chain(0b10100, self.t, 4)

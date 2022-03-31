@@ -1,96 +1,128 @@
-from bitstring import BitArray
-from enum import Enum
-from configurations import *
-import shift
-import bits_ops
-from enums import *
-from armulator.armv6.all_registers.sunavcr import SUNAVCR
-from armulator.armv6.all_registers.pmcr import PMCR
-from armulator.armv6.all_registers.jmcr import JMCR
-from armulator.armv6.all_registers.prrr import PRRR
-from armulator.armv6.all_registers.nmrr import NMRR
-from armulator.armv6.all_registers.dacr import DACR
-from armulator.armv6.all_registers.mpuir import MPUIR
+from enum import auto, Enum
+
+from armulator.armv6 import bits_ops
+from armulator.armv6 import shift
 from armulator.armv6.all_registers.cpacr import CPACR
-from armulator.armv6.all_registers.scr import SCR
-from armulator.armv6.all_registers.nsacr import NSACR
-from armulator.armv6.all_registers.rgnr import RGNR
-from armulator.armv6.all_registers.teecr import TEECR
-from armulator.armv6.all_registers.midr import MIDR
-from armulator.armv6.all_registers.vbar import VBAR
-from armulator.armv6.all_registers.ttbcr import TTBCR
-from armulator.armv6.all_registers.sctlr import SCTLR
-from armulator.armv6.all_registers.hstr import HSTR
-from armulator.armv6.all_registers.hsctlr import HSCTLR
-from armulator.armv6.all_registers.hcr import HCR
-from armulator.armv6.all_registers.hdcr import HDCR
-from armulator.armv6.all_registers.htcr import HTCR
-from armulator.armv6.all_registers.vtcr import VTCR
-from armulator.armv6.all_registers.hcptr import HCPTR
-from armulator.armv6.all_registers.rsr import DRSR, IRSR
-from armulator.armv6.all_registers.racr import DRACR, IRACR
-from armulator.armv6.all_registers.sder import SDER
+from armulator.armv6.all_registers.cpsr import CPSR
+from armulator.armv6.all_registers.dacr import DACR
+from armulator.armv6.all_registers.dbgdidr import DBGDIDR
+from armulator.armv6.all_registers.dfsr import DFSR
 from armulator.armv6.all_registers.fcseidr import FCSEIDR
 from armulator.armv6.all_registers.fpexc import FPEXC
-from armulator.armv6.all_registers.hsr import HSR
-from armulator.armv6.all_registers.dbgdidr import DBGDIDR
+from armulator.armv6.all_registers.hcptr import HCPTR
+from armulator.armv6.all_registers.hcr import HCR
+from armulator.armv6.all_registers.hdcr import HDCR
 from armulator.armv6.all_registers.hpfar import HPFAR
-from armulator.armv6.all_registers.dfsr import DFSR
-from armulator.armv6.all_registers.cpsr import CPSR
+from armulator.armv6.all_registers.hsctlr import HSCTLR
+from armulator.armv6.all_registers.hsr import HSR
+from armulator.armv6.all_registers.hstr import HSTR
+from armulator.armv6.all_registers.htcr import HTCR
 from armulator.armv6.all_registers.id_pfr1 import IdPfr1
+from armulator.armv6.all_registers.jmcr import JMCR
+from armulator.armv6.all_registers.midr import MIDR
+from armulator.armv6.all_registers.mpuir import MPUIR
+from armulator.armv6.all_registers.nmrr import NMRR
+from armulator.armv6.all_registers.nsacr import NSACR
+from armulator.armv6.all_registers.pmcr import PMCR
+from armulator.armv6.all_registers.prrr import PRRR
+from armulator.armv6.all_registers.racr import DRACR, IRACR
+from armulator.armv6.all_registers.rgnr import RGNR
+from armulator.armv6.all_registers.rsr import DRSR, IRSR
+from armulator.armv6.all_registers.scr import SCR
+from armulator.armv6.all_registers.sctlr import SCTLR
+from armulator.armv6.all_registers.sder import SDER
+from armulator.armv6.all_registers.sunavcr import SUNAVCR
+from armulator.armv6.all_registers.teecr import TEECR
+from armulator.armv6.all_registers.ttbcr import TTBCR
+from armulator.armv6.all_registers.vbar import VBAR
+from armulator.armv6.all_registers.vtcr import VTCR
+from armulator.armv6.bits_ops import chain, set_substring, bit_at, substring, set_bit_at
+from armulator.armv6.configurations import *
+from armulator.armv6.enums import *
+
+
+class RName(Enum):
+    R0usr = auto()
+    R1usr = auto()
+    R2usr = auto()
+    R3usr = auto()
+    R4usr = auto()
+    R5usr = auto()
+    R6usr = auto()
+    R7usr = auto()
+    R8usr = auto()
+    R8fiq = auto()
+    R9usr = auto()
+    R9fiq = auto()
+    R10usr = auto()
+    R10fiq = auto()
+    R11usr = auto()
+    R11fiq = auto()
+    R12usr = auto()
+    R12fiq = auto()
+    SPusr = auto()
+    SPfiq = auto()
+    SPirq = auto()
+    SPsvc = auto()
+    SPabt = auto()
+    SPund = auto()
+    SPmon = auto()
+    SPhyp = auto()
+    LRusr = auto()
+    LRfiq = auto()
+    LRirq = auto()
+    LRsvc = auto()
+    LRabt = auto()
+    LRund = auto()
+    LRmon = auto()
+    PC = auto()
 
 
 class Registers:
     def __init__(self):
-        rnames = ("RName_0usr RName_1usr RName_2usr RName_3usr RName_4usr RName_5usr RName_6usr RName_7usr "
-                  "RName_8usr RName_8fiq RName_9usr RName_9fiq RName_10usr RName_10fiq RName_11usr RName_11fiq "
-                  "RName_12usr RName_12fiq RName_SPusr RName_SPfiq RName_SPirq RName_SPsvc RName_SPabt RName_SPund "
-                  "RName_SPmon RName_SPhyp RName_LRusr RName_LRfiq RName_LRirq RName_LRsvc RName_LRabt RName_LRund "
-                  "RName_LRmon RName_PC")
-        self.RName = Enum("RName", rnames)
         self._R = {}
         self.changed_registers = [False] * 16
-        for register in self.RName:
-            self._R[register] = BitArray(length=32)
+        for register in RName:
+            self._R[register] = 0
         self.cpsr = CPSR()
-        self.spsr_hyp = BitArray(length=32)
-        self.spsr_svc = BitArray(length=32)
-        self.spsr_abt = BitArray(length=32)
-        self.spsr_und = BitArray(length=32)
-        self.spsr_mon = BitArray(length=32)
-        self.spsr_irq = BitArray(length=32)
-        self.spsr_fiq = BitArray(length=32)
-        self.elr_hyp = BitArray(length=32)
+        self.spsr_hyp = 0b00000000000000000000000000000000
+        self.spsr_svc = 0b00000000000000000000000000000000
+        self.spsr_abt = 0b00000000000000000000000000000000
+        self.spsr_und = 0b00000000000000000000000000000000
+        self.spsr_mon = 0b00000000000000000000000000000000
+        self.spsr_irq = 0b00000000000000000000000000000000
+        self.spsr_fiq = 0b00000000000000000000000000000000
+        self.elr_hyp = 0b00000000000000000000000000000000
         self.scr = SCR()
         self.nsacr = NSACR()
         self.sctlr = SCTLR()
         self.hstr = HSTR()
         self.hsr = HSR()
         self.hsctlr = HSCTLR()
-        self.hvbar = BitArray(length=32)
+        self.hvbar = 0b00000000000000000000000000000000
         self.jmcr = JMCR()
         self.hcr = HCR()
-        self.mvbar = BitArray(length=32)
-        self.teehbr = BitArray(length=32)
+        self.mvbar = 0b00000000000000000000000000000000
+        self.teehbr = 0b00000000000000000000000000000000
         self.hdcr = HDCR()
         self.vbar = VBAR()
         self.dbgdidr = DBGDIDR()
         self.dfsr = DFSR()
-        self.dfar = BitArray(length=32)
-        self.hdfar = BitArray(length=32)
+        self.dfar = 0b00000000000000000000000000000000
+        self.hdfar = 0b00000000000000000000000000000000
         self.hpfar = HPFAR()
         self.ttbcr = TTBCR()
         self.fcseidr = FCSEIDR()
         self.htcr = HTCR()
-        self.httbr = BitArray(length=64)
-        self.ttbr0_64 = BitArray(length=64)
-        self.ttbr1_64 = BitArray(length=64)
+        self.httbr = 0b0000000000000000000000000000000000000000000000000000000000000000
+        self.ttbr0_64 = 0b0000000000000000000000000000000000000000000000000000000000000000
+        self.ttbr1_64 = 0b0000000000000000000000000000000000000000000000000000000000000000
         self.vtcr = VTCR()
-        self.vttbr = BitArray(length=64)
-        self.mair0 = BitArray(length=32)
-        self.mair1 = BitArray(length=32)
-        self.hmair0 = BitArray(length=32)
-        self.hmair1 = BitArray(length=32)
+        self.vttbr = 0b0000000000000000000000000000000000000000000000000000000000000000
+        self.mair0 = 0b00000000000000000000000000000000
+        self.mair1 = 0b00000000000000000000000000000000
+        self.hmair0 = 0b00000000000000000000000000000000
+        self.hmair1 = 0b00000000000000000000000000000000
         self.prrr = PRRR()
         self.nmrr = NMRR()
         self.dacr = DACR()
@@ -98,79 +130,79 @@ class Registers:
         self.cpacr = CPACR()
         self.rgnr = RGNR(number_of_mpu_regions())
         self.hcptr = HCPTR()
-        self.drsrs = [DRSR()] * number_of_mpu_regions()
-        self.drbars = [BitArray(length=32)] * number_of_mpu_regions()
-        self.dracrs = [DRACR()] * number_of_mpu_regions()
-        self.irbars = [BitArray(length=32)] * number_of_mpu_regions()
-        self.irsrs = [IRSR()] * number_of_mpu_regions()
-        self.iracrs = [IRACR()] * number_of_mpu_regions()
+        self.drsrs = [DRSR() for _ in range(number_of_mpu_regions())]
+        self.drbars = [0] * number_of_mpu_regions()
+        self.dracrs = [DRACR()for _ in range(number_of_mpu_regions())]
+        self.irbars = [0] * number_of_mpu_regions()
+        self.irsrs = [IRSR() for _ in range(number_of_mpu_regions())]
+        self.iracrs = [IRACR() for _ in range(number_of_mpu_regions())]
         self.teecr = TEECR()
         self.event_register = False
         self.midr = MIDR()
-        self.ctr = BitArray(length=32)
-        self.tcmtr = BitArray(length=32)
-        self.tlbtr = BitArray(length=32)
-        self.id_pfr0 = BitArray(length=32)
+        self.ctr = 0b00000000000000000000000000000000
+        self.tcmtr = 0b00000000000000000000000000000000
+        self.tlbtr = 0b00000000000000000000000000000000
+        self.id_pfr0 = 0b00000000000000000000000000000000
         self.id_pfr1 = IdPfr1()
-        self.id_dfr0 = BitArray(length=32)
-        self.id_afr0 = BitArray(length=32)
-        self.id_mmfr0 = BitArray(length=32)
-        self.id_mmfr1 = BitArray(length=32)
-        self.id_mmfr2 = BitArray(length=32)
-        self.id_mmfr3 = BitArray(length=32)
-        self.id_isar0 = BitArray(length=32)
-        self.id_isar1 = BitArray(length=32)
-        self.id_isar2 = BitArray(length=32)
-        self.id_isar3 = BitArray(length=32)
-        self.id_isar4 = BitArray(length=32)
-        self.id_isar5 = BitArray(length=32)
-        self.actlr = BitArray(length=32)
+        self.id_dfr0 = 0b00000000000000000000000000000000
+        self.id_afr0 = 0b00000000000000000000000000000000
+        self.id_mmfr0 = 0b00000000000000000000000000000000
+        self.id_mmfr1 = 0b00000000000000000000000000000000
+        self.id_mmfr2 = 0b00000000000000000000000000000000
+        self.id_mmfr3 = 0b00000000000000000000000000000000
+        self.id_isar0 = 0b00000000000000000000000000000000
+        self.id_isar1 = 0b00000000000000000000000000000000
+        self.id_isar2 = 0b00000000000000000000000000000000
+        self.id_isar3 = 0b00000000000000000000000000000000
+        self.id_isar4 = 0b00000000000000000000000000000000
+        self.id_isar5 = 0b00000000000000000000000000000000
+        self.actlr = 0b00000000000000000000000000000000
         self.sder = SDER()
-        self.ttbr0 = BitArray(length=32)
-        self.ttbr1 = BitArray(length=32)
-        self.ifsr = BitArray(length=32)
-        self.ifar = BitArray(length=32)
-        self.par = BitArray(length=32)
-        self.cdsr = BitArray(length=32)
-        self.dclr = BitArray(length=32)
-        self.iclr = BitArray(length=32)
-        self.dtcmrr = BitArray(length=32)
-        self.dtcm_nsacr = BitArray(length=32)
-        self.itcm_nsacr = BitArray(length=32)
-        self.tcmsr = BitArray(length=32)
-        self.cbor = BitArray(length=32)
-        self.tlblr = BitArray(length=32)
-        self.dmaispr = BitArray(length=32)
-        self.dmaisqr = BitArray(length=32)
-        self.dmaisrr = BitArray(length=32)
-        self.dmaisir = BitArray(length=32)
-        self.dmauar = BitArray(length=32)
-        self.dmacnr = BitArray(length=32)
-        self.stop_dmaer = BitArray(length=32)
-        self.start_dmaer = BitArray(length=32)
-        self.clear_dmaer = BitArray(length=32)
-        self.dmacr = BitArray(length=32)
-        self.dmaisar = BitArray(length=32)
-        self.dmaesar = BitArray(length=32)
-        self.dmaiear = BitArray(length=32)
-        self.dmacsr = BitArray(length=32)
-        self.dmacidr = BitArray(length=32)
-        self.isr = BitArray(length=32)
-        self.contextidr = BitArray(length=32)
-        self.tpidrurw = BitArray(length=32)
-        self.tpidruro = BitArray(length=32)
-        self.tpidrprw = BitArray(length=32)
-        self.ppmrr = BitArray(length=32)
+        self.ttbr0 = 0b00000000000000000000000000000000
+        self.ttbr1 = 0b00000000000000000000000000000000
+        self.ifsr = 0b00000000000000000000000000000000
+        self.ifar = 0b00000000000000000000000000000000
+        self.par = 0b00000000000000000000000000000000
+        self.cdsr = 0b00000000000000000000000000000000
+        self.dclr = 0b00000000000000000000000000000000
+        self.iclr = 0b00000000000000000000000000000000
+        self.dtcmrr = 0b00000000000000000000000000000000
+        self.dtcm_nsacr = 0b00000000000000000000000000000000
+        self.itcm_nsacr = 0b00000000000000000000000000000000
+        self.tcmsr = 0b00000000000000000000000000000000
+        self.cbor = 0b00000000000000000000000000000000
+        self.tlblr = 0b00000000000000000000000000000000
+        self.dmaispr = 0b00000000000000000000000000000000
+        self.dmaisqr = 0b00000000000000000000000000000000
+        self.dmaisrr = 0b00000000000000000000000000000000
+        self.dmaisir = 0b00000000000000000000000000000000
+        self.dmauar = 0b00000000000000000000000000000000
+        self.dmacnr = 0b00000000000000000000000000000000
+        self.stop_dmaer = 0b00000000000000000000000000000000
+        self.start_dmaer = 0b00000000000000000000000000000000
+        self.clear_dmaer = 0b00000000000000000000000000000000
+        self.dmacr = 0b00000000000000000000000000000000
+        self.dmaisar = 0b00000000000000000000000000000000
+        self.dmaesar = 0b00000000000000000000000000000000
+        self.dmaiear = 0b00000000000000000000000000000000
+        self.dmacsr = 0b00000000000000000000000000000000
+        self.dmacidr = 0b00000000000000000000000000000000
+        self.isr = 0b00000000000000000000000000000000
+        self.contextidr = 0b00000000000000000000000000000000
+        self.tpidrurw = 0b00000000000000000000000000000000
+        self.tpidruro = 0b00000000000000000000000000000000
+        self.tpidrprw = 0b00000000000000000000000000000000
+        self.ppmrr = 0b00000000000000000000000000000000
         self.sunavcr = SUNAVCR()
         self.pmcr = PMCR()
-        self.ccr = BitArray(length=32)
-        self.cr0 = BitArray(length=32)
-        self.cr1 = BitArray(length=32)
-        self.svcr_rc = BitArray(length=32)
-        self.svcr_ic = BitArray(length=32)
-        self.svcr_fic = BitArray(length=32)
-        self.svcr_edrc = BitArray(length=32)
-        self.svcsmr = BitArray(length=32)
+        self.ccr = 0b00000000000000000000000000000000
+        self.cr0 = 0b00000000000000000000000000000000
+        self.cr1 = 0b00000000000000000000000000000000
+        self.svcr_rc = 0b00000000000000000000000000000000
+        self.svcr_ic = 0b00000000000000000000000000000000
+        self.svcr_fic = 0b00000000000000000000000000000000
+        self.svcr_edrc = 0b00000000000000000000000000000000
+        self.svcsmr = 0b00000000000000000000000000000000
         self.fpexc = FPEXC()
 
     def coproc_to_register(self, coproc, crn, opc1, crm, opc2):
@@ -179,11 +211,6 @@ class Registers:
             (15, 0, 0, 0, 0): self.midr,
             (15, 0, 0, 0, 1): self.ctr,
             (15, 0, 0, 0, 2): self.tcmtr,
-            # (15, 0, 0, 0, 3): self.ctr,
-            # (15, 0, 0, 0, 4): self.ctr,
-            # (15, 0, 0, 0, 5): self.ctr,
-            # (15, 0, 0, 0, 6): self.ctr,
-            # (15, 0, 0, 0, 7): self.ctr,
             (15, 0, 0, 1, 0): self.id_pfr0,
             (15, 0, 0, 1, 1): self.id_pfr1,
             (15, 0, 0, 1, 2): self.id_dfr0,
@@ -198,7 +225,6 @@ class Registers:
             (15, 0, 0, 2, 3): self.id_isar3,
             (15, 0, 0, 2, 4): self.id_isar4,
             (15, 0, 0, 2, 5): self.id_isar5,
-            # some more
             (15, 1, 0, 0, 0): self.sctlr,
             (15, 1, 0, 0, 1): self.actlr,
             (15, 1, 0, 0, 2): self.cpacr,
@@ -206,8 +232,7 @@ class Registers:
         return coproc_to_register_dict[parameters_tuple]
 
     def pc_store_value(self):
-        # not sure
-        return self._R[self.RName.RName_PC]
+        return self._R[RName.PC]
 
     def set_event_register(self, flag):
         self.event_register = flag
@@ -215,177 +240,154 @@ class Registers:
     def get_event_register(self):
         return self.event_register
 
-    def current_instr_set(self):
-        isetstate = self.cpsr.get_isetstate()
-        if isetstate == "0b00":
-            result = InstrSet.InstrSet_ARM
-        if isetstate == "0b01":
-            result = InstrSet.InstrSet_Thumb
-        if isetstate == "0b10":
-            result = InstrSet.InstrSet_Jazelle
-        if isetstate == "0b11":
-            result = InstrSet.InstrSet_ThumbEE
-        return result
+    def current_instr_set(self) -> InstrSet:
+        return InstrSet(self.cpsr.isetstate)
 
-    def select_instr_set(self, iset):
-        if iset == InstrSet.InstrSet_ARM:
-            if self.current_instr_set() == InstrSet.InstrSet_ThumbEE:
-                print "unpredictable"
-            else:
-                self.cpsr.set_isetstate(BitArray(bin="0b00"))
-        if iset == InstrSet.InstrSet_Thumb:
-            self.cpsr.set_isetstate(BitArray(bin="0b01"))
-        if iset == InstrSet.InstrSet_Jazelle:
-            self.cpsr.set_isetstate(BitArray(bin="0b10"))
-        if iset == InstrSet.InstrSet_ThumbEE:
-            self.cpsr.set_isetstate(BitArray(bin="0b11"))
+    def select_instr_set(self, iset: InstrSet):
+        if iset == InstrSet.ARM and self.current_instr_set() == InstrSet.THUMB_EE:
+            print('unpredictable')
+            return
+        self.cpsr.isetstate = iset.value
 
     def is_secure(self):
-        return (not have_security_ext()) or (not self.scr.get_ns()) or (self.cpsr.get_m() == "0b10110")
+        return (not have_security_ext()) or (not self.scr.ns) or (self.cpsr.m == 0b10110)
 
     def bad_mode(self, mode):
-        if mode == "0b10000":
-            result = False
-        elif mode == "0b10001":
-            result = False
-        elif mode == "0b10010":
-            result = False
-        elif mode == "0b10011":
-            result = False
-        elif mode == "0b10110":
-            result = not have_security_ext()
-        elif mode == "0b10111":
-            result = False
-        elif mode == "0b11010":
-            result = not have_virt_ext()
-        elif mode == "0b11011":
-            result = False
-        elif mode == "0b11111":
-            result = False
-        else:
-            result = True
-        return result
+        if mode == 0b10000:
+            return False
+        elif mode == 0b10001:
+            return False
+        elif mode == 0b10010:
+            return False
+        elif mode == 0b10011:
+            return False
+        elif mode == 0b10110:
+            return not have_security_ext()
+        elif mode == 0b10111:
+            return False
+        elif mode == 0b11010:
+            return not have_virt_ext()
+        elif mode == 0b11011:
+            return False
+        elif mode == 0b11111:
+            return False
+        return True
 
     def current_mode_is_not_user(self):
-        if self.bad_mode(self.cpsr.get_m()):
-            print "unpredictable"
-        if self.cpsr.get_m() == "0b10000":
+        if self.bad_mode(self.cpsr.m):
+            print('unpredictable')
+        if self.cpsr.m == 0b10000:
             return False
         return True
 
     def current_mode_is_hyp(self):
-        if self.bad_mode(self.cpsr.get_m()):
-            print "unpredictable"
-        if self.cpsr.get_m() == "0b11010":
+        if self.bad_mode(self.cpsr.m):
+            print('unpredictable')
+        if self.cpsr.m == 0b11010:
             return True
         return False
 
     def current_mode_is_user_or_system(self):
-        if self.bad_mode(self.cpsr.get_m()):
-            print "unpredictable"
-        if self.cpsr.get_m() == "0b10000":
+        if self.bad_mode(self.cpsr.m):
+            print('unpredictable')
+        if self.cpsr.m == 0b10000:
             return True
-        if self.cpsr.get_m() == "0b11111":
+        if self.cpsr.m == 0b11111:
             return True
         return False
 
     def r_bank_select(self, mode, usr, fiq, irq, svc, abt, und, mon, hyp):
         if self.bad_mode(mode):
-            print "unpredictable"
-            result = usr
-        else:
-            if mode == "0b10000":
-                result = usr
-            elif mode == "0b10001":
-                result = fiq
-            elif mode == "0b10010":
-                result = irq
-            elif mode == "0b10011":
-                result = svc
-            elif mode == "0b10110":
-                result = mon
-            elif mode == "0b10111":
-                result = abt
-            elif mode == "0b11010":
-                result = hyp
-            elif mode == "0b11011":
-                result = und
-            elif mode == "0b11111":
-                result = usr
-        return result
+            print('unpredictable')
+            return usr
+        if mode == 0b10000:
+            return usr
+        elif mode == 0b10001:
+            return fiq
+        elif mode == 0b10010:
+            return irq
+        elif mode == 0b10011:
+            return svc
+        elif mode == 0b10110:
+            return mon
+        elif mode == 0b10111:
+            return abt
+        elif mode == 0b11010:
+            return hyp
+        elif mode == 0b11011:
+            return und
+        elif mode == 0b11111:
+            return usr
 
     def r_fiq_bank_select(self, mode, usr, fiq):
         return self.r_bank_select(mode, usr, fiq, usr, usr, usr, usr, usr, usr)
 
     def look_up_rname(self, n, mode):
         assert 0 <= n <= 14
-        if n is 0:
-            result = self.RName.RName_0usr
-        elif n is 1:
-            result = self.RName.RName_1usr
-        elif n is 2:
-            result = self.RName.RName_2usr
-        elif n is 3:
-            result = self.RName.RName_3usr
-        elif n is 4:
-            result = self.RName.RName_4usr
-        elif n is 5:
-            result = self.RName.RName_5usr
-        elif n is 6:
-            result = self.RName.RName_6usr
-        elif n is 7:
-            result = self.RName.RName_7usr
-        elif n is 8:
-            result = self.r_fiq_bank_select(mode, self.RName.RName_8usr, self.RName.RName_8fiq)
-        elif n is 9:
-            result = self.r_fiq_bank_select(mode, self.RName.RName_9usr, self.RName.RName_9fiq)
-        elif n is 10:
-            result = self.r_fiq_bank_select(mode, self.RName.RName_10usr, self.RName.RName_10fiq)
-        elif n is 11:
-            result = self.r_fiq_bank_select(mode, self.RName.RName_11usr, self.RName.RName_11fiq)
-        elif n is 12:
-            result = self.r_fiq_bank_select(mode, self.RName.RName_12usr, self.RName.RName_12fiq)
-        elif n is 13:
-            result = self.r_bank_select(mode, self.RName.RName_SPusr, self.RName.RName_SPfiq,
-                                        self.RName.RName_SPirq, self.RName.RName_SPsvc, self.RName.RName_SPabt,
-                                        self.RName.RName_SPund, self.RName.RName_SPmon, self.RName.RName_SPhyp)
-        elif n is 14:
-            result = self.r_bank_select(mode, self.RName.RName_LRusr, self.RName.RName_LRfiq,
-                                        self.RName.RName_LRirq, self.RName.RName_LRsvc, self.RName.RName_LRabt,
-                                        self.RName.RName_LRund, self.RName.RName_LRmon, self.RName.RName_LRusr)
-        return result
+        if n == 0:
+            return RName.R0usr
+        elif n == 1:
+            return RName.R1usr
+        elif n == 2:
+            return RName.R2usr
+        elif n == 3:
+            return RName.R3usr
+        elif n == 4:
+            return RName.R4usr
+        elif n == 5:
+            return RName.R5usr
+        elif n == 6:
+            return RName.R6usr
+        elif n == 7:
+            return RName.R7usr
+        elif n == 8:
+            return self.r_fiq_bank_select(mode, RName.R8usr, RName.R8fiq)
+        elif n == 9:
+            return self.r_fiq_bank_select(mode, RName.R9usr, RName.R9fiq)
+        elif n == 10:
+            return self.r_fiq_bank_select(mode, RName.R10usr, RName.R10fiq)
+        elif n == 11:
+            return self.r_fiq_bank_select(mode, RName.R11usr, RName.R11fiq)
+        elif n == 12:
+            return self.r_fiq_bank_select(mode, RName.R12usr, RName.R12fiq)
+        elif n == 13:
+            return self.r_bank_select(mode, RName.SPusr, RName.SPfiq, RName.SPirq, RName.SPsvc, RName.SPabt,
+                                      RName.SPund, RName.SPmon, RName.SPhyp)
+        elif n == 14:
+            return self.r_bank_select(mode, RName.LRusr, RName.LRfiq, RName.LRirq, RName.LRsvc, RName.LRabt,
+                                      RName.LRund, RName.LRmon, RName.LRusr)
 
     def get_rmode(self, n, mode):
         assert 0 <= n <= 14
-        if not self.is_secure() and mode == "0b10110":
-            print "unpredictable"
-        if not self.is_secure() and mode == "0b10001" and self.nsacr.get_rfr():
-            print "unpredictable"
+        if not self.is_secure() and mode == 0b10110:
+            print('unpredictable')
+        if not self.is_secure() and mode == 0b10001 and self.nsacr.rfr:
+            print('unpredictable')
         return self._R[self.look_up_rname(n, mode)]
 
     def set_rmode(self, n, mode, value):
         assert 0 <= n <= 14
-        if not self.is_secure() and mode == "0b10110":
-            print "unpredictable"
-        if not self.is_secure() and mode == "0b10001" and self.nsacr.get_rfr():
-            print "unpredictable"
-        if n == 13 and value[30:32] != "0b00" and self.current_instr_set() != InstrSet.InstrSet_ARM:
-            print "unpredictable"
+        if not self.is_secure() and mode == 0b10110:
+            print('unpredictable')
+        if not self.is_secure() and mode == 0b10001 and self.nsacr.rfr:
+            print('unpredictable')
+        if n == 13 and bits_ops.lower_chunk(value, 2) != 0b00 and self.current_instr_set() != InstrSet.ARM:
+            print('unpredictable')
         self._R[self.look_up_rname(n, mode)] = value
 
     def get(self, n):
         assert 0 <= n <= 15
         if n == 15:
-            offset = "1000" if (self.current_instr_set() == InstrSet.InstrSet_ARM) else "100"
-            result = bits_ops.add(self._R[self.RName.RName_PC], BitArray(bin=offset), 32)
+            offset = 8 if (self.current_instr_set() == InstrSet.ARM) else 4
+            result = bits_ops.add(self._R[RName.PC], offset, 32)
         else:
-            result = self.get_rmode(n, self.cpsr.get_m())
+            result = self.get_rmode(n, self.cpsr.m)
         return result
 
     def set(self, n, value):
         assert 0 <= n <= 14
         self.changed_registers[n] = True
-        self.set_rmode(n, self.cpsr.get_m(), value)
+        self.set_rmode(n, self.cpsr.m, value)
 
     def get_sp(self):
         return self.get(13)
@@ -404,120 +406,116 @@ class Registers:
 
     def branch_to(self, address):
         self.changed_registers[15] = True
-        self._R[self.RName.RName_PC] = address
+        self._R[RName.PC] = address
 
     def get_spsr(self):
-        if self.bad_mode(self.cpsr.get_m()):
-            print "unpredictable"
-            result = BitArray(length=32)
-        else:
-            result = BitArray(length=32)
-            if self.cpsr.get_m() == "0b10001":
-                result = self.spsr_fiq
-            elif self.cpsr.get_m() == "0b10010":
-                result = self.spsr_irq
-            elif self.cpsr.get_m() == "0b10011":
-                result = self.spsr_svc
-            elif self.cpsr.get_m() == "0b10110":
-                result = self.spsr_mon
-            elif self.cpsr.get_m() == "0b10111":
-                result = self.spsr_abt
-            elif self.cpsr.get_m() == "0b11010":
-                result = self.spsr_hyp
-            elif self.cpsr.get_m() == "0b11011":
-                result = self.spsr_und
-            else:
-                print "unpredictable"
-        return result
+        if self.bad_mode(self.cpsr.m):
+            print('unpredictable')
+            return 0x00000000
+        if self.cpsr.m == 0b10001:
+            return self.spsr_fiq
+        elif self.cpsr.m == 0b10010:
+            return self.spsr_irq
+        elif self.cpsr.m == 0b10011:
+            return self.spsr_svc
+        elif self.cpsr.m == 0b10110:
+            return self.spsr_mon
+        elif self.cpsr.m == 0b10111:
+            return self.spsr_abt
+        elif self.cpsr.m == 0b11010:
+            return self.spsr_hyp
+        elif self.cpsr.m == 0b11011:
+            return self.spsr_und
+        print('unpredictable')
+        return 0x00000000
 
     def set_spsr(self, value):
-        if self.bad_mode(self.cpsr.get_m()):
-            print "unpredictable"
+        if self.bad_mode(self.cpsr.m):
+            print('unpredictable')
         else:
-            if self.cpsr.get_m() == "0b10001":
+            if self.cpsr.m == 0b10001:
                 self.spsr_fiq = value
-            elif self.cpsr.get_m() == "0b10010":
+            elif self.cpsr.m == 0b10010:
                 self.spsr_irq = value
-            elif self.cpsr.get_m() == "0b10011":
+            elif self.cpsr.m == 0b10011:
                 self.spsr_svc = value
-            elif self.cpsr.get_m() == "0b10110":
+            elif self.cpsr.m == 0b10110:
                 self.spsr_mon = value
-            elif self.cpsr.get_m() == "0b10111":
+            elif self.cpsr.m == 0b10111:
                 self.spsr_abt = value
-            elif self.cpsr.get_m() == "0b11010":
+            elif self.cpsr.m == 0b11010:
                 self.spsr_hyp = value
-            elif self.cpsr.get_m() == "0b11011":
+            elif self.cpsr.m == 0b11011:
                 self.spsr_und = value
             else:
-                print "unpredictable"
+                print('unpredictable')
 
     def it_advance(self):
-        if self.cpsr.get_it()[-3:] == "0b000":
-            self.cpsr.set_it(BitArray(bin="0b00000000"))
+        if bits_ops.lower_chunk(self.cpsr.it, 3) == 0b000:
+            self.cpsr.it = 0
         else:
-            itstate = self.cpsr.get_it()
-            mask, carry = shift.lsl_c(itstate[4:], 1)
-            condition_state = BitArray(bool=carry) + mask
-            itstate.overwrite(condition_state, 3)
-            self.cpsr.set_it(itstate)
+            itstate = self.cpsr.it
+            mask, carry = shift.lsl_c(bits_ops.lower_chunk(itstate, 4), 4, 1)
+            condition_state = chain(carry, mask, 4)
+            self.cpsr.it = set_substring(itstate, 4, 0, condition_state)
 
     def cpsr_write_by_instr(self, value, bytemask, is_excp_return):
         privileged = self.current_mode_is_not_user()
-        nmfi = self.sctlr.get_nmfi()
-        if bytemask[0]:
-            self.cpsr.value.overwrite(value[0:5], 0)
+        nmfi = self.sctlr.nmfi
+        if bit_at(bytemask, 3):
+            self.cpsr.value = set_substring(self.cpsr.value, 31, 27, substring(value, 31, 27))
             if is_excp_return:
-                self.cpsr.value.overwrite(value[5:8], 5)
-        if bytemask[1]:
-            self.cpsr.set_ge(value[12:16])
-        if bytemask[2]:
+                self.cpsr.value = set_substring(self.cpsr.value, 26, 24, substring(value, 26, 24))
+        if bit_at(bytemask, 2):
+            self.cpsr.value = set_substring(self.cpsr.value, 19, 16, substring(value, 19, 16))
+        if bit_at(bytemask, 1):
             if is_excp_return:
-                self.cpsr.value.overwrite(value[16:22], 16)
-            self.cpsr.set_e(value[22])
-            if privileged and (self.is_secure() or self.scr.get_aw() or have_virt_ext()):
-                self.cpsr.set_a(value[23])
-        if bytemask[3]:
+                self.cpsr.value = set_substring(self.cpsr.value, 15, 10, substring(value, 15, 10))
+            self.cpsr.value = set_bit_at(self.cpsr.value, 9, bit_at(value, 9))
+            if privileged and (self.is_secure() or self.scr.aw or have_virt_ext()):
+                self.cpsr.value = set_bit_at(self.cpsr.value, 8, bit_at(value, 8))
+        if bit_at(bytemask, 0):
             if privileged:
-                self.cpsr.set_i(value[24])
-            if (privileged and
-                    (not nmfi or not value[25]) and
-                    (self.is_secure() or self.scr.get_fw() or have_virt_ext())):
-                self.cpsr.set_f(value[25])
+                self.cpsr.value = set_bit_at(self.cpsr.value, 7, bit_at(value, 7))
+            if (privileged and (not nmfi or not bit_at(value, 6)) and
+                    (self.is_secure() or self.scr.fw or have_virt_ext())):
+                self.cpsr.value = set_bit_at(self.cpsr.value, 6, bit_at(value, 6))
             if is_excp_return:
-                self.cpsr.set_t(value[26])
+                self.cpsr.value = set_bit_at(self.cpsr.value, 5, bit_at(value, 5))
             if privileged:
-                if self.bad_mode(value[27:]):
-                    print "unpredictable"
+                value_mode = substring(value, 4, 0)
+                if self.bad_mode(value_mode):
+                    print('unpredictable')
                 else:
-                    if not self.is_secure() and value[27:] == "0b10110":
-                        print "unpredictable"
-                    elif not self.is_secure() and value[27:] == "0b10001" and self.nsacr.get_rfr():
-                        print "unpredictable"
-                    elif not self.scr.get_ns() and value[27:] == "0b11010":
-                        print "unpredictable"
-                    elif not self.is_secure() and self.cpsr.get_m() != "0b11010" and value[27:] == "0b11010":
-                        print "unpredictable"
-                    elif self.cpsr.get_m() == "0b11010" and value[27:] != "0b11010" and not is_excp_return:
-                        print "unpredictable"
+                    if not self.is_secure() and value_mode == 0b10110:
+                        print('unpredictable')
+                    elif not self.is_secure() and value_mode == 0b10001 and self.nsacr.rfr:
+                        print('unpredictable')
+                    elif not self.scr.ns and value_mode == 0b11010:
+                        print('unpredictable')
+                    elif not self.is_secure() and self.cpsr.m != 0b11010 and value_mode == 0b11010:
+                        print('unpredictable')
+                    elif self.cpsr.m == 0b11010 and value_mode != 0b11010 and not is_excp_return:
+                        print('unpredictable')
                     else:
-                        self.cpsr.set_m(value[27:32])
+                        self.cpsr.m = value_mode
 
     def spsr_write_by_instr(self, value, bytemask):
         if self.current_mode_is_user_or_system():
-            print "unpredictable"
+            print('unpredictable')
         spsr = self.get_spsr()
-        if bytemask[0]:
-            spsr.overwrite(value[0:5], 0)
-        if bytemask[1]:
-            spsr.overwrite(value[12:16], 12)
-        if bytemask[2]:
-            spsr.overwrite(value[16:24], 16)
-        if bytemask[3]:
-            spsr.overwrite(value[24:27], 24)
-            if self.bad_mode(value[27:]):
-                print "unpredictable"
+        if bit_at(bytemask, 3):
+            spsr = set_substring(spsr, 31, 27, substring(value, 31, 27))
+        if bit_at(bytemask, 2):
+            spsr = set_substring(spsr, 19, 16, substring(value, 19, 16))
+        if bit_at(bytemask, 1):
+            spsr = set_substring(spsr, 15, 8, substring(value, 15, 8))
+        if bit_at(bytemask, 0):
+            spsr = set_substring(spsr, 7, 5, substring(value, 7, 5))
+            if self.bad_mode(substring(value, 4, 0)):
+                print('unpredictable')
             else:
-                spsr.overwrite(value[27:], 27)
+                spsr = set_substring(spsr, 4, 0, substring(value, 4, 0))
         self.set_spsr(spsr)
 
     def is_external_abort(self):
@@ -533,249 +531,245 @@ class Registers:
         return False
 
     def exc_vector_base(self):
-        if self.sctlr.get_v():
-            return BitArray(bin="11111111111111110000000000000000")
+        if self.sctlr.v:
+            return 0xffff0000
         elif have_security_ext():
-            return self.vbar.value.copy()
+            return self.vbar.value
         else:
-            return BitArray(length=32)
+            return 0x00000000
 
     def enter_hyp_mode(self, new_spsr_value, preferred_exceptn_return, vect_offset):
-        self.cpsr.set_m("0b11010")
+        self.cpsr.m = 0b11010
         self.set_spsr(new_spsr_value)
         self.elr_hyp = preferred_exceptn_return
-        self.cpsr.set_j(False)
-        self.cpsr.set_t(self.hsctlr.get_te())
-        self.cpsr.set_e(self.hsctlr.get_ee())
-        if not self.scr.get_ea():
-            self.cpsr.set_a(True)
-        if not self.scr.get_fiq():
-            self.cpsr.set_f(True)
-        if not self.scr.get_irq():
-            self.cpsr.set_i(True)
-        self.cpsr.set_it(BitArray(length=8))
-        self.branch_to(BitArray(uint=(self.hvbar.uint + vect_offset), length=32))
+        self.cpsr.j = 0
+        self.cpsr.t = self.hsctlr.te
+        self.cpsr.e = self.hsctlr.ee
+        if not self.scr.ea:
+            self.cpsr.a = 1
+        if not self.scr.fiq:
+            self.cpsr.f = 1
+        if not self.scr.irq:
+            self.cpsr.i = 1
+        self.cpsr.it = 0b00000000
+        self.branch_to(self.hvbar + vect_offset)
 
     def enter_monitor_mode(self, new_spsr_value, new_lr_value, vect_offset):
-        self.cpsr.set_m("0b10110")
+        self.cpsr.m = 0b10110
         self.set_spsr(new_spsr_value)
         self.set(14, new_lr_value)
-        self.cpsr.set_j(False)
-        self.cpsr.set_t(self.sctlr.get_te())
-        self.cpsr.set_e(self.sctlr.get_ee())
-        self.cpsr.set_a(True)
-        self.cpsr.set_f(True)
-        self.cpsr.set_i(True)
-        self.cpsr.set_it(BitArray(length=8))
-        self.branch_to(BitArray(uint=(self.mvbar.uint + vect_offset), length=32))
+        self.cpsr.j = 0
+        self.cpsr.t = self.sctlr.te
+        self.cpsr.e = self.sctlr.ee
+        self.cpsr.a = 1
+        self.cpsr.f = 1
+        self.cpsr.i = 1
+        self.cpsr.it = 0b00000000
+        self.branch_to(self.mvbar + vect_offset)
 
     def take_hyp_trap_exception(self):
-        preferred_exceptn_return = BitArray(
-                uint=(self.get_pc().uint - 4 if self.cpsr.get_t() else self.get_pc().uint - 8), length=32)
-        new_spsr_value = self.cpsr.value.copy()
+        preferred_exceptn_return = self.get_pc() - 4 if self.cpsr.t else self.get_pc() - 8
+        new_spsr_value = self.cpsr.value
         self.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, 20)
 
     def take_smc_exception(self):
         self.it_advance()
-        new_lr_value = self.get_pc() if self.cpsr.get_t() else BitArray(uint=(self.get_pc().uint - 4), length=32)
-        new_spsr_value = self.cpsr.value.copy()
+        new_lr_value = self.get_pc() if self.cpsr.t else self.get_pc() - 4
+        new_spsr_value = self.cpsr.value
         vect_offset = 8
-        if self.cpsr.get_m() == "0b10110":
-            self.scr.set_ns(False)
+        if self.cpsr.m == 0b10110:
+            self.scr.ns = 0
         self.enter_monitor_mode(new_spsr_value, new_lr_value, vect_offset)
 
     def take_data_abort_exception(self, dabort_exception):
-        new_lr_value = BitArray(uint=self.get_pc().uint + 4, length=32) if self.cpsr.get_t() else self.get_pc()
-        new_spsr_value = self.cpsr.value.copy()
+        new_lr_value = bits_ops.add(self.get_pc(), 4, 32) if self.cpsr.t else self.get_pc()
+        new_spsr_value = self.cpsr.value
         vect_offset = 16
-        preferred_exceptn_return = BitArray(uint=(new_lr_value.uint - 8), length=32)
-        route_to_monitor = have_security_ext() and self.scr.get_ea() and self.is_external_abort()
-        take_to_hyp = have_virt_ext() and have_security_ext() and self.scr.get_ns() and self.cpsr.get_m() == "0b11010"
+        preferred_exceptn_return = bits_ops.sub(new_lr_value, 8, 32)
+        route_to_monitor = have_security_ext() and self.scr.ea and self.is_external_abort()
+        take_to_hyp = have_virt_ext() and have_security_ext() and self.scr.ns and self.cpsr.m == 0b11010
         route_to_hyp = (
-            have_virt_ext() and
-            have_security_ext() and
-            not self.is_secure() and
-            (
-                dabort_exception.second_stage_abort() or
+                have_virt_ext() and
+                have_security_ext() and
+                not self.is_secure() and
                 (
-                    self.cpsr.get_m() != "0b11010" and
-                    (self.is_external_abort() and self.is_async_abort() and self.hcr.get_amo()) or
-                    (self.debug_exception() and self.hdcr.get_tde())
-                ) or
-                (
-                    self.cpsr.get_m() == "0b10000" and
-                    self.hcr.get_tge() and
-                    (dabort_exception.is_alignment_fault() or (self.is_external_abort() and not self.is_async_abort()))
+                        dabort_exception.second_stage_abort() or
+                        (
+                                self.cpsr.m != 0b11010 and
+                                (self.is_external_abort() and self.is_async_abort() and self.hcr.amo) or
+                                (self.debug_exception() and self.hdcr.get_tde())
+                        ) or
+                        (
+                                self.cpsr.m == 0b10000 and
+                                self.hcr.tge and
+                                (dabort_exception.is_alignment_fault() or (
+                                        self.is_external_abort() and not self.is_async_abort()))
+                        )
                 )
-            )
         )
         if route_to_monitor:
-            if self.cpsr.get_m() == "0b10110":
-                self.scr.set_ns(False)
+            if self.cpsr.m == 0b10110:
+                self.scr.ns = 0
             self.enter_monitor_mode(new_spsr_value, new_lr_value, vect_offset)
         elif take_to_hyp:
             self.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, vect_offset)
         elif route_to_hyp:
             self.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, 20)
         else:
-            if have_security_ext() and self.cpsr.get_m() == "0b10110":
-                self.scr.set_ns(False)
-            self.cpsr.set_m("0b10111")
+            if have_security_ext() and self.cpsr.m == 0b10110:
+                self.scr.ns = 0
+            self.cpsr.m = 0b10111
             self.set_spsr(new_spsr_value)
             self.set(14, new_lr_value)
-            self.cpsr.set_i(True)
-            if not have_security_ext() or have_virt_ext() or not self.scr.get_ns() or self.scr.get_aw():
-                self.cpsr.set_a(True)
-            self.cpsr.set_it(BitArray(length=8))
-            self.cpsr.set_j(False)
-            self.cpsr.set_t(self.sctlr.get_te())
-            self.cpsr.set_e(self.sctlr.get_ee())
-            self.branch_to(BitArray(uint=(self.exc_vector_base().uint + vect_offset), length=32))
+            self.cpsr.i = 1
+            if not have_security_ext() or have_virt_ext() or not self.scr.ns or self.scr.aw:
+                self.cpsr.a = 1
+            self.cpsr.it = 0b00000000
+            self.cpsr.j = 0
+            self.cpsr.t = self.sctlr.te
+            self.cpsr.e = self.sctlr.ee
+            self.branch_to(bits_ops.add(self.exc_vector_base(), vect_offset, 32))
 
     def take_undef_instr_exception(self):
-        new_lr_value = (BitArray(uint=(self.get_pc().uint - 2), length=32)
-                        if self.cpsr.get_t()
-                        else BitArray(uint=(self.get_pc().uint - 4), length=32))
-        new_spsr_value = self.cpsr.value.copy()
+        new_lr_value = bits_ops.sub(self.get_pc(), 2, 32) if self.cpsr.t else bits_ops.sub(self.get_pc(), 4, 32)
+        new_spsr_value = self.cpsr.value
         vect_offset = 4
-        take_to_hyp = have_virt_ext() and have_security_ext() and self.scr.get_ns() and self.cpsr.get_m() == "0b11010"
+        take_to_hyp = have_virt_ext() and have_security_ext() and self.scr.ns and self.cpsr.m == 0b11010
         route_to_hyp = (have_virt_ext() and
                         have_security_ext() and
                         not self.is_secure() and
-                        self.hcr.get_tge() and
-                        self.cpsr.get_m() == "0b10000")
-        return_offset = 2 if self.cpsr.get_t() else 4
-        preferred_exceptn_return = BitArray(uint=(new_lr_value.uint - return_offset), length=32)
+                        self.hcr.tge and
+                        self.cpsr.m == 0b10000)
+        return_offset = 2 if self.cpsr.t else 4
+        preferred_exceptn_return = bits_ops.sub(new_lr_value, return_offset, 32)
         if take_to_hyp:
             self.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, vect_offset)
         elif route_to_hyp:
             self.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, 20)
         else:
-            if self.cpsr.get_m() == "0b10110":
-                self.scr.set_ns(False)
-            self.cpsr.set_m("0b11011")
+            if self.cpsr.m == 0b10110:
+                self.scr.ns = 0
+            self.cpsr.m = 0b11011
             self.set_spsr(new_spsr_value)
             self.set(14, new_lr_value)
-            self.cpsr.set_i(True)
-            self.cpsr.set_it(BitArray(length=8))
-            self.cpsr.set_j(False)
-            self.cpsr.set_t(self.sctlr.get_te())
-            self.cpsr.set_e(self.sctlr.get_ee())
-            self.branch_to(BitArray(uint=(self.exc_vector_base().uint + vect_offset), length=32))
+            self.cpsr.i = 1
+            self.cpsr.it = 0b00000000
+            self.cpsr.j = 0
+            self.cpsr.t = self.sctlr.te
+            self.cpsr.e = self.sctlr.ee
+            self.branch_to(bits_ops.add(self.exc_vector_base(), vect_offset, 32))
 
     def take_svc_exception(self):
         self.it_advance()
-        new_lr_value = (bits_ops.sub(self.get_pc(), BitArray(bin="10"), 32)
-                        if self.cpsr.get_t()
-                        else bits_ops.sub(self.get_pc(), BitArray(bin="100"), 32))
-        new_spsr_value = self.cpsr.value.copy()
+        new_lr_value = bits_ops.sub(self.get_pc(), 2, 32) if self.cpsr.t else bits_ops.sub(self.get_pc(), 4, 32)
+        new_spsr_value = self.cpsr.value
         vect_offset = 8
-        take_to_hyp = have_virt_ext() and have_security_ext() and self.scr.get_ns() and self.cpsr.get_m() == "0b11010"
+        take_to_hyp = have_virt_ext() and have_security_ext() and self.scr.ns and self.cpsr.m == 0b11010
         route_to_hyp = (have_virt_ext() and
                         have_security_ext() and
                         not self.is_secure() and
-                        self.hcr.get_tge() and
-                        self.cpsr.get_m() == "0b10000")
+                        self.hcr.tge and
+                        self.cpsr.m == 0b10000)
         preferred_exceptn_return = new_lr_value
         if take_to_hyp:
             self.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, vect_offset)
         elif route_to_hyp:
             self.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, 20)
         else:
-            if self.cpsr.get_m() == "0b10110":
-                self.scr.set_ns(False)
-            self.cpsr.set_m("0b10011")
+            if self.cpsr.m == 0b10110:
+                self.scr.ns = 0
+            self.cpsr.m = 0b10011
             self.set_spsr(new_spsr_value)
             self.set(14, new_lr_value)
-            self.cpsr.set_i(True)
-            self.cpsr.set_it(BitArray(length=8))
-            self.cpsr.set_j(False)
-            self.cpsr.set_t(self.sctlr.get_te())
-            self.cpsr.set_e(self.sctlr.get_ee())
-            self.branch_to(bits_ops.add(self.exc_vector_base(), BitArray(uint=vect_offset, length=32), 32))
+            self.cpsr.i = 1
+            self.cpsr.it = 0b00000000
+            self.cpsr.j = 0
+            self.cpsr.t = self.sctlr.te
+            self.cpsr.e = self.sctlr.ee
+            self.branch_to(bits_ops.add(self.exc_vector_base(), vect_offset, 32))
 
     def take_physical_irq_exception(self):
-        new_lr_value = self.get_pc() if self.cpsr.get_t() else bits_ops.sub(self.get_pc(), BitArray(bin="100"), 32)
-        new_spsr_value = self.cpsr.value.copy()
+        new_lr_value = self.get_pc() if self.cpsr.t else bits_ops.sub(self.get_pc(), 4, 32)
+        new_spsr_value = self.cpsr.value
         vect_offset = 24
-        route_to_monitor = have_security_ext() and self.scr.get_irq()
+        route_to_monitor = have_security_ext() and self.scr.irq
         route_to_hyp = (
-            (have_virt_ext() and
-             have_security_ext() and
-             not self.scr.get_irq() and
-             self.hcr.get_imo() and
-             not self.is_secure()) or
-            self.cpsr.get_m() == "0b11010"
+                (have_virt_ext() and
+                 have_security_ext() and
+                 not self.scr.irq and
+                 self.hcr.imo and
+                 not self.is_secure()) or
+                self.cpsr.m == 0b11010
         )
         if route_to_monitor:
-            if self.cpsr.get_m() == "0b10110":
-                self.scr.set_ns(False)
+            if self.cpsr.m == 0b10110:
+                self.scr.ns = 0
             self.enter_monitor_mode(new_spsr_value, new_lr_value, vect_offset)
         elif route_to_hyp:
-            self.hsr.value = BitArray(length=32)  # unknown
-            preferred_exceptn_return = bits_ops.sub(new_lr_value, BitArray(bin="100"), 32)
+            self.hsr.value = 0x00000000  # unknown
+            preferred_exceptn_return = bits_ops.sub(new_lr_value, 4, 32)
             self.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, vect_offset)
         else:
-            if self.cpsr.get_m() == "0b10110":
-                self.scr.set_ns(False)
-            self.cpsr.set_m("0b10010")
+            if self.cpsr.m == 0b10110:
+                self.scr.ns = 0
+            self.cpsr.m = 0b10010
             self.set_spsr(new_spsr_value)
             self.set(14, new_lr_value)
-            self.cpsr.set_i(True)
-            if not have_security_ext() or have_virt_ext() or not self.scr.get_ns() or self.scr.get_aw():
-                self.cpsr.set_a(True)
-            self.cpsr.set_it(BitArray(length=8))
-            self.cpsr.set_j(False)
-            self.cpsr.set_t(self.sctlr.get_te())
-            self.cpsr.set_e(self.sctlr.get_ee())
-            if self.sctlr.get_ve():
-                self.branch_to(BitArray(hex=configurations.impdef_irq_vector))
+            self.cpsr.i = 1
+            if not have_security_ext() or have_virt_ext() or not self.scr.ns or self.scr.aw:
+                self.cpsr.a = 1
+            self.cpsr.it = 0b00000000
+            self.cpsr.j = 0
+            self.cpsr.t = self.sctlr.te
+            self.cpsr.e = self.sctlr.ee
+            if self.sctlr.ve:
+                self.branch_to(configurations.impdef_irq_vector)
             else:
-                self.branch_to(bits_ops.add(self.exc_vector_base(), BitArray(uint=vect_offset, length=32), 32))
+                self.branch_to(bits_ops.add(self.exc_vector_base(), vect_offset, 32))
 
     def take_physical_fiq_exception(self):
-        new_lr_value = self.get_pc() if self.cpsr.get_t() else bits_ops.sub(self.get_pc(), BitArray(bin="100"), 32)
-        new_spsr_value = self.cpsr.value.copy()
+        new_lr_value = self.get_pc() if self.cpsr.t else bits_ops.sub(self.get_pc(), 4, 32)
+        new_spsr_value = self.cpsr.value
         vect_offset = 28
-        route_to_monitor = have_security_ext() and self.scr.get_fiq()
+        route_to_monitor = have_security_ext() and self.scr.fiq
         route_to_hyp = (
-            (have_virt_ext() and
-             have_security_ext() and
-             not self.scr.get_fiq() and
-             self.hcr.get_fmo() and
-             not self.is_secure()) or
-            self.cpsr.get_m() == "0b11010"
+                (have_virt_ext() and
+                 have_security_ext() and
+                 not self.scr.fiq and
+                 self.hcr.fmo and
+                 not self.is_secure()) or
+                self.cpsr.m == 0b11010
         )
         if route_to_monitor:
-            if self.cpsr.get_m() == "0b10110":
-                self.scr.set_ns(False)
+            if self.cpsr.m == 0b10110:
+                self.scr.ns = 0
             self.enter_monitor_mode(new_spsr_value, new_lr_value, vect_offset)
         elif route_to_hyp:
-            self.hsr.value = BitArray(length=32)  # unknown
-            preferred_exceptn_return = bits_ops.sub(new_lr_value, BitArray(bin="100"), 32)
+            self.hsr.value = 0x00000000  # unknown
+            preferred_exceptn_return = bits_ops.sub(new_lr_value, 4, 32)
             self.enter_hyp_mode(new_spsr_value, preferred_exceptn_return, vect_offset)
         else:
-            if self.cpsr.get_m() == "0b10110":
-                self.scr.set_ns(False)
-            self.cpsr.set_m("0b10001")
+            if self.cpsr.m == 0b10110:
+                self.scr.ns = 0
+            self.cpsr.m = 0b10001
             self.set_spsr(new_spsr_value)
             self.set(14, new_lr_value)
-            self.cpsr.set_i(True)
-            if not have_security_ext() or have_virt_ext() or not self.scr.get_ns() or self.scr.get_fw():
-                self.cpsr.set_f(True)
-            if not have_security_ext() or have_virt_ext() or not self.scr.get_ns() or self.scr.get_aw():
-                self.cpsr.set_a(True)
-            self.cpsr.set_it(BitArray(length=8))
-            self.cpsr.set_j(False)
-            self.cpsr.set_t(self.sctlr.get_te())
-            self.cpsr.set_e(self.sctlr.get_ee())
-            if self.sctlr.get_ve():
-                self.branch_to(BitArray(hex=configurations.impdef_fiq_vector))
+            self.cpsr.i = 1
+            if not have_security_ext() or have_virt_ext() or not self.scr.ns or self.scr.fw:
+                self.cpsr.f = 1
+            if not have_security_ext() or have_virt_ext() or not self.scr.ns or self.scr.aw:
+                self.cpsr.a = 1
+            self.cpsr.it = 0b00000000
+            self.cpsr.j = 0
+            self.cpsr.t = self.sctlr.te
+            self.cpsr.e = self.sctlr.ee
+            if self.sctlr.ve:
+                self.branch_to(configurations.impdef_fiq_vector)
             else:
-                self.branch_to(bits_ops.add(self.exc_vector_base(), BitArray(uint=vect_offset, length=32), 32))
+                self.branch_to(bits_ops.add(self.exc_vector_base(), vect_offset, 32))
 
     def increment_pc(self, opcode_length):
-        self._R[self.RName.RName_PC] = bits_ops.add(self._R[self.RName.RName_PC], BitArray(bin=bin(opcode_length)), 32)
+        self._R[RName.PC] = bits_ops.add(self._R[RName.PC], opcode_length, 32)
 
     def reset_control_registers(self):
-        self.vbar.value = BitArray(bin=configurations.reset_values["VBAR"])
+        self.vbar = VBAR()

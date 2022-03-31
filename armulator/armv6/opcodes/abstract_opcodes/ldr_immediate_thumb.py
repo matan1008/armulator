@@ -1,12 +1,11 @@
-from armulator.armv6.bits_ops import add as bits_add, sub as bits_sub
-from bitstring import BitArray
 from armulator.armv6.arm_exceptions import EndOfInstruction
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
+from armulator.armv6.bits_ops import add as bits_add, sub as bits_sub, chain, lower_chunk
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class LdrImmediateThumb(AbstractOpcode):
-    def __init__(self, add, wback, index, t, n, imm32):
-        super(LdrImmediateThumb, self).__init__()
+class LdrImmediateThumb(Opcode):
+    def __init__(self, instruction, add, wback, index, t, n, imm32):
+        super().__init__(instruction)
         self.add = add
         self.wback = wback
         self.index = index
@@ -28,17 +27,17 @@ class LdrImmediateThumb(AbstractOpcode):
                 if self.wback:
                     processor.registers.set(self.n, offset_addr)
                 if self.t == 15:
-                    if address[30:32] == "0b00":
+                    if lower_chunk(address, 2) == 0b00:
                         processor.load_write_pc(data)
                     else:
-                        print "unpredictable"
-                elif processor.unaligned_support() or address[30:32] == "0b00":
+                        print('unpredictable')
+                elif processor.unaligned_support() or lower_chunk(address, 2) == 0b00:
                     processor.registers.set(self.t, data)
                 else:
-                    processor.registers.set(self.t, BitArray(length=32))  # unknown
+                    processor.registers.set(self.t, 0x00000000)  # unknown
 
     def instruction_syndrome(self):
         if self.t == 15 or self.wback:
-            return BitArray(length=9)
+            return 0b000000000
         else:
-            return BitArray(bin="11000") + BitArray(uint=self.t, length=4)
+            return chain(0b11000, self.t, 4)

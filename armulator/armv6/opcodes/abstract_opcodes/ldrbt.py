@@ -1,13 +1,12 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
-from armulator.armv6.bits_ops import add as bits_add, sub as bits_sub, zero_extend
 from armulator.armv6.arm_exceptions import EndOfInstruction
-from armulator.armv6.shift import shift
-from bitstring import BitArray
+from armulator.armv6.bits_ops import add as bits_add, sub as bits_sub, chain
+from armulator.armv6.opcodes.opcode import Opcode
+from armulator.armv6.shift import shift, SRType
 
 
-class Ldrbt(AbstractOpcode):
-    def __init__(self, add, register_form, post_index, t, n, m="", shift_t="", shift_n="", imm32=""):
-        super(Ldrbt, self).__init__()
+class Ldrbt(Opcode):
+    def __init__(self, instruction, add, register_form, post_index, t, n, m=0, shift_t=SRType.LSL, shift_n=0, imm32=0):
+        super().__init__(instruction)
         self.add = add
         self.register_form = register_form
         self.post_index = post_index
@@ -21,24 +20,24 @@ class Ldrbt(AbstractOpcode):
     def execute(self, processor):
         if processor.condition_passed():
             if processor.registers.current_mode_is_hyp():
-                print "unpredictable"
+                print('unpredictable')
             else:
                 try:
                     processor.null_check_if_thumbee(self.n)
                 except EndOfInstruction:
                     pass
                 else:
-                    offset = shift(processor.registers.get(self.m), self.shift_t, self.shift_n,
-                                   processor.registers.cpsr.get_c()) if self.register_form else self.imm32
+                    offset = shift(processor.registers.get(self.m), 32, self.shift_t, self.shift_n,
+                                   processor.registers.cpsr.c) if self.register_form else self.imm32
                     offset_addr = bits_add(processor.registers.get(self.n), offset, 32) if self.add else bits_sub(
                         processor.registers.get(self.n), offset, 32)
                     address = processor.registers.get(self.n) if self.post_index else offset_addr
-                    processor.registers.set(self.t, zero_extend(processor.mem_u_unpriv_get(address, 1), 32))
+                    processor.registers.set(self.t, processor.mem_u_unpriv_get(address, 1))
                     if self.post_index:
                         processor.registers.set(self.n, offset_addr)
 
     def instruction_syndrome(self):
         if self.t == 15:
-            return BitArray(length=9)
+            return 0b000000000
         else:
-            return BitArray(bin="10000") + BitArray(uint=self.t, length=4)
+            return chain(0b10000, self.t, 4)

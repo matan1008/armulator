@@ -1,12 +1,11 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
-from armulator.armv6.bits_ops import add
-from bitstring import BitArray
 from armulator.armv6.arm_exceptions import EndOfInstruction
+from armulator.armv6.bits_ops import add, bit_at, substring, bit_count
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class PopThumb(AbstractOpcode):
-    def __init__(self, registers, unaligned_allowed):
-        super(PopThumb, self).__init__()
+class PopThumb(Opcode):
+    def __init__(self, instruction, registers, unaligned_allowed):
+        super().__init__(instruction)
         self.registers = registers
         self.unaligned_allowed = unaligned_allowed
 
@@ -18,26 +17,25 @@ class PopThumb(AbstractOpcode):
                 pass
             else:
                 address = processor.registers.get_sp()
-                for i in xrange(15):
-                    if self.registers[15 - i]:
+                for i in range(15):
+                    if bit_at(self.registers, i):
                         processor.registers.set(
-                                i,
-                                (processor.mem_u_get(address, 4)
-                                 if self.unaligned_allowed
-                                 else processor.mem_a_get(address, 4))
+                            i,
+                            (processor.mem_u_get(address, 4) if self.unaligned_allowed else processor.mem_a_get(address,
+                                                                                                                4))
                         )
-                        address = add(address, BitArray(bin="100"), 32)
-                if self.registers[0]:
+                        address = add(address, 4, 32)
+                if bit_at(self.registers, 15):
                     if self.unaligned_allowed:
-                        if address[30:32] == "0b00":
+                        if substring(address, 1, 0) == 0b00:
                             processor.load_write_pc(processor.mem_u_get(address, 4))
                         else:
-                            print "unpredictable"
+                            print('unpredictable')
                     else:
                         processor.load_write_pc(processor.mem_a_get(address, 4))
-                if not self.registers[2]:
-                    processor.registers.set_sp(
-                            add(processor.registers.get_sp(),
-                                BitArray(uint=(4 * self.registers.count(1)), length=32), 32))
-                if self.registers[2]:
-                    processor.registers.set_sp(BitArray(length=32))  # unknown
+                if not bit_at(self.registers, 13):
+                    processor.registers.set_sp(add(
+                        processor.registers.get_sp(), 4 * bit_count(self.registers, 1, 16), 32
+                    ))
+                if bit_at(self.registers, 13):
+                    processor.registers.set_sp(0x00000000)  # unknown

@@ -1,10 +1,10 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
-from bitstring import BitArray
+from armulator.armv6.bits_ops import substring, set_substring, to_signed, to_unsigned
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class Smlalxy(AbstractOpcode):
-    def __init__(self, m_high, n_high, m, d_hi, d_lo, n):
-        super(Smlalxy, self).__init__()
+class Smlalxy(Opcode):
+    def __init__(self, instruction, m_high, n_high, m, d_hi, d_lo, n):
+        super().__init__(instruction)
         self.m_high = m_high
         self.n_high = n_high
         self.m = m
@@ -14,11 +14,13 @@ class Smlalxy(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            operand1 = processor.registers.get(self.n)[0:16] if self.n_high else processor.registers.get(
-                    self.n)[16:]
-            operand2 = processor.registers.get(self.m)[0:16] if self.m_high else processor.registers.get(
-                    self.m)[16:]
-            d_total = (processor.registers.get(self.d_hi) + processor.registers.get(self.d_lo)).int
-            result = operand1.int * operand2.int + d_total
-            processor.registers.set(self.d_hi, BitArray(int=result, length=64)[0:32])
-            processor.registers.set(self.d_lo, BitArray(int=result, length=64)[32:64])
+            n = processor.registers.get(self.n)
+            operand1 = substring(n, 31, 16) if self.n_high else substring(n, 15, 0)
+            m = processor.registers.get(self.m)
+            operand2 = substring(m, 31, 16) if self.m_high else substring(m, 15, 0)
+            d_total = to_signed(
+                set_substring(processor.registers.get(self.d_lo), 63, 32, processor.registers.get(self.d_hi)), 64
+            )
+            result = to_unsigned(to_signed(operand1, 16) * to_signed(operand2, 16) + d_total, 64)
+            processor.registers.set(self.d_hi, substring(result, 63, 32))
+            processor.registers.set(self.d_lo, substring(result, 31, 0))

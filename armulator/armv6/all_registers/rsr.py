@@ -6,26 +6,27 @@ class RSR(AbstractRegister):
     Region Size and Enable Register
     """
 
-    def __init__(self):
-        super(RSR, self).__init__()
+    def get_sd_n(self, n):
+        return self[8 + n]
 
     def set_sd_n(self, n, flag):
-        self.value[23 - n] = flag
+        self[8 + n] = flag
 
-    def get_sd_n(self, n):
-        return self.value[23 - n]
+    @property
+    def rsize(self):
+        return self[5:1]
 
-    def set_rsize(self, rsize):
-        self.value[26:31] = rsize
+    @rsize.setter
+    def rsize(self, rsize):
+        self[5:1] = rsize
 
-    def get_rsize(self):
-        return self.value[26:31]
+    @property
+    def en(self):
+        return self[0]
 
-    def set_en(self, flag):
-        self.value[31] = flag
-
-    def get_en(self):
-        return self.value[31]
+    @en.setter
+    def en(self, flag):
+        self[0] = flag
 
 
 class DRSR(RSR):

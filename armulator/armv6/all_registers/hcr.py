@@ -6,151 +6,194 @@ class HCR(AbstractRegister):
     Hyp Configuration Register
     """
 
-    def __init__(self):
-        super(HCR, self).__init__()
+    @property
+    def tge(self):
+        return self[27]
 
-    def set_tge(self, flag):
-        self.value[4] = flag
+    @tge.setter
+    def tge(self, flag):
+        self[27] = flag
 
-    def get_tge(self):
-        return self.value[4]
+    @property
+    def tvm(self):
+        return self[26]
 
-    def set_tvm(self, flag):
-        self.value[5] = flag
+    @tvm.setter
+    def tvm(self, flag):
+        self[26] = flag
 
-    def get_tvm(self):
-        return self.value[5]
+    @property
+    def ttlb(self):
+        return self[25]
 
-    def set_ttlb(self, flag):
-        self.value[6] = flag
+    @ttlb.setter
+    def ttlb(self, flag):
+        self[25] = flag
 
-    def get_ttlb(self):
-        return self.value[6]
+    @property
+    def tpu(self):
+        return self[24]
 
-    def set_tpu(self, flag):
-        self.value[7] = flag
+    @tpu.setter
+    def tpu(self, flag):
+        self[24] = flag
 
-    def get_tpu(self):
-        return self.value[7]
+    @property
+    def tpc(self):
+        return self[23]
 
-    def set_tpc(self, flag):
-        self.value[8] = flag
+    @tpc.setter
+    def tpc(self, flag):
+        self[23] = flag
 
-    def get_tpc(self):
-        return self.value[8]
+    @property
+    def tsw(self):
+        return self[22]
 
-    def set_tsw(self, flag):
-        self.value[9] = flag
+    @tsw.setter
+    def tsw(self, flag):
+        self[22] = flag
 
-    def get_tsw(self):
-        return self.value[9]
+    @property
+    def tac(self):
+        return self[21]
 
-    def set_tac(self, flag):
-        self.value[10] = flag
+    @tac.setter
+    def tac(self, flag):
+        self[21] = flag
 
-    def get_tac(self):
-        return self.value[10]
+    @property
+    def tidcp(self):
+        return self[20]
 
-    def set_tidcp(self, flag):
-        self.value[11] = flag
+    @tidcp.setter
+    def tidcp(self, flag):
+        self[20] = flag
 
-    def get_tidcp(self):
-        return self.value[11]
+    @property
+    def tsc(self):
+        return self[19]
 
-    def set_tsc(self, flag):
-        self.value[12] = flag
-
-    def get_tsc(self):
-        return self.value[12]
+    @tsc.setter
+    def tsc(self, flag):
+        self[19] = flag
 
     def set_tid_n(self, n, flag):
         assert 0 <= n < 4
-        self.value[16 - n] = flag
+        self[15 + n] = flag
 
     def get_tid_n(self, n):
         assert 0 <= n < 4
-        return self.value[16 - n]
+        return self[15 + n]
 
-    def set_twe(self, flag):
-        self.value[17] = flag
+    @property
+    def twe(self):
+        return self[14]
 
-    def get_twe(self):
-        return self.value[17]
+    @twe.setter
+    def twe(self, flag):
+        self[14] = flag
 
-    def set_twi(self, flag):
-        self.value[18] = flag
+    @property
+    def twi(self):
+        return self[13]
 
-    def get_twi(self):
-        return self.value[18]
+    @twi.setter
+    def twi(self, flag):
+        self[13] = flag
 
-    def set_dc(self, flag):
-        self.value[19] = flag
+    @property
+    def dc(self):
+        return self[12]
 
-    def get_dc(self):
-        return self.value[19]
+    @dc.setter
+    def dc(self, flag):
+        self[12] = flag
 
-    def set_bsu(self, bsu):
-        self.value[20:22] = bsu
+    @property
+    def bsu(self):
+        return self[11:10]
 
-    def get_bsu(self):
-        return self.value[20:22]
+    @bsu.setter
+    def bsu(self, bsu):
+        self[11:10] = bsu
 
-    def set_fb(self, flag):
-        self.value[22] = flag
+    @property
+    def fb(self):
+        return self[9]
 
-    def get_fb(self):
-        return self.value[22]
+    @fb.setter
+    def fb(self, flag):
+        self[9] = flag
 
-    def set_va(self, flag):
-        self.value[23] = flag
+    @property
+    def va(self):
+        return self[8]
 
-    def get_va(self):
-        return self.value[23]
+    @va.setter
+    def va(self, flag):
+        self[8] = flag
 
-    def set_vi(self, flag):
-        self.value[24] = flag
+    @property
+    def vi(self):
+        return self[7]
 
-    def get_vi(self):
-        return self.value[24]
+    @vi.setter
+    def vi(self, flag):
+        self[7] = flag
 
-    def set_vf(self, flag):
-        self.value[25] = flag
+    @property
+    def vf(self):
+        return self[6]
 
-    def get_vf(self):
-        return self.value[25]
+    @vf.setter
+    def vf(self, flag):
+        self[6] = flag
 
-    def set_amo(self, flag):
-        self.value[26] = flag
+    @property
+    def amo(self):
+        return self[5]
 
-    def get_amo(self):
-        return self.value[26]
+    @amo.setter
+    def amo(self, flag):
+        self[5] = flag
 
-    def set_imo(self, flag):
-        self.value[27] = flag
+    @property
+    def imo(self):
+        return self[4]
 
-    def get_imo(self):
-        return self.value[27]
+    @imo.setter
+    def imo(self, flag):
+        self[4] = flag
 
-    def set_fmo(self, flag):
-        self.value[28] = flag
+    @property
+    def fmo(self):
+        return self[3]
 
-    def get_fmo(self):
-        return self.value[28]
+    @fmo.setter
+    def fmo(self, flag):
+        self[3] = flag
 
-    def set_ptw(self, flag):
-        self.value[29] = flag
+    @property
+    def ptw(self):
+        return self[2]
 
-    def get_ptw(self):
-        return self.value[29]
+    @ptw.setter
+    def ptw(self, flag):
+        self[2] = flag
 
-    def set_swio(self, flag):
-        self.value[30] = flag
+    @property
+    def swio(self):
+        return self[1]
 
-    def get_swio(self):
-        return self.value[30]
+    @swio.setter
+    def swio(self, flag):
+        self[1] = flag
 
-    def set_vm(self, flag):
-        self.value[31] = flag
+    @property
+    def vm(self):
+        return self[0]
 
-    def get_vm(self):
-        return self.value[31]
+    @vm.setter
+    def vm(self, flag):
+        self[0] = flag

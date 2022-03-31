@@ -6,23 +6,26 @@ class HSR(AbstractRegister):
     Hyp Syndrome Register
     """
 
-    def __init__(self):
-        super(HSR, self).__init__()
+    @property
+    def ec(self):
+        return self[31:26]
 
-    def set_ec(self, ec):
-        self.value[0:6] = ec
+    @ec.setter
+    def ec(self, ec):
+        self[31:26] = ec
 
-    def get_ec(self):
-        return self.value[0:6]
+    @property
+    def il(self):
+        return self[25]
 
-    def set_il(self, flag):
-        self.value[6] = flag
+    @il.setter
+    def il(self, flag):
+        self[25] = flag
 
-    def get_il(self):
-        return self.value[6]
+    @property
+    def iss(self):
+        return self[24:0]
 
-    def set_iss(self, iss):
-        self.value[7:32] = iss
-
-    def get_iss(self):
-        return self.value[7:32]
+    @iss.setter
+    def iss(self, iss):
+        self[24:0] = iss

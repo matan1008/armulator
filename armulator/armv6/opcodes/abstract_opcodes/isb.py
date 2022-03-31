@@ -1,9 +1,9 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class Isb(AbstractOpcode):
-    def __init__(self):
-        super(Isb, self).__init__()
+class Isb(Opcode):
+    def __init__(self, instruction):
+        super().__init__(instruction)
 
     def execute(self, processor):
         if processor.condition_passed():

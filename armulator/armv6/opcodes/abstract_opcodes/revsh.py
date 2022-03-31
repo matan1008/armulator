@@ -1,15 +1,16 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
-from armulator.armv6.bits_ops import sign_extend
+from armulator.armv6.bits_ops import sign_extend, lower_chunk, substring, set_substring
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class Revsh(AbstractOpcode):
-    def __init__(self, m, d):
-        super(Revsh, self).__init__()
+class Revsh(Opcode):
+    def __init__(self, instruction, m, d):
+        super().__init__(instruction)
         self.m = m
         self.d = d
 
     def execute(self, processor):
         if processor.condition_passed():
-            result = sign_extend(processor.registers.get(self.m)[24:32], 24)
-            result += processor.registers.get(self.m)[16:24]
+            m = processor.registers.get(self.m)
+            result = set_substring(0, 31, 8, sign_extend(lower_chunk(m, 8), 8, 24))
+            result = set_substring(result, 7, 0, substring(m, 15, 8))
             processor.registers.set(self.d, result)

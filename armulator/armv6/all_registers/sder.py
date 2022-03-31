@@ -6,17 +6,18 @@ class SDER(AbstractRegister):
     Secure Debug Enable Register
     """
 
-    def __init__(self):
-        super(SDER, self).__init__()
+    @property
+    def suniden(self):
+        return self[1]
 
-    def set_suniden(self, flag):
-        self.value[30] = flag
+    @suniden.setter
+    def suniden(self, flag):
+        self[1] = flag
 
-    def get_suniden(self):
-        return self.value[30]
+    @property
+    def suiden(self):
+        return self[0]
 
-    def set_suiden(self, flag):
-        self.value[31] = flag
-
-    def get_suiden(self):
-        return self.value[31]
+    @suiden.setter
+    def suiden(self, flag):
+        self[0] = flag

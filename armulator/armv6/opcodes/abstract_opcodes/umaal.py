@@ -1,10 +1,10 @@
-from armulator.armv6.opcodes.abstract_opcode import AbstractOpcode
-from bitstring import BitArray
+from armulator.armv6.bits_ops import substring
+from armulator.armv6.opcodes.opcode import Opcode
 
 
-class Umaal(AbstractOpcode):
-    def __init__(self, m, d_hi, d_lo, n):
-        super(Umaal, self).__init__()
+class Umaal(Opcode):
+    def __init__(self, instruction, m, d_hi, d_lo, n):
+        super().__init__(instruction)
         self.m = m
         self.d_hi = d_hi
         self.d_lo = d_lo
@@ -12,8 +12,7 @@ class Umaal(AbstractOpcode):
 
     def execute(self, processor):
         if processor.condition_passed():
-            result = processor.registers.get(self.n).uint * processor.registers.get(
-                self.m).uint + processor.registers.get(
-                    self.d_hi).uint + processor.registers.get(self.d_lo).uint
-            processor.registers.set(self.d_hi, BitArray(uint=result, length=64)[0:32])
-            processor.registers.set(self.d_lo, BitArray(uint=result, length=64)[32:64])
+            result = (processor.registers.get(self.n) * processor.registers.get(self.m) +
+                      processor.registers.get(self.d_hi) + processor.registers.get(self.d_lo))
+            processor.registers.set(self.d_hi, substring(result, 63, 32))
+            processor.registers.set(self.d_lo, substring(result, 31, 0))

@@ -6,11 +6,10 @@ class JMCR(AbstractRegister):
     Jazelle Main Configuration Register
     """
 
-    def __init__(self):
-        super(JMCR, self).__init__()
+    @property
+    def je(self):
+        return self[0]
 
-    def set_je(self, flag):
-        self.value[31] = flag
-
-    def get_je(self):
-        return self.value[31]
+    @je.setter
+    def je(self, flag):
+        self[0] = flag
