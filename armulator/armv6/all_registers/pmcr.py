@@ -77,5 +77,3 @@ class PMCR(AbstractRegister):
     @n.setter
     def n(self, n):
         self[15:11] = n
-
-

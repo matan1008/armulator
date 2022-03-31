@@ -95,7 +95,7 @@ def test_bl_immediate_a1(arm_v6_without_fetch):
     assert arm.registers.current_instr_set() == InstrSet.ARM
 
 
-def test_bl_immediate_a1(arm_v6_without_fetch):
+def test_bl_immediate_a2(arm_v6_without_fetch):
     arm = arm_v6_without_fetch
     arm.opcode = 0b11111010000000000000000000001000
     prev_pc = 0x0F000000
