@@ -839,7 +839,6 @@ class ArmV6:
         memattrs = MemoryAttributes()
         region = substring(texcb, 2, 0)
         if region == 6:
-            raise NotImplementedError()
             # IMPLEMENTATION_DEFINED setting of memattrs
             pass
         else:
@@ -1537,7 +1536,6 @@ class ArmV6:
     def hint_yield(self):
         # mock
         raise NotImplementedError()
-        pass
 
     def clear_event_register(self):
         self.registers.set_event_register(False)
@@ -1563,7 +1561,6 @@ class ArmV6:
 
     def generate_integer_zero_divide(self):
         raise UndefinedInstructionException("division by zero in the integer division instruction")
-        pass
 
     def generate_coprocessor_exception(self):
         raise UndefinedInstructionException("rejected coprocessor instruction")
