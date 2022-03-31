@@ -1,4 +1,3 @@
-from armulator.armv6.opcodes.concrete.qadd_t1 import QaddT1
 from armulator.armv6.opcodes.concrete.qdadd_a1 import QdaddA1
 from armulator.armv6.opcodes.concrete.qdadd_t1 import QdaddT1
 
