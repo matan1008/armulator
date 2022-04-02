@@ -120,7 +120,7 @@ def test_pld_literal_a1(arm_v6_without_fetch):
         arm.emulate_cycle()
 
 
-def test_pld_register_t1(arm_v6_without_fetch):
+def test_pld_register_a1(arm_v6_without_fetch):
     arm = arm_v6_without_fetch
     arm.opcode = 0b11110111110100011111000000000000
     arm.opcode_len = 32

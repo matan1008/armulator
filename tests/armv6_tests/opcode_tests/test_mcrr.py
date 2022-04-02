@@ -52,7 +52,7 @@ def test_mcrr_a1(arm_v6_without_fetch):
     assert arm.registers.pc_store_value() == 0x00000004
 
 
-def test_mcrr2_t2(arm_v6_without_fetch):
+def test_mcrr2_a2(arm_v6_without_fetch):
     arm = arm_v6_without_fetch
     arm.opcode = 0b11111100010000010010000100010000
     arm.opcode_len = 32
