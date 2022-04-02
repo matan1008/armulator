@@ -597,7 +597,7 @@ class Registers:
                         (
                                 self.cpsr.m != 0b11010 and
                                 (self.is_external_abort() and self.is_async_abort() and self.hcr.amo) or
-                                (self.debug_exception() and self.hdcr.get_tde())
+                                (self.debug_exception() and self.hdcr.tde)
                         ) or
                         (
                                 self.cpsr.m == 0b10000 and
