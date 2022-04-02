@@ -204,7 +204,7 @@ def test_ldc2_immediate_a2(arm_v6_without_fetch):
     assert arm.registers.pc_store_value() == 0x00000004
 
 
-def test_ldc2_literal_t2(arm_v6_without_fetch):
+def test_ldc2_literal_a2(arm_v6_without_fetch):
     arm = arm_v6_without_fetch
     arm.opcode = 0b11111101100111110001000100000001
     arm.opcode_len = 32
