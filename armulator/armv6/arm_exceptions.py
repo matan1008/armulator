@@ -1,5 +1,8 @@
 from armulator.armv6.enums import DAbort
 
+__all__ = ['ArmulatorException', 'EndOfInstruction', 'SVCException', 'DataAbortException', 'HypTrapException',
+           'SMCException', 'UndefinedInstructionException']
+
 
 class ArmulatorException(Exception):
     """ Domain exception for armulator errors. """
