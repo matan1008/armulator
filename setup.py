@@ -17,6 +17,7 @@ if __name__ == '__main__':
         name='armulator',
         description='A pure Python ARM processor emulator',
         long_description=get_description(),
+        long_description_content_type='text/markdown',
         url='https://github.com/matan1008/armulator',
         author='Matan Perelman',
         author_email='matan1008@gmail.com',
