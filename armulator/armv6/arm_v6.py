@@ -1832,7 +1832,7 @@ class ArmV6:
             if opcode_start in (0b11101, 0b11110, 0b11111):
                 self.opcode_len += 2
                 new_part = self.mem_a_get(bits_ops.add(self.registers.pc_store_value(), 2, 32), 2)
-                self.opcode = chain(self.opcode, new_part, 2)
+                self.opcode = chain(self.opcode, new_part, 16)
         self.opcode_len *= 8
         return self.opcode
 
