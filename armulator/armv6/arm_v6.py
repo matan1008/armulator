@@ -1,10 +1,9 @@
 from os import path
 
-from armulator.armv6 import bits_ops
 from armulator.armv6.address_descriptor import AddressDescriptor
 from armulator.armv6.arm_exceptions import *
 from armulator.armv6.bits_ops import substring, chain, bit_at, lower_chunk, set_substring, set_bit_at, align, \
-    big_endian_reverse, is_ones, to_signed
+    big_endian_reverse, is_ones, to_signed, add
 from armulator.armv6.configurations import *
 from armulator.armv6.enums import *
 from armulator.armv6.memory_attributes import MemoryAttributes, MemType
@@ -1426,7 +1425,7 @@ class ArmV6:
         raise NotImplementedError()
 
     def exclusive_monitors_pass(self, address, size):
-        if address != bits_ops.align(address, size):
+        if address != align(address, size):
             self.alignment_fault(address, True)
         else:
             memaddrdesc = self.translate_address(address, self.registers.current_mode_is_not_user(), True, size, True)
@@ -1444,12 +1443,12 @@ class ArmV6:
         self.mark_exclusive_local(memaddrdesc.paddress, processor_id(), size)
 
     def mem_a_with_priv_set(self, address, size, privileged, was_aligned, value):
-        if address == bits_ops.align(address, size):
+        if address == align(address, size):
             va = address
         elif arch_version() >= 7 or self.registers.sctlr.a or self.registers.sctlr.u:
             self.alignment_fault(address, True)
         else:
-            va = bits_ops.align(address, size)
+            va = align(address, size)
         memaddrdesc = self.translate_address(va, privileged, True, size, was_aligned)
         if memaddrdesc.memattrs.shareable:
             self.clear_exclusive_by_address(memaddrdesc.paddress, processor_id(), size)
@@ -1458,12 +1457,12 @@ class ArmV6:
         self.mem[memaddrdesc, size] = value
 
     def mem_a_with_priv_get(self, address, size, privileged, was_aligned):
-        if address == bits_ops.align(address, size):
+        if address == align(address, size):
             va = address
         elif arch_version() >= 7 or self.registers.sctlr.a or self.registers.sctlr.u:
             self.alignment_fault(address, False)
         else:
-            va = bits_ops.align(address, size)
+            va = align(address, size)
         memaddrdesc = self.translate_address(va, privileged, False, size, was_aligned)
         value = self.mem[memaddrdesc, size]
         if self.registers.cpsr.e:
@@ -1478,8 +1477,8 @@ class ArmV6:
 
     def mem_u_with_priv_set(self, address, size, privileged, value):
         if arch_version() < 7 and not self.registers.sctlr.a and not self.registers.sctlr.u:
-            address = bits_ops.align(address, size)
-        if address == bits_ops.align(address, size):
+            address = align(address, size)
+        if address == align(address, size):
             self.mem_a_with_priv_set(address, size, privileged, True, value)
         elif (have_virt_ext() and
               not self.registers.is_secure() and
@@ -1497,8 +1496,8 @@ class ArmV6:
     def mem_u_with_priv_get(self, address, size, privileged):
         value = 0
         if arch_version() < 7 and not self.registers.sctlr.a and not self.registers.sctlr.u:
-            address = bits_ops.align(address, size)
-        if address == bits_ops.align(address, size):
+            address = align(address, size)
+        if address == align(address, size):
             value = self.mem_a_with_priv_get(address, size, privileged, True)
         elif (have_virt_ext() and
               not self.registers.is_secure() and
@@ -1831,7 +1830,7 @@ class ArmV6:
             opcode_start = substring(self.opcode, 15, 11)
             if opcode_start in (0b11101, 0b11110, 0b11111):
                 self.opcode_len += 2
-                new_part = self.mem_a_get(bits_ops.add(self.registers.pc_store_value(), 2, 32), 2)
+                new_part = self.mem_a_get(add(self.registers.pc_store_value(), 2, 32), 2)
                 self.opcode = chain(self.opcode, new_part, 16)
         self.opcode_len *= 8
         return self.opcode
