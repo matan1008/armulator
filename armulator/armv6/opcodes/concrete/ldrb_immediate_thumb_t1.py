@@ -11,5 +11,4 @@ class LdrbImmediateThumbT1(LdrbImmediateThumb):
         index = True
         add = True
         wback = False
-        imm32 = imm5 << 2
-        return LdrbImmediateThumbT1(instr, add=add, wback=wback, index=index, t=rt, n=rn, imm32=imm32)
+        return LdrbImmediateThumbT1(instr, add=add, wback=wback, index=index, t=rt, n=rn, imm32=imm5)
