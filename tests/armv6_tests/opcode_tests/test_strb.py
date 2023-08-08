@@ -46,7 +46,7 @@ def test_strb_register_t1(thumb_v6_without_fetch):
 
 def test_strb_immediate_thumb_t1(thumb_v6_without_fetch):
     arm = thumb_v6_without_fetch
-    arm.opcode = 0b0111000001001010
+    arm.opcode = 0b0111000100001010
     arm.opcode_len = 16
     # setting Data Region registers
     arm.registers.drsrs[0].en = 1  # enabling memory region

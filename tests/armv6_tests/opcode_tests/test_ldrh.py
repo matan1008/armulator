@@ -48,7 +48,7 @@ def test_ldrh_register_t1(thumb_v6_without_fetch):
 
 def test_ldrh_immediate_thumb_t1(thumb_v6_without_fetch):
     arm = thumb_v6_without_fetch
-    arm.opcode = 0b1000100001001010
+    arm.opcode = 0b1000100010001010
     arm.opcode_len = 16
     # setting Data Region registers
     arm.registers.drsrs[0].en = 1  # enabling memory region

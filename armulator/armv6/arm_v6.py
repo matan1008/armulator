@@ -37,24 +37,29 @@ class ArmV6:
     def start(self):
         self.take_reset()
 
+    def format_registers(self):
+        return (
+            f"R0: 0x{self.registers.get(0):08X}\n"
+            f"R1: 0x{self.registers.get(1):08X}\n"
+            f"R2: 0x{self.registers.get(2):08X}\n"
+            f"R3: 0x{self.registers.get(3):08X}\n"
+            f"R4: 0x{self.registers.get(4):08X}\n"
+            f"R5: 0x{self.registers.get(5):08X}\n"
+            f"R6: 0x{self.registers.get(6):08X}\n"
+            f"R7: 0x{self.registers.get(7):08X}\n"
+            f"R8: 0x{self.registers.get(8):08X}\n"
+            f"R9: 0x{self.registers.get(9):08X}\n"
+            f"R10: 0x{self.registers.get(10):08X}\n"
+            f"R11: 0x{self.registers.get(11):08X}\n"
+            f"R12: 0x{self.registers.get(12):08X}\n"
+            f"SP: 0x{self.registers.get_sp():08X}\n"
+            f"LR: 0x{self.registers.get_lr():08X}\n"
+            f"PC: 0x{self.registers.pc_store_value():08X}\n"
+            f"CPSR: 0x{self.registers.cpsr.value:08X}\n"
+        )
+
     def print_registers(self):
-        print("{0}:{1}".format("R0", self.registers.get(0)))
-        print("{0}:{1}".format("R1", self.registers.get(1)))
-        print("{0}:{1}".format("R2", self.registers.get(2)))
-        print("{0}:{1}".format("R3", self.registers.get(3)))
-        print("{0}:{1}".format("R4", self.registers.get(4)))
-        print("{0}:{1}".format("R5", self.registers.get(5)))
-        print("{0}:{1}".format("R6", self.registers.get(6)))
-        print("{0}:{1}".format("R7", self.registers.get(7)))
-        print("{0}:{1}".format("R8", self.registers.get(8)))
-        print("{0}:{1}".format("R9", self.registers.get(9)))
-        print("{0}:{1}".format("R10", self.registers.get(10)))
-        print("{0}:{1}".format("R11", self.registers.get(11)))
-        print("{0}:{1}".format("R12", self.registers.get(12)))
-        print("{0}:{1}".format("SP", self.registers.get_sp()))
-        print("{0}:{1}".format("LR", self.registers.get_lr()))
-        print("{0}:{1}".format("PC", self.registers.pc_store_value()))
-        print("{0}:{1}".format("CPSR", self.registers.cpsr.value))
+        print(self.format_registers())
 
     def take_reset(self):
         self.registers.cpsr.m = 0b10011
