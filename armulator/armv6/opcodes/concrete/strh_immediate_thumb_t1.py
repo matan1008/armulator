@@ -11,5 +11,5 @@ class StrhImmediateThumbT1(StrhImmediateThumb):
         index = True
         add = True
         wback = False
-        imm32 = imm5 << 2
+        imm32 = imm5 << 1
         return StrhImmediateThumbT1(instr, add=add, wback=wback, index=index, t=rt, n=rn, imm32=imm32)
