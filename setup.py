@@ -22,12 +22,12 @@ if __name__ == '__main__':
         author='Matan Perelman',
         author_email='matan1008@gmail.com',
         classifiers=[
-            'Programming Language :: Python :: 3.6',
             'Programming Language :: Python :: 3.7',
             'Programming Language :: Python :: 3.8',
             'Programming Language :: Python :: 3.9',
             'Programming Language :: Python :: 3.10',
             'Programming Language :: Python :: 3.11',
+            'Programming Language :: Python :: 3.12',
         ],
         keywords='arm emulator',
         packages=PACKAGES,
